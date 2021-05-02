@@ -1,4 +1,26 @@
-import { ViewStyle, TextStyle, ImageStyle } from 'react-native';
+import React from 'react';
+import {
+  ViewStyle,
+  TextStyle,
+  ImageStyle,
+  ButtonProps,
+  FlatListProps,
+  ImageProps,
+  ImageBackgroundProps,
+  InputAccessoryViewProps,
+  KeyboardAvoidingViewProps,
+  PressableProps,
+  ScrollViewProps,
+  SectionListProps,
+  TextProps,
+  TextInputProps,
+  TouchableHighlightProps,
+  TouchableNativeFeedbackProps,
+  TouchableOpacityProps,
+  TouchableWithoutFeedbackProps,
+  ViewProps,
+  VirtualizedListProps
+} from 'react-native';
 
 export type StyledComponent =
   | 'Button'
@@ -20,6 +42,40 @@ export type StyledComponent =
   | 'View'
   | 'VirtualizedList';
 
+export type PolymorphicProps<T extends StyledComponent> = T extends 'Button'
+  ? ButtonProps
+  : T extends 'FlatList'
+  ? FlatListProps<any>
+  : T extends 'Image'
+  ? ImageProps
+  : T extends 'ImageBackground'
+  ? ImageBackgroundProps
+  : T extends 'InputAccessoryView'
+  ? InputAccessoryViewProps
+  : T extends 'KeyboardAvoidingView'
+  ? KeyboardAvoidingViewProps
+  : T extends 'Pressable'
+  ? PressableProps
+  : T extends 'ScrollView'
+  ? ScrollViewProps
+  : T extends 'SectionList'
+  ? SectionListProps<any>
+  : T extends 'Text'
+  ? TextProps
+  : T extends 'TextInput'
+  ? TextInputProps
+  : T extends 'TouchableHighlight'
+  ? TouchableHighlightProps
+  : T extends 'TouchableNativeFeedback'
+  ? TouchableNativeFeedbackProps
+  : T extends 'TouchableOpacity'
+  ? TouchableOpacityProps
+  : T extends 'TouchableWithoutFeedback'
+  ? TouchableWithoutFeedbackProps
+  : T extends 'VirtualizedList'
+  ? VirtualizedListProps<any>
+  : ViewProps;
+
 export type StyleProperties<T extends StyledComponent> = T extends 'Text'
   ? TextStyle
   : T extends 'Image'
@@ -30,6 +86,11 @@ export type AllStyleProperties = ViewStyle & ImageStyle & TextStyle;
 
 export type AnyStyleProperties = ViewStyle | ImageStyle | TextStyle;
 
+export type ComponentProps<T extends StyledComponent> = PolymorphicProps<T> & {
+  css?: any;
+  children?: React.ReactNode; // TODO: improve children handling
+};
+
 export type StyledConfig<T extends StyledComponent> = {
   variants?: {
     [prop: string]: {
@@ -37,11 +98,8 @@ export type StyledConfig<T extends StyledComponent> = {
     };
   };
   compoundVariants?: Array<{
-    [prop: string]: string | number | boolean | object;
-    // css: {
-    //   color: 'blueviolet';
-    //   borderColor: 'darkviolet';
-    // };
+    [prop: string]: string | number | boolean | object; // TOOD: fix type
+    // css: object;
   }>;
   defaultVariants?: {
     [prop: string]: string;
@@ -53,18 +111,25 @@ export type ThemeToken = {
 };
 
 export type Theme = {
-  colors: ThemeToken;
-  space: ThemeToken;
-  fontSizes: ThemeToken;
-  fonts: ThemeToken;
-  fontWeights: ThemeToken;
-  lineHeights: ThemeToken;
-  letterSpacings: ThemeToken;
-  sizes: ThemeToken;
-  borderWidths: ThemeToken;
-  borderStyles: ThemeToken;
-  radii: ThemeToken;
-  shadows: ThemeToken;
-  zIndices: ThemeToken;
-  transitions: ThemeToken;
+  colors?: ThemeToken;
+  space?: ThemeToken;
+  fontSizes?: ThemeToken;
+  fonts?: ThemeToken;
+  fontWeights?: ThemeToken;
+  lineHeights?: ThemeToken;
+  letterSpacings?: ThemeToken;
+  sizes?: ThemeToken;
+  borderWidths?: ThemeToken;
+  borderStyles?: ThemeToken;
+  radii?: ThemeToken;
+  shadows?: ThemeToken;
+  zIndices?: ThemeToken;
+  transitions?: ThemeToken;
+};
+
+export type Config = {
+  theme?: Theme;
+  media?: any;
+  utils?: any;
+  themeMap?: any;
 };

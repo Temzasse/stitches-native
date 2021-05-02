@@ -1,7 +1,7 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 
-import { styled, css } from './lib';
+import { styled, css } from './styled';
 
 export default function App() {
   return (
@@ -46,20 +46,20 @@ const Button = styled('TouchableOpacity', {
   variants: {
     variant: {
       primary: {
-        backgroundColor: 'blueviolet',
+        backgroundColor: '$primary',
       },
       secondary: {
-        backgroundColor: 'lightgray',
+        backgroundColor: '$secondary',
       },
     },
     size: {
       small: {
         height: 32,
-        paddingHorizontal: 8,
+        paddingHorizontal: '$2',
       },
       large: {
         height: 44,
-        paddingHorizontal: 16,
+        paddingHorizontal: '$3',
       },
     },
     outlined: {

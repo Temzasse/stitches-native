@@ -1,0 +1,60 @@
+const COLOR_PROPERTIES = [
+  'backgroundColor',
+  'border',
+  'borderColor',
+  'borderStartColor',
+  'borderEndColor',
+  'borderTopColor',
+  'borderLeftColor',
+  'borderBottomColor',
+  'borderRightColor',
+  'color',
+  'tintColor',
+  'shadowColor',
+  'textShadowColor',
+  'textDecoration',
+  'overlayColor',
+];
+
+const RADII_PROPERTIES = [
+  'borderRadius',
+  'borderTopLeftRadius',
+  'borderTopRightRadius',
+  'borderBottomRightRadius',
+  'borderBottomLeftRadius',
+];
+
+const SPACE_PROPERTIES = [
+  'margin',
+  'marginTop',
+  'marginRight',
+  'marginBottom',
+  'marginLeft',
+  'marginEnd',
+  'marginStart',
+  'marginHorizontal',
+  'marginVertical',
+  'padding',
+  'paddingTop',
+  'paddingRight',
+  'paddingBottom',
+  'paddingLeft',
+  'paddingHorizontal',
+  'paddingVertical',
+  'paddingEnd',
+  'paddingStart',
+  'top',
+  'right',
+  'bottom',
+  'left',
+];
+
+const SIZE_PROPERTIES = [
+  'width',
+  'minWidth',
+  'maxWidth',
+  'height',
+  'minHeight',
+  'maxHeight',
+  'flexBasis',
+];

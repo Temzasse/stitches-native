@@ -1,3 +1,5 @@
+import { Config } from './types';
+
 export function getCompoundKey(compoundEntries: Array<[string, any]>) {
   // Eg. `color_primary+size_small`
   return (
@@ -13,4 +15,9 @@ export function getCompoundKey(compoundEntries: Array<[string, any]>) {
       }, '')
       .slice(0, -1)
   ); // Remove last `+` character
+}
+
+export function processStyles(styles: any, config: Config) {
+  // TODO: replace tokens in styles with real values
+  return {};
 }
