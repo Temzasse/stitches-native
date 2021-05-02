@@ -1,4 +1,5 @@
 import { createElement, forwardRef, memo } from 'react';
+import { UnionToIntersection } from 'ts-essentials';
 
 import {
   Config,
@@ -20,10 +21,13 @@ const ReactNative = require('react-native');
  */
 
 export function createCss<C extends Config>(config: C) {
-  function styled<T extends StyledComponent, S extends StyledConfig<T>>(
-    component: T,
-    styledConfig: S
-  ) {
+  function styled<
+    T extends StyledComponent,
+    S extends StyledConfig<T>,
+    V extends S['variants'],
+    P extends keyof V, // Component props from variants
+    A extends keyof UnionToIntersection<V[P]> // TODO: fix type
+  >(component: T, styledConfig: S) {
     const {
       variants = {},
       compoundVariants = [],
@@ -32,7 +36,7 @@ export function createCss<C extends Config>(config: C) {
     } = styledConfig;
 
     const styleSheet = ReactNative.StyleSheet.create({
-      base: processStyles(styles, config),
+      base: styles ? processStyles(styles as any, config) : {},
       // Variant styles
       ...Object.entries(variants).reduce(
         (acc, [vartiantProp, variantValues]) => {
@@ -40,7 +44,7 @@ export function createCss<C extends Config>(config: C) {
             ([variantName, variantValue]) => {
               // Eg. `color_primary` or `size_small`
               const key = `${vartiantProp}_${variantName}`;
-              acc[key] = processStyles(variantValue, config);
+              acc[key] = processStyles((variantValue || {}) as any, config);
             }
           );
           return acc;
@@ -54,52 +58,57 @@ export function createCss<C extends Config>(config: C) {
 
         if (compoundEntries.length > 1) {
           const key = getCompoundKey(compoundEntries);
-          acc[key] = processStyles(css, config);
+          acc[key] = processStyles((css || {}) as any, config);
         }
 
         return acc;
       }, {} as { [key: string]: AnyStyleProperties })
     });
 
-    const Comp = forwardRef<any, ComponentProps<T>>((props, ref) => {
-      let variantStyles = [];
-      let compoundVariantStyles = [];
-      const p = props as any; // TODO: fix type
+    const Comp = forwardRef<any, ComponentProps<T> & { [prop in P]?: A }>(
+      (props, ref) => {
+        let variantStyles = [];
+        let compoundVariantStyles = [];
+        const p = props as any; // TODO: fix type
 
-      if (variants) {
-        variantStyles = Object.keys(variants)
-          .map(prop => {
-            const key = `${prop}_${p[prop] || defaultVariants[prop]}`;
-            return styleSheet[key];
-          })
-          .filter(Boolean);
-      }
-
-      if (compoundVariants) {
-        compoundVariantStyles = compoundVariants
-          .map(compoundVariant => {
-            const { css, ...compounds } = compoundVariant;
-            const compoundEntries = Object.entries(compounds);
-
-            if (compoundEntries.every(([prop, value]) => p[prop] === value)) {
-              const key = getCompoundKey(compoundEntries);
+        if (variants) {
+          variantStyles = Object.keys(variants)
+            .map(prop => {
+              const key = `${prop}_${p[prop] || defaultVariants[prop]}`;
               return styleSheet[key];
-            }
-          })
-          .filter(Boolean);
-      }
+            })
+            .filter(Boolean);
+        }
 
-      return createElement(ReactNative[component], {
-        ...p,
-        style: [
-          styleSheet.base,
-          ...variantStyles.concat(compoundVariantStyles),
-          processStyles(props.css, config),
-          p.style
-        ],
-        ref
-      });
-    });
+        if (compoundVariants) {
+          compoundVariantStyles = compoundVariants
+            .map(compoundVariant => {
+              const { css, ...compounds } = compoundVariant;
+              const compoundEntries = Object.entries(compounds);
+
+              if (compoundEntries.every(([prop, value]) => p[prop] === value)) {
+                const key = getCompoundKey(compoundEntries);
+                return styleSheet[key];
+              }
+            })
+            .filter(Boolean);
+        }
+
+        // console.log(compoundVariantStyles);
+
+        return createElement(ReactNative[component], {
+          ...p,
+          style: [
+            styleSheet.base,
+            ...variantStyles,
+            ...compoundVariantStyles,
+            processStyles(props.css || {}, config),
+            p.style
+          ],
+          ref
+        });
+      }
+    );
 
     return memo(Comp);
   }

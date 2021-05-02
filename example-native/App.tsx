@@ -73,7 +73,7 @@ const Button = styled('TouchableOpacity', {
       variant: 'primary',
       outlined: true,
       css: {
-        borderColor: 'blueviolet',
+        borderColor: '$primary',
         backgroundColor: 'transparent',
       },
     },
@@ -81,7 +81,7 @@ const Button = styled('TouchableOpacity', {
       variant: 'secondary',
       outlined: true,
       css: {
-        borderColor: 'lightgray',
+        borderColor: '$secondary',
         backgroundColor: 'transparent',
       },
     },

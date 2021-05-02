@@ -1,5 +1,12 @@
 import { Config } from './types';
 
+import {
+  COLOR_PROPERTIES,
+  RADII_PROPERTIES,
+  SIZE_PROPERTIES,
+  SPACE_PROPERTIES,
+} from './constants';
+
 export function getCompoundKey(compoundEntries: Array<[string, any]>) {
   // Eg. `color_primary+size_small`
   return (
@@ -17,7 +24,30 @@ export function getCompoundKey(compoundEntries: Array<[string, any]>) {
   ); // Remove last `+` character
 }
 
-export function processStyles(styles: any, config: Config) {
-  // TODO: replace tokens in styles with real values
-  return {};
+export function processStyles(
+  styles: { [property: string]: string | number },
+  config: Config
+) {
+  if (!config.theme) return styles;
+
+  return Object.entries(styles).reduce((acc, [key, val]) => {
+    if (typeof val === 'number' || val.indexOf('$') === -1) {
+      acc[key] = val;
+      return acc;
+    }
+
+    const token = val.replace('$', '');
+
+    if (COLOR_PROPERTIES.includes(key) && config.theme?.colors) {
+      acc[key] = config.theme.colors[token];
+    } else if (RADII_PROPERTIES.includes(key) && config.theme?.radii) {
+      acc[key] = config.theme.radii[token];
+    } else if (SIZE_PROPERTIES.includes(key) && config.theme?.sizes) {
+      acc[key] = config.theme.sizes[token];
+    } else if (SPACE_PROPERTIES.includes(key) && config.theme?.space) {
+      acc[key] = config.theme.space[token];
+    }
+
+    return acc;
+  }, {} as any);
 }

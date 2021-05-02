@@ -1,4 +1,4 @@
-const COLOR_PROPERTIES = [
+export const COLOR_PROPERTIES = [
   'backgroundColor',
   'border',
   'borderColor',
@@ -16,7 +16,7 @@ const COLOR_PROPERTIES = [
   'overlayColor',
 ];
 
-const RADII_PROPERTIES = [
+export const RADII_PROPERTIES = [
   'borderRadius',
   'borderTopLeftRadius',
   'borderTopRightRadius',
@@ -24,7 +24,7 @@ const RADII_PROPERTIES = [
   'borderBottomLeftRadius',
 ];
 
-const SPACE_PROPERTIES = [
+export const SPACE_PROPERTIES = [
   'margin',
   'marginTop',
   'marginRight',
@@ -49,7 +49,7 @@ const SPACE_PROPERTIES = [
   'left',
 ];
 
-const SIZE_PROPERTIES = [
+export const SIZE_PROPERTIES = [
   'width',
   'minWidth',
   'maxWidth',
