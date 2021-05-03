@@ -86,11 +86,6 @@ export type AllStyleProperties = ViewStyle & ImageStyle & TextStyle;
 
 export type AnyStyleProperties = ViewStyle | ImageStyle | TextStyle;
 
-export type ComponentProps<T extends StyledComponent> = PolymorphicProps<T> & {
-  css?: any;
-  children?: React.ReactNode; // TODO: improve children handling
-};
-
 export type StyledConfig<T extends StyledComponent> = {
   variants?: {
     [prop: string]: {
@@ -105,6 +100,22 @@ export type StyledConfig<T extends StyledComponent> = {
     [prop: string]: string;
   };
 } & StyleProperties<T>;
+
+export type ComponentProps<
+  T extends StyledComponent,
+  V extends StyledConfig<any>['variants']
+> = PolymorphicProps<T> & {
+  css?: any;
+  children?: React.ReactNode; // TODO: improve children handling
+} & {
+    [K in keyof V]?: ComponentPropValue<keyof V[K]>;
+  };
+
+export type ComponentPropValue<T> = T extends 'true'
+  ? boolean
+  : T extends 'false'
+  ? boolean
+  : T;
 
 export type ThemeToken = {
   [name: string]: string | number;

@@ -38,13 +38,13 @@ export function processStyles(
 
     const token = val.replace('$', '');
 
-    if (COLOR_PROPERTIES.includes(key) && config.theme?.colors) {
+    if (key in COLOR_PROPERTIES && config.theme?.colors) {
       acc[key] = config.theme.colors[token];
-    } else if (RADII_PROPERTIES.includes(key) && config.theme?.radii) {
+    } else if (key in RADII_PROPERTIES && config.theme?.radii) {
       acc[key] = config.theme.radii[token];
-    } else if (SIZE_PROPERTIES.includes(key) && config.theme?.sizes) {
+    } else if (key in SIZE_PROPERTIES && config.theme?.sizes) {
       acc[key] = config.theme.sizes[token];
-    } else if (SPACE_PROPERTIES.includes(key) && config.theme?.space) {
+    } else if (key in SPACE_PROPERTIES && config.theme?.space) {
       acc[key] = config.theme.space[token];
     }
 

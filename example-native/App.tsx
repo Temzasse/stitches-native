@@ -15,7 +15,12 @@ export default function App() {
           <ButtonText>Hello</ButtonText>
         </Button>
 
-        <Button variant="secondary" outlined style={{ marginTop: 16 }}>
+        <Button
+          variant="secondary"
+          size="small"
+          outlined
+          style={{ marginTop: 16 }}
+        >
           <ButtonText>Hello</ButtonText>
         </Button>
       </Wrapper>
