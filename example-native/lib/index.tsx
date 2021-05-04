@@ -1,14 +1,12 @@
 import { createElement, forwardRef, memo } from 'react';
-import { UnionToIntersection } from 'ts-essentials';
 
 import {
-  Config,
-  StyledConfig,
-  StyledComponent,
-  ComponentProps,
-  AllStyleProperties,
-  AnyStyleProperties
-} from './types';
+  AllStyleProperty,
+  AnyStyleProperty,
+  StyledComponent
+} from './rn.types';
+
+import { Config, StyledConfig, ComponentProps } from './types';
 
 import { getCompoundKey, processStyles } from './utils';
 
@@ -47,7 +45,7 @@ export function createCss<C extends Config>(config: C) {
           );
           return acc;
         },
-        {} as { [key: string]: AnyStyleProperties }
+        {} as { [key: string]: AnyStyleProperty }
       ),
       // Compound variant styles
       ...compoundVariants.reduce((acc, compoundVariant) => {
@@ -60,7 +58,7 @@ export function createCss<C extends Config>(config: C) {
         }
 
         return acc;
-      }, {} as { [key: string]: AnyStyleProperties })
+      }, {} as { [key: string]: AnyStyleProperty })
     });
 
     const Comp = forwardRef<any, ComponentProps<T, V>>((props: any, ref) => {
@@ -108,7 +106,7 @@ export function createCss<C extends Config>(config: C) {
     return memo(Comp);
   }
 
-  const css = (cssStyles: AllStyleProperties) => ({});
+  const css = (cssStyles: AllStyleProperty) => ({});
 
   return { styled, css };
 }

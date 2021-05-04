@@ -37,10 +37,10 @@ const buttonStyles = css({
 
 const Wrapper = styled('View', {
   flex: 1,
+  flexShrink: 0,
   justifyContent: 'center',
   alignItems: 'center',
   backgroundColor: '$primary',
-  borderColor: '#eee',
 });
 
 const Button = styled('TouchableOpacity', {
@@ -48,6 +48,7 @@ const Button = styled('TouchableOpacity', {
   alignItems: 'center',
   borderRadius: 999,
   minWidth: 100,
+  backgroundColor: '$primary',
 
   variants: {
     variant: {

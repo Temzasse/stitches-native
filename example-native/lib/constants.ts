@@ -1,62 +1,66 @@
 export const COLOR_PROPERTIES = {
   backgroundColor: 'color',
   border: 'color',
-  borderColor: 'color',
-  borderStartColor: 'color',
-  borderEndColor: 'color',
-  borderTopColor: 'color',
-  borderLeftColor: 'color',
   borderBottomColor: 'color',
+  borderColor: 'color',
+  borderEndColor: 'color',
+  borderLeftColor: 'color',
   borderRightColor: 'color',
+  borderStartColor: 'color',
+  borderTopColor: 'color',
   color: 'color',
-  tintColor: 'color',
-  shadowColor: 'color',
-  textShadowColor: 'color',
-  textDecoration: 'color',
   overlayColor: 'color',
+  shadowColor: 'color',
+  textDecoration: 'color',
+  textShadowColor: 'color',
+  tintColor: 'color',
 };
 
 export const RADII_PROPERTIES = {
+  borderBottomLeftRadius: 'radii',
+  borderBottomRightRadius: 'radii',
+  borderBottomStartRadius: 'radii',
+  borderBottomEndRadius: 'radii',
   borderRadius: 'radii',
   borderTopLeftRadius: 'radii',
   borderTopRightRadius: 'radii',
-  borderBottomRightRadius: 'radii',
-  borderBottomLeftRadius: 'radii',
+  borderTopStartRadius: 'radii',
+  borderTopEndRadius: 'radii',
 };
 
 export const SPACE_PROPERTIES = {
-  margin: 'space',
-  marginTop: 'space',
-  marginRight: 'space',
-  marginBottom: 'space',
-  marginLeft: 'space',
-  marginEnd: 'space',
-  marginStart: 'space',
-  marginHorizontal: 'space',
-  marginVertical: 'space',
-  padding: 'space',
-  paddingTop: 'space',
-  paddingRight: 'space',
-  paddingBottom: 'space',
-  paddingLeft: 'space',
-  paddingHorizontal: 'space',
-  paddingVertical: 'space',
-  paddingEnd: 'space',
-  paddingStart: 'space',
-  top: 'space',
-  right: 'space',
   bottom: 'space',
   left: 'space',
+  margin: 'space',
+  marginBottom: 'space',
+  marginEnd: 'space',
+  marginHorizontal: 'space',
+  marginLeft: 'space',
+  marginRight: 'space',
+  marginStart: 'space',
+  marginTop: 'space',
+  marginVertical: 'space',
+  padding: 'space',
+  paddingBottom: 'space',
+  paddingEnd: 'space',
+  paddingHorizontal: 'space',
+  paddingLeft: 'space',
+  paddingRight: 'space',
+  paddingStart: 'space',
+  paddingTop: 'space',
+  paddingVertical: 'space',
+  right: 'space',
+  top: 'space',
 };
 
 export const SIZE_PROPERTIES = {
-  width: 'sizes',
-  minWidth: 'sizes',
-  maxWidth: 'sizes',
-  height: 'sizes',
-  minHeight: 'sizes',
-  maxHeight: 'sizes',
   flexBasis: 'sizes',
+  height: 'sizes',
+  maxHeight: 'sizes',
+  maxWidth: 'sizes',
+  minHeight: 'sizes',
+  minWidth: 'sizes',
+  width: 'sizes',
 };
 
 export const FONT_PROPERTIES = {
@@ -85,10 +89,12 @@ export const Z_INDEX_PROPERTIES = {
 
 export const BORDER_WIDTH_PROPERTIES = {
   borderWidth: 'borderWidths',
+  borderTopWidth: 'borderWidths',
+  borderRightWidth: 'borderWidths',
+  borderBottomWidth: 'borderWidths',
+  borderLeftWidth: 'borderWidths',
 };
 
 export const BORDER_STYLE_PROPERTIES = {
   borderStyle: 'borderStyles',
 };
-
-// TODO: figure out shadows
