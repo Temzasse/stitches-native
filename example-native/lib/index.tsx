@@ -23,7 +23,7 @@ const ReactNative = require('react-native');
 export function createCss<C extends Config>(config: C) {
   function styled<
     T extends StyledComponent,
-    S extends StyledConfig<T>,
+    S extends StyledConfig<T, C>,
     V extends S['variants']
   >(component: T, styledConfig: S) {
     const {
@@ -63,15 +63,14 @@ export function createCss<C extends Config>(config: C) {
       }, {} as { [key: string]: AnyStyleProperties })
     });
 
-    const Comp = forwardRef<any, ComponentProps<T, V>>((props, ref) => {
+    const Comp = forwardRef<any, ComponentProps<T, V>>((props: any, ref) => {
       let variantStyles = [];
       let compoundVariantStyles = [];
-      const p = props as any; // TODO: fix type
 
       if (variants) {
         variantStyles = Object.keys(variants)
           .map(prop => {
-            const key = `${prop}_${p[prop] || defaultVariants[prop]}`;
+            const key = `${prop}_${props[prop] || defaultVariants[prop]}`;
             return styleSheet[key];
           })
           .filter(Boolean);
@@ -83,7 +82,9 @@ export function createCss<C extends Config>(config: C) {
             const { css, ...compounds } = compoundVariant;
             const compoundEntries = Object.entries(compounds);
 
-            if (compoundEntries.every(([prop, value]) => p[prop] === value)) {
+            if (
+              compoundEntries.every(([prop, value]) => props[prop] === value)
+            ) {
               const key = getCompoundKey(compoundEntries);
               return styleSheet[key];
             }
@@ -91,16 +92,14 @@ export function createCss<C extends Config>(config: C) {
           .filter(Boolean);
       }
 
-      // console.log(compoundVariantStyles);
-
       return createElement(ReactNative[component], {
-        ...p,
+        ...props,
         style: [
           styleSheet.base,
           ...variantStyles,
           ...compoundVariantStyles,
           processStyles(props.css || {}, config),
-          p.style
+          props.style
         ],
         ref
       });

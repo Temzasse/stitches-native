@@ -39,7 +39,8 @@ const Wrapper = styled('View', {
   flex: 1,
   justifyContent: 'center',
   alignItems: 'center',
-  backgroundColor: '#eee',
+  backgroundColor: '$primary',
+  borderColor: '#eee',
 });
 
 const Button = styled('TouchableOpacity', {

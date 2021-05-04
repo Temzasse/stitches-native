@@ -50,11 +50,45 @@ export const SPACE_PROPERTIES = {
 };
 
 export const SIZE_PROPERTIES = {
-  width: 'size',
-  minWidth: 'size',
-  maxWidth: 'size',
-  height: 'size',
-  minHeight: 'size',
-  maxHeight: 'size',
-  flexBasis: 'size',
+  width: 'sizes',
+  minWidth: 'sizes',
+  maxWidth: 'sizes',
+  height: 'sizes',
+  minHeight: 'sizes',
+  maxHeight: 'sizes',
+  flexBasis: 'sizes',
 };
+
+export const FONT_PROPERTIES = {
+  fontFamily: 'fonts',
+};
+
+export const FONT_SIZE_PROPERTIES = {
+  fontSize: 'fontSizes',
+};
+
+export const FONT_WEIGHT_PROPERTIES = {
+  fontWeights: 'fontWeights',
+};
+
+export const LINE_HEIGHT_PROPERTIES = {
+  lineHeight: 'lineHeights',
+};
+
+export const LETTER_SPACING_PROPERTIES = {
+  letterSpacing: 'letterSpacings',
+};
+
+export const Z_INDEX_PROPERTIES = {
+  zIndex: 'zIndices',
+};
+
+export const BORDER_WIDTH_PROPERTIES = {
+  borderWidth: 'borderWidths',
+};
+
+export const BORDER_STYLE_PROPERTIES = {
+  borderStyle: 'borderStyles',
+};
+
+// TODO: figure out shadows
