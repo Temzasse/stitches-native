@@ -23,6 +23,10 @@ export default function App() {
         >
           <ButtonText>Hello</ButtonText>
         </Button>
+
+        <Rect>
+          <Box css={{ backgroundColor: '$secondary', size: 40 }} />
+        </Rect>
       </Wrapper>
 
       <StatusBar style="auto" />
@@ -40,7 +44,16 @@ const Wrapper = styled('View', {
   flexShrink: 0,
   justifyContent: 'center',
   alignItems: 'center',
+});
+
+const Box = styled('View', {});
+
+const Rect = styled('View', {
   backgroundColor: '$primary',
+  size: 100,
+  marginTop: '$3',
+  borderRadius: '$sm',
+  flexCenter: 'row',
 });
 
 const Button = styled('TouchableOpacity', {

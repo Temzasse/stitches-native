@@ -1,5 +1,11 @@
 import React from 'react';
-import { LiteralUnion } from 'type-fest';
+import {
+  ConditionalKeys,
+  ConditionalPick,
+  LiteralUnion,
+  Merge,
+  SetRequired
+} from 'type-fest';
 
 import {
   AnyStyleProperty,
@@ -43,7 +49,7 @@ export type ThemeToken = {
   [name: string]: string | number;
 };
 
-export type Theme = {
+type Theme = {
   colors?: ThemeToken;
   space?: ThemeToken;
   fontSizes?: ThemeToken;
@@ -57,7 +63,22 @@ export type Theme = {
   radii?: ThemeToken;
   zIndices?: ThemeToken;
   // shadows?: ThemeToken;
-  // transitions?: ThemeToken;
+};
+
+type EmptyTheme = {
+  colors?: {};
+  space?: {};
+  fontSizes?: {};
+  fonts?: {};
+  fontWeights?: {};
+  lineHeights?: {};
+  letterSpacings?: {};
+  sizes?: {};
+  borderWidths?: {};
+  borderStyles?: {};
+  radii?: {};
+  zIndices?: {};
+  // shadows?: ThemeToken;
 };
 
 type TokenizedValue<T extends string | number | symbol> =
@@ -75,7 +96,7 @@ type TokenizedStyleProperty<S extends AnyStyleProperty, C extends Config> = {
     : K extends FontProperty
     ? LiteralUnion<TokenizedValue<keyof NonNullable<C['theme']>['fonts']>, string> // prettier-ignore
     : K extends FontSizeProperty
-    ? TokenizedValue<keyof NonNullable<C['theme']>['fontSizes']> | number
+    ? LiteralUnion<TokenizedValue<keyof NonNullable<C['theme']>['fontSizes']>, number> // prettier-ignore
     : K extends FontWeightProperty
     ? TokenizedValue<keyof NonNullable<C['theme']>['fontWeights']> | FontWeight
     : K extends LineHeightProperty
@@ -88,43 +109,57 @@ type TokenizedStyleProperty<S extends AnyStyleProperty, C extends Config> = {
     ? TokenizedValue<keyof NonNullable<C['theme']>['borderWidths']> // TODO: why does adding `number` break autocomplete?
     : K extends BorderStyleProperty
     ? TokenizedValue<keyof NonNullable<C['theme']>['borderStyles']> | BorderStyle // prettier-ignore
-    : StrictStyleProperty<K>;
+    : K extends string
+    ? StrictStyleProperty<K>
+    : S[K];
 };
 
 export type Config = {
   theme?: Theme;
   media?: any;
-  utils?: any;
+  utils?: {
+    [util: string]: (config: Config) => (value: any) => any
+  };
   themeMap?: any;
 };
 
-export type StyledConfig<
-  T extends StyledComponent,
-  C extends Config
-> = TokenizedStyleProperty<StyleProperty<T>, C> & {
-  variants?: {
-    [prop: string]: {
-      [variant: string]: TokenizedStyleProperty<StyleProperty<T>, C>;
-    };
-  };
-  compoundVariants?: Array<{
-    [variant: string]: string | number | boolean | object; // TOOD: fix type
-    // css: object;
-  }>;
+// interface CompoundVariant<T extends StyledComponent, C extends Config> {
+//   css: TokenizedStyleProperty<StyleProperty<T>, C>;
+//   [variant in V]: string;
+// }
+
+type VariantConfig<T extends StyledComponent, C extends Config> = {
+  variants?: Record<
+    string,
+    { [variant: string]: TokenizedStyleProperty<StyleProperty<T>, C> }
+  >;
+} & {
+  compoundVariants?: Array<any>;
+} & {
   defaultVariants?: {
     [prop: string]: string;
   };
 };
 
+type Utils<U extends Config['utils']> = {
+  [K in keyof U]?: string | number;
+};
+
+export type StyledConfig<
+  T extends StyledComponent,
+  C extends Config
+> = TokenizedStyleProperty<StyleProperty<T>, C> &
+  VariantConfig<T, C> &
+  Utils<C['utils']>;
+
 export type ComponentProps<
   T extends StyledComponent,
-  V extends StyledConfig<any, any>['variants']
+  C extends Config,
+  V extends VariantConfig<T, C>
 > = PolymorphicProps<T> & {
-  css?: any;
-  children?: React.ReactNode; // TODO: improve children handling
-} & {
-    [K in keyof V]?: ComponentPropValue<keyof V[K]>;
-  };
+  children?: React.ReactNode;
+  css?: TokenizedStyleProperty<StyleProperty<T>, C>;
+};
 
 export type ComponentPropValue<T> = T extends 'true'
   ? boolean

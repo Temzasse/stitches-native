@@ -33,11 +33,11 @@ const { styled, css } = createCss({
     },
   },
   utils: {
-    size: () => (value: any) => ({
+    size: () => (value: number) => ({
       width: value,
       height: value,
     }),
-    center: () => (value: 'row' | 'column' = 'row') => ({
+    flexCenter: () => (value: 'row' | 'column' = 'row') => ({
       flexDirection: value,
       justifyContent: 'center',
       alignItems: 'center',

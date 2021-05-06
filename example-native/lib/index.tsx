@@ -7,23 +7,15 @@ import {
 } from './rn.types';
 
 import { Config, StyledConfig, ComponentProps } from './types';
-
 import { getCompoundKey, processStyles } from './utils';
 
 const ReactNative = require('react-native');
 
-/**
- * API: https://stitches.dev/docs/api
- * - Local scoped tokens ($$shadowColor: 'red')
- * - Scale-prefixed tokens (marginTop: '$sizes$1')
- */
-
 export function createCss<C extends Config>(config: C) {
-  function styled<
-    T extends StyledComponent,
-    S extends StyledConfig<T, C>,
-    V extends S['variants']
-  >(component: T, styledConfig: S) {
+  function styled<T extends StyledComponent, S extends StyledConfig<T, C>>(
+    component: T,
+    styledConfig: S
+  ) {
     const {
       variants = {},
       compoundVariants = [],
@@ -61,7 +53,7 @@ export function createCss<C extends Config>(config: C) {
       }, {} as { [key: string]: AnyStyleProperty })
     });
 
-    const Comp = forwardRef<any, ComponentProps<T, V>>((props: any, ref) => {
+    const Comp = forwardRef<any, ComponentProps<T, C, S>>((props: any, ref) => {
       let variantStyles = [];
       let compoundVariantStyles = [];
 

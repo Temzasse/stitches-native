@@ -65,9 +65,7 @@ export type StringProperty =
 
 export type BooleanProperty = 'includeFontPadding';
 
-export type StrictStyleProperty<
-  T extends string | number | symbol
-> = T extends 'alignContent'
+export type StrictStyleProperty<T extends string> = T extends 'alignContent'
   ? 'flex-start' | 'flex-end' | 'center' | 'stretch' | 'space-between' | 'space-around' // prettier-ignore
   : T extends 'alignItems'
   ? 'flex-start' | 'flex-end' | 'center' | 'stretch' | 'baseline'
