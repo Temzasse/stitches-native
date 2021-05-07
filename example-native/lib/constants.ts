@@ -98,3 +98,18 @@ export const BORDER_WIDTH_PROPERTIES = {
 export const BORDER_STYLE_PROPERTIES = {
   borderStyle: 'borderStyles',
 };
+
+export const DEFAULT_THEME_MAP = {
+  colors: COLOR_PROPERTIES,
+  radii: RADII_PROPERTIES,
+  size: SIZE_PROPERTIES,
+  space: SPACE_PROPERTIES,
+  borderStyles: BORDER_STYLE_PROPERTIES,
+  borderWidths: BORDER_WIDTH_PROPERTIES,
+  fonts: FONT_PROPERTIES,
+  fontSizes: FONT_SIZE_PROPERTIES,
+  fontWeights: FONT_WEIGHT_PROPERTIES,
+  letterSpacings: LETTER_SPACING_PROPERTIES,
+  lineHeights: LINE_HEIGHT_PROPERTIES,
+  zIndices: Z_INDEX_PROPERTIES,
+};

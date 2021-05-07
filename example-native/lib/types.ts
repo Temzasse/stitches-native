@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  ConditionalKeys,
-  ConditionalPick,
-  LiteralUnion,
-  Merge,
-  SetRequired
-} from 'type-fest';
+import { LiteralUnion } from 'type-fest';
 
 import {
   AnyStyleProperty,
@@ -82,7 +76,7 @@ type EmptyTheme = {
 };
 
 type TokenizedValue<T extends string | number | symbol> =
-  T extends string ? `$${T}` : T extends number ? `$${T}` : never;
+  T extends string | number ? `$${T}` : never;
 
 type TokenizedStyleProperty<S extends AnyStyleProperty, C extends Config> = {
   [K in keyof S]?: K extends ColorProperty
@@ -118,9 +112,11 @@ export type Config = {
   theme?: Theme;
   media?: any;
   utils?: {
-    [util: string]: (config: Config) => (value: any) => any
+    [util: string]: (config: Config) => (value: any) => any;
   };
-  themeMap?: any;
+  themeMap?: {
+    [property: string]: string;
+  };
 };
 
 // interface CompoundVariant<T extends StyledComponent, C extends Config> {
@@ -159,10 +155,10 @@ export type ComponentProps<
 > = PolymorphicProps<T> & {
   children?: React.ReactNode;
   css?: TokenizedStyleProperty<StyleProperty<T>, C>;
+} & {
+  [K in keyof V['variants']]: ComponentPropValue<keyof V['variants'][K]>
 };
 
-export type ComponentPropValue<T> = T extends 'true'
-  ? boolean
-  : T extends 'false'
+export type ComponentPropValue<T> = T extends 'true' | 'false'
   ? boolean
   : T;

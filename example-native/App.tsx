@@ -26,6 +26,7 @@ export default function App() {
 
         <Rect>
           <Box css={{ backgroundColor: '$secondary', size: 40 }} />
+          <Box style={someStyles} />
         </Rect>
       </Wrapper>
 
@@ -34,9 +35,9 @@ export default function App() {
   );
 }
 
-const buttonStyles = css({
-  color: 'black',
+const someStyles = css({
   backgroundColor: 'orange',
+  size: 20,
 });
 
 const Wrapper = styled('View', {

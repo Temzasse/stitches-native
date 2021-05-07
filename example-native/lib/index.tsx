@@ -11,6 +11,8 @@ import { getCompoundKey, processStyles } from './utils';
 
 const ReactNative = require('react-native');
 
+export { DEFAULT_THEME_MAP as defaultThemeMap } from './constants';
+
 export function createCss<C extends Config>(config: C) {
   function styled<T extends StyledComponent, S extends StyledConfig<T, C>>(
     component: T,
@@ -98,7 +100,13 @@ export function createCss<C extends Config>(config: C) {
     return memo(Comp);
   }
 
-  const css = (cssStyles: AllStyleProperty) => ({});
+  const css = (cssStyles: AllStyleProperty) => {
+    const styleSheet = ReactNative.StyleSheet.create({
+      styles: processStyles(cssStyles as any, config)
+    });
+
+    return styleSheet.styles;
+  };
 
   return { styled, css };
 }
