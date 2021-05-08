@@ -1,19 +1,62 @@
-import { createElement, forwardRef, memo } from 'react';
+import merge from 'lodash.merge';
+import { PartialDeep } from 'type-fest';
+
+import React, {
+  memo,
+  useContext,
+  forwardRef,
+  createElement,
+  createContext
+} from 'react';
 
 import {
-  AllStyleProperty,
-  AnyStyleProperty,
-  StyledComponent
-} from './rn.types';
+  Config,
+  StyledConfig,
+  ComponentProps,
+  ThemeDefinition
+} from './types/index';
 
-import { Config, StyledConfig, ComponentProps } from './types';
-import { getCompoundKey, processStyles } from './utils';
+import { AllStyleProperty, StyledComponent } from './types/react-native';
+import { createStyleSheets, getCompoundKey, processStyles } from './utils';
+export { DEFAULT_THEME_MAP as defaultThemeMap } from './constants';
 
 const ReactNative = require('react-native');
 
-export { DEFAULT_THEME_MAP as defaultThemeMap } from './constants';
-
 export function createCss<C extends Config>(config: C) {
+  const themes: ThemeDefinition[] = [{ id: 'theme-1', values: config.theme }];
+
+  function theme(theme: NonNullable<PartialDeep<C['theme']>>) {
+    const t = {
+      id: `theme-${themes.length + 1}`,
+      values: Object.entries(config.theme || {}).reduce((acc, [key, val]) => {
+        acc[key] = { ...val, ...theme[key] };
+        return acc;
+      }, {})
+    };
+
+    themes.push(t);
+
+    return t;
+  }
+
+  const ThemeContext = createContext(themes[0]);
+
+  function ThemeProvider({
+    theme = themes[0],
+    children
+  }: {
+    theme?: ThemeDefinition;
+    children: React.ReactNode;
+  }) {
+    return (
+      <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>
+    );
+  }
+
+  function useTheme() {
+    return useContext(ThemeContext);
+  }
+
   function styled<T extends StyledComponent, S extends StyledConfig<T, C>>(
     component: T,
     styledConfig: S
@@ -25,39 +68,24 @@ export function createCss<C extends Config>(config: C) {
       ...styles
     } = styledConfig;
 
-    const styleSheet = ReactNative.StyleSheet.create({
-      base: styles ? processStyles(styles as any, config) : {},
-      // Variant styles
-      ...Object.entries(variants).reduce(
-        (acc, [vartiantProp, variantValues]) => {
-          Object.entries(variantValues).forEach(
-            ([variantName, variantValue]) => {
-              // Eg. `color_primary` or `size_small`
-              const key = `${vartiantProp}_${variantName}`;
-              acc[key] = processStyles((variantValue || {}) as any, config);
-            }
-          );
-          return acc;
-        },
-        {} as { [key: string]: AnyStyleProperty }
-      ),
-      // Compound variant styles
-      ...compoundVariants.reduce((acc, compoundVariant) => {
-        const { css, ...compounds } = compoundVariant;
-        const compoundEntries = Object.entries(compounds);
-
-        if (compoundEntries.length > 1) {
-          const key = getCompoundKey(compoundEntries);
-          acc[key] = processStyles((css || {}) as any, config);
-        }
-
-        return acc;
-      }, {} as { [key: string]: AnyStyleProperty })
+    const styleSheets = createStyleSheets({
+      styles,
+      config,
+      themes,
+      variants,
+      compoundVariants
     });
 
-    const Comp = forwardRef<any, ComponentProps<T, C, S>>((props: any, ref) => {
-      let variantStyles = [];
-      let compoundVariantStyles = [];
+    const Comp = forwardRef<
+      any,
+      ComponentProps<T, C, NonNullable<S['variants']>>
+    >((props: any, ref) => {
+      const theme = useTheme();
+      console.log('> useTheme', theme);
+      const styleSheet = styleSheets[theme.id];
+
+      let variantStyles: any[] = [];
+      let compoundVariantStyles: any[] = [];
 
       if (variants) {
         variantStyles = Object.keys(variants)
@@ -84,13 +112,21 @@ export function createCss<C extends Config>(config: C) {
           .filter(Boolean);
       }
 
+      const cssStyles = props.css
+        ? processStyles({
+            styles: props.css || {},
+            theme: theme.values,
+            config
+          })
+        : {};
+
       return createElement(ReactNative[component], {
         ...props,
         style: [
           styleSheet.base,
           ...variantStyles,
           ...compoundVariantStyles,
-          processStyles(props.css || {}, config),
+          cssStyles,
           props.style
         ],
         ref
@@ -100,13 +136,15 @@ export function createCss<C extends Config>(config: C) {
     return memo(Comp);
   }
 
-  const css = (cssStyles: AllStyleProperty) => {
-    const styleSheet = ReactNative.StyleSheet.create({
-      styles: processStyles(cssStyles as any, config)
-    });
+  // TODO: how can we make css aware of the current theme?
+  function css(cssStyles: AllStyleProperty) {
+    // const styleSheet = ReactNative.StyleSheet.create({
+    //   styles: processStyles(cssStyles as any, config)
+    // });
 
-    return styleSheet.styles;
-  };
+    // return styleSheet.styles;
+    return {};
+  }
 
-  return { styled, css };
+  return { styled, css, theme, ThemeProvider };
 }

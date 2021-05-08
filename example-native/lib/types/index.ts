@@ -1,5 +1,5 @@
 import React from 'react';
-import { LiteralUnion } from 'type-fest';
+import { LiteralUnion, PartialDeep } from 'type-fest';
 
 import {
   AnyStyleProperty,
@@ -8,8 +8,8 @@ import {
   PolymorphicProps,
   StrictStyleProperty,
   StyledComponent,
-  StyleProperty
-} from './rn.types';
+  StyleProperty,
+} from './react-native';
 
 import {
   COLOR_PROPERTIES,
@@ -23,8 +23,9 @@ import {
   LETTER_SPACING_PROPERTIES,
   Z_INDEX_PROPERTIES,
   BORDER_WIDTH_PROPERTIES,
-  BORDER_STYLE_PROPERTIES
-} from './constants';
+  BORDER_STYLE_PROPERTIES,
+  DEFAULT_THEME_MAP,
+} from '../constants';
 
 type ColorProperty = keyof typeof COLOR_PROPERTIES;
 type SpaceProperty = keyof typeof SPACE_PROPERTIES;
@@ -43,40 +44,11 @@ export type ThemeToken = {
   [name: string]: string | number;
 };
 
-type Theme = {
-  colors?: ThemeToken;
-  space?: ThemeToken;
-  fontSizes?: ThemeToken;
-  fonts?: ThemeToken;
-  fontWeights?: ThemeToken;
-  lineHeights?: ThemeToken;
-  letterSpacings?: ThemeToken;
-  sizes?: ThemeToken;
-  borderWidths?: ThemeToken;
-  borderStyles?: ThemeToken;
-  radii?: ThemeToken;
-  zIndices?: ThemeToken;
-  // shadows?: ThemeToken;
-};
-
-type EmptyTheme = {
-  colors?: {};
-  space?: {};
-  fontSizes?: {};
-  fonts?: {};
-  fontWeights?: {};
-  lineHeights?: {};
-  letterSpacings?: {};
-  sizes?: {};
-  borderWidths?: {};
-  borderStyles?: {};
-  radii?: {};
-  zIndices?: {};
-  // shadows?: ThemeToken;
-};
-
-type TokenizedValue<T extends string | number | symbol> =
-  T extends string | number ? `$${T}` : never;
+type TokenizedValue<T extends string | number | symbol> = T extends
+  | string
+  | number
+  ? `$${T}`
+  : never;
 
 type TokenizedStyleProperty<S extends AnyStyleProperty, C extends Config> = {
   [K in keyof S]?: K extends ColorProperty
@@ -108,27 +80,20 @@ type TokenizedStyleProperty<S extends AnyStyleProperty, C extends Config> = {
     : S[K];
 };
 
-export type Config = {
-  theme?: Theme;
-  media?: any;
-  utils?: {
-    [util: string]: (config: Config) => (value: any) => any;
-  };
-  themeMap?: {
-    [property: string]: string;
-  };
-};
-
 // interface CompoundVariant<T extends StyledComponent, C extends Config> {
 //   css: TokenizedStyleProperty<StyleProperty<T>, C>;
 //   [variant in V]: string;
 // }
 
+type Variant<T extends StyledComponent, C extends Config> = Record<
+  string,
+  {
+    [variant: string]: TokenizedStyleProperty<StyleProperty<T>, C>;
+  }
+>;
+
 type VariantConfig<T extends StyledComponent, C extends Config> = {
-  variants?: Record<
-    string,
-    { [variant: string]: TokenizedStyleProperty<StyleProperty<T>, C> }
-  >;
+  variants?: Variant<T, C>;
 } & {
   compoundVariants?: Array<any>;
 } & {
@@ -137,8 +102,33 @@ type VariantConfig<T extends StyledComponent, C extends Config> = {
   };
 };
 
+type ComponentPropValue<T> = T extends 'true' | 'false' ? boolean : T;
+
 type Utils<U extends Config['utils']> = {
   [K in keyof U]?: string | number;
+};
+
+export type ThemeDefinition = {
+  id: string;
+  values: Config['theme'];
+};
+
+export type ThemeMap = PartialDeep<typeof DEFAULT_THEME_MAP>;
+
+export type Theme = {
+  borderStyles?: ThemeToken;
+  borderWidths?: ThemeToken;
+  colors?: ThemeToken;
+  fonts?: ThemeToken;
+  fontSizes?: ThemeToken;
+  fontWeights?: ThemeToken;
+  letterSpacings?: ThemeToken;
+  lineHeights?: ThemeToken;
+  radii?: ThemeToken;
+  sizes?: ThemeToken;
+  space?: ThemeToken;
+  zIndices?: ThemeToken;
+  // shadows?: ThemeToken;
 };
 
 export type StyledConfig<
@@ -151,14 +141,19 @@ export type StyledConfig<
 export type ComponentProps<
   T extends StyledComponent,
   C extends Config,
-  V extends VariantConfig<T, C>
+  V extends Variant<T, C>
 > = PolymorphicProps<T> & {
   children?: React.ReactNode;
   css?: TokenizedStyleProperty<StyleProperty<T>, C>;
 } & {
-  [K in keyof V['variants']]: ComponentPropValue<keyof V['variants'][K]>
-};
+    [K in keyof V]: ComponentPropValue<keyof V[K]>;
+  };
 
-export type ComponentPropValue<T> = T extends 'true' | 'false'
-  ? boolean
-  : T;
+export type Config = {
+  theme?: Theme;
+  media?: any;
+  utils?: {
+    [util: string]: (config: Config) => (value: any) => any;
+  };
+  themeMap?: ThemeMap;
+};

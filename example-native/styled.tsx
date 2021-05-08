@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { createCss } from './lib';
 
-const { styled, css } = createCss({
+const { styled, css, theme, ThemeProvider } = createCss({
   theme: {
     colors: {
       primary: '#301b96',
@@ -10,6 +10,7 @@ const { styled, css } = createCss({
       secondary: '#8BBEB2',
       secondaryDark: '#384d48',
       secondaryLight: '#d9fff6',
+      background: '#fff',
     },
     space: {
       1: 4,
@@ -46,4 +47,10 @@ const { styled, css } = createCss({
   },
 });
 
-export { styled, css };
+const darkTheme = theme({
+  colors: {
+    background: '#222',
+  },
+});
+
+export { styled, css, theme, darkTheme, ThemeProvider };

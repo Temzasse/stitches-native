@@ -1,4 +1,7 @@
-import { Config } from './types';
+import { StyleSheet } from 'react-native';
+
+import { AnyStyleProperty } from './types/react-native';
+import { Config, ThemeDefinition } from './types';
 import { DEFAULT_THEME_MAP } from './constants';
 
 export function getCompoundKey(compoundEntries: Array<[string, any]>) {
@@ -18,42 +21,48 @@ export function getCompoundKey(compoundEntries: Array<[string, any]>) {
   ); // Remove last `+` character
 }
 
-export function processStyles(
-  styles: { [property: string]: string | number },
-  config: Config
-) {
-  const themeMap = (config.themeMap || DEFAULT_THEME_MAP) as any;
+export function processStyles({
+  styles,
+  theme,
+  config,
+}: {
+  styles: { [property: string]: string | number };
+  theme: Config['theme'];
+  config: Config;
+}) {
+  const { utils, themeMap = DEFAULT_THEME_MAP } = config;
 
   return Object.entries(styles).reduce((acc, [key, val]) => {
-    const { theme, utils } = config;
-
     if (typeof val === 'string' && val.indexOf('$') !== -1) {
       const token = (val as string).replace('$', '');
 
-      if (key in themeMap.colors && theme?.colors) {
+      if (key in (themeMap.colors || {}) && theme?.colors) {
         acc[key] = theme.colors[token];
-      } else if (key in themeMap.radii && theme?.radii) {
+      } else if (key in (themeMap.radii || {}) && theme?.radii) {
         acc[key] = theme.radii[token];
-      } else if (key in themeMap.sizes && theme?.sizes) {
+      } else if (key in (themeMap.sizes || {}) && theme?.sizes) {
         acc[key] = theme.sizes[token];
-      } else if (key in themeMap.space && theme?.space) {
+      } else if (key in (themeMap.space || {}) && theme?.space) {
         acc[key] = theme.space[token];
-      } else if (key in themeMap.borderStyles && theme?.borderStyles) {
+      } else if (key in (themeMap.borderStyles || {}) && theme?.borderStyles) {
         acc[key] = theme.borderStyles[token];
-      } else if (key in themeMap.borderWidths && theme?.borderWidths) {
+      } else if (key in (themeMap.borderWidths || {}) && theme?.borderWidths) {
         acc[key] = theme.borderWidths[token];
-      } else if (key in themeMap.fonts && theme?.fonts) {
+      } else if (key in (themeMap.fonts || {}) && theme?.fonts) {
         acc[key] = theme.fonts[token];
-      } else if (key in themeMap.fontSizes && theme?.fontSizes) {
+      } else if (key in (themeMap.fontSizes || {}) && theme?.fontSizes) {
         acc[key] = theme.fontSizes[token];
-      } else if (key in themeMap.fontWeights && theme?.fontWeights) {
+      } else if (key in (themeMap.fontWeights || {}) && theme?.fontWeights) {
         acc[key] = theme.fontWeights[token];
-      } else if (key in themeMap.letterSpacings && theme?.letterSpacings) {
-        acc[key] = theme.letterSpacings[token];
-      } else if (key in themeMap.lineHeights && theme?.lineHeights) {
+      } else if (key in (themeMap.lineHeights || {}) && theme?.lineHeights) {
         acc[key] = theme.lineHeights[token];
-      } else if (key in themeMap.zIndices && theme?.zIndices) {
+      } else if (key in (themeMap.zIndices || {}) && theme?.zIndices) {
         acc[key] = theme.zIndices[token];
+      } else if (
+        key in (themeMap.letterSpacings || {}) &&
+        theme?.letterSpacings
+      ) {
+        acc[key] = theme.letterSpacings[token];
       }
     } else if (utils && key in utils) {
       acc = { ...acc, ...utils[key](config)(val) };
@@ -63,4 +72,64 @@ export function processStyles(
 
     return acc;
   }, {} as any);
+}
+
+export function createStyleSheets({
+  themes,
+  styles,
+  config,
+  variants,
+  compoundVariants,
+}: {
+  themes: ThemeDefinition[];
+  styles: any;
+  config: Config;
+  variants: any;
+  compoundVariants: any;
+}) {
+  const styleSheets = themes.reduce((styleSheetAcc, { id, values: theme }) => {
+    styleSheetAcc[id] = StyleSheet.create({
+      base: styles ? processStyles({ styles, config, theme }) : {},
+      // Variant styles
+      ...Object.entries(variants).reduce(
+        (variantsAcc, [vartiantProp, variantValues]) => {
+          Object.entries(variantValues as any).forEach(
+            ([variantName, variantStyles]) => {
+              // Eg. `color_primary` or `size_small`
+              const key = `${vartiantProp}_${variantName}`;
+
+              variantsAcc[key] = processStyles({
+                styles: variantStyles as any,
+                config,
+                theme,
+              });
+            }
+          );
+          return variantsAcc;
+        },
+        {} as { [key: string]: AnyStyleProperty }
+      ),
+      // Compound variant styles
+      ...compoundVariants.reduce((compoundAcc, compoundVariant) => {
+        const { css, ...compounds } = compoundVariant;
+        const compoundEntries = Object.entries(compounds);
+
+        if (compoundEntries.length > 1) {
+          const key = getCompoundKey(compoundEntries);
+
+          compoundAcc[key] = processStyles({
+            styles: (css || {}) as any,
+            config,
+            theme,
+          });
+        }
+
+        return compoundAcc;
+      }, {} as { [key: string]: AnyStyleProperty }),
+    });
+
+    return styleSheetAcc;
+  }, {});
+
+  return styleSheets;
 }
