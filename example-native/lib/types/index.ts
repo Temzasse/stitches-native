@@ -92,21 +92,7 @@ type Variant<T extends StyledComponent, C extends Config> = Record<
   }
 >;
 
-type VariantConfig<T extends StyledComponent, C extends Config> = {
-  variants?: Variant<T, C>;
-} & {
-  compoundVariants?: Array<any>;
-} & {
-  defaultVariants?: {
-    [prop: string]: string;
-  };
-};
-
 type ComponentPropValue<T> = T extends 'true' | 'false' ? boolean : T;
-
-type Utils<U extends Config['utils']> = {
-  [K in keyof U]?: string | number;
-};
 
 export type ThemeDefinition = {
   id: string;
@@ -134,9 +120,16 @@ export type Theme = {
 export type StyledConfig<
   T extends StyledComponent,
   C extends Config
-> = TokenizedStyleProperty<StyleProperty<T>, C> &
-  VariantConfig<T, C> &
-  Utils<C['utils']>;
+> = TokenizedStyleProperty<StyleProperty<T>, C> & {
+  variants?: Variant<T, C>;
+  compoundVariants?: Array<any>;
+  defaultVariants?: { [prop: string]: string };
+} & {
+    [K in keyof C['utils']]?: string | number;
+  } &
+  {
+    [K in keyof C['media']]?: TokenizedStyleProperty<StyleProperty<T>, C>;
+  };
 
 export type ComponentProps<
   T extends StyledComponent,

@@ -64,8 +64,28 @@ export function createCss<C extends Config>(config: C) {
       variants = {},
       compoundVariants = [],
       defaultVariants = {},
-      ...styles
+      ..._styles
     } = styledConfig;
+
+    let styles = {};
+
+    // Handle responsive base styles
+    if (typeof config.media === 'object') {
+      Object.entries(_styles).forEach(([key, val]) => {
+        if (key in config.media) {
+          if (config.media[key] === true && typeof val === 'object') {
+            styles = { ...styles, ...val };
+          } else {
+            // Make sure other media styles are removed so they won't be passed on to StyleSheet
+            delete _styles[key];
+          }
+        } else {
+          styles[key] = val;
+        }
+      });
+    } else {
+      styles = _styles;
+    }
 
     const styleSheets = createStyleSheets({
       styles,
