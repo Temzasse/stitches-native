@@ -146,7 +146,9 @@ export type ComponentProps<
   children?: React.ReactNode;
   css?: TokenizedStyleProperty<StyleProperty<T>, C>;
 } & {
-    [K in keyof V]: ComponentPropValue<keyof V[K]>;
+    [K in keyof V]:
+      | ComponentPropValue<keyof V[K]>
+      | { [M in keyof C['media']]: string };
   };
 
 export type Config = {

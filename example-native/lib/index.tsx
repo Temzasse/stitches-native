@@ -1,4 +1,3 @@
-import merge from 'lodash.merge';
 import { PartialDeep } from 'type-fest';
 
 import React, {
@@ -81,7 +80,6 @@ export function createCss<C extends Config>(config: C) {
       ComponentProps<T, C, NonNullable<S['variants']>>
     >((props: any, ref) => {
       const theme = useTheme();
-      console.log('> useTheme', theme);
       const styleSheet = styleSheets[theme.id];
 
       let variantStyles: any[] = [];
@@ -90,8 +88,24 @@ export function createCss<C extends Config>(config: C) {
       if (variants) {
         variantStyles = Object.keys(variants)
           .map(prop => {
-            const key = `${prop}_${props[prop] || defaultVariants[prop]}`;
-            return styleSheet[key];
+            const propValue = props[prop] || defaultVariants[prop];
+            let styleSheetKey = '';
+
+            // Handle responsive prop value
+            if (
+              typeof propValue === 'object' &&
+              typeof config.media === 'object'
+            ) {
+              Object.entries(config.media).forEach(([key, val]) => {
+                if (val === true && propValue[key] !== undefined) {
+                  styleSheetKey = `${prop}_${propValue[key]}`;
+                }
+              });
+            } else {
+              styleSheetKey = `${prop}_${propValue}`;
+            }
+
+            return styleSheetKey ? styleSheet[styleSheetKey] : undefined;
           })
           .filter(Boolean);
       }

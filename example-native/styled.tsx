@@ -45,6 +45,11 @@ const { styled, css, theme, ThemeProvider } = createCss({
     }),
     absoluteFill: () => () => StyleSheet.absoluteFillObject,
   },
+  media: {
+    // TODO: expo-device only has `getDeviceTypeAsync` but these values need to be sync...
+    phone: true,
+    tablet: false,
+  },
 });
 
 const darkTheme = theme({

@@ -17,7 +17,7 @@ export default function Example({
         <Switch value={mode === 'dark'} onValueChange={toggleMode} />
 
         <Button variant="primary">
-          <ButtonText>Hello</ButtonText>
+          <ButtonText color="white">Hello</ButtonText>
         </Button>
 
         <Button variant="secondary" style={{ marginTop: 16 }}>
@@ -30,7 +30,12 @@ export default function Example({
           outlined
           style={{ marginTop: 16 }}
         >
-          <ButtonText>Hello</ButtonText>
+          <ButtonText
+            variant={{ phone: 'body', tablet: 'title' }}
+            color="secondary"
+          >
+            Hello
+          </ButtonText>
         </Button>
 
         <Rect>
@@ -53,7 +58,7 @@ const Wrapper = styled('View', {
   flexShrink: 0,
   justifyContent: 'center',
   alignItems: 'center',
-  backgroundColor: '$background'
+  backgroundColor: '$background',
 });
 
 const Box = styled('View', {});
@@ -123,5 +128,32 @@ const Button = styled('TouchableOpacity', {
 });
 
 const ButtonText = styled('Text', {
-  color: 'white',
+  color: '#000',
+
+  variants: {
+    variant: {
+      title: {
+        fontSize: 32,
+        lineHeight: 34,
+      },
+      body: {
+        fontSize: 16,
+        lineHeight: 18,
+      },
+    },
+    color: {
+      primary: {
+        color: '$primary',
+      },
+      secondary: {
+        color: '$secondary',
+      },
+      white: {
+        color: '#fff',
+      },
+    },
+  },
+  defaultVariants: {
+    variant: 'body',
+  },
 });
