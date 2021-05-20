@@ -10,6 +10,7 @@ import React, {
 
 import {
   Config,
+  CssFnStyles,
   StyledConfig,
   ComponentProps,
   ThemeDefinition
@@ -170,14 +171,10 @@ export function createCss<C extends Config>(config: C) {
     return memo(Comp);
   }
 
-  // TODO: how can we make css aware of the current theme?
-  function css(cssStyles: AllStyleProperty) {
-    // const styleSheet = ReactNative.StyleSheet.create({
-    //   styles: processStyles(cssStyles as any, config)
-    // });
-
-    // return styleSheet.styles;
-    return {};
+  function css<T extends StyledComponent = 'View'>(
+    cssStyles: CssFnStyles<T, C>
+  ) {
+    return cssStyles;
   }
 
   return { styled, css, theme, ThemeProvider };

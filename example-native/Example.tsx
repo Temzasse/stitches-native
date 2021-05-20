@@ -49,16 +49,15 @@ export default function Example({
 }
 
 const someStyles = css({
-  backgroundColor: 'orange',
-  size: 20,
+  flex: 1,
+  backgroundColor: '$background',
 });
 
 const Wrapper = styled('View', {
-  flex: 1,
   flexShrink: 0,
   justifyContent: 'center',
   alignItems: 'center',
-  backgroundColor: '$background',
+  ...someStyles,
 });
 
 const Box = styled('View', {});

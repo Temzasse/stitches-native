@@ -131,6 +131,11 @@ export type StyledConfig<
     [K in keyof C['media']]?: TokenizedStyleProperty<StyleProperty<T>, C>;
   };
 
+export type CssFnStyles<
+  T extends StyledComponent,
+  C extends Config
+> = TokenizedStyleProperty<StyleProperty<T>, C>;
+
 export type ComponentProps<
   T extends StyledComponent,
   C extends Config,
