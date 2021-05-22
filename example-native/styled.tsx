@@ -46,11 +46,20 @@ const { styled, css, theme, ThemeProvider } = createCss({
     absoluteFill: () => () => StyleSheet.absoluteFillObject,
   },
   media: {
-    // TODO: expo-device only has `getDeviceTypeAsync` but these values need to be sync...
-    phone: true,
-    tablet: false,
+    // You can provide boolean values for breakpoints when you just need to
+    // distinguish between phone and tablet devices
+    phone: true, // Eg. !DeviceInfo.isTablet()
+    tablet: false, // Eg. DeviceInfo.isTablet()
+
+    // You can also provide width based breakpoints
+    sm: '(width >= 750px)', // iPhone SE
+    md: '(width >= 1080px)', // iPhone 6/7/8 Plus
+    lg: '(width >= 1284px)', // iPhone 12 Pro Max
+    xl: '(width >= 1536px)', // iPad Pro 9.7
   },
 });
+
+
 
 const darkTheme = theme({
   colors: {

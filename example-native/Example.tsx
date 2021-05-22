@@ -31,8 +31,8 @@ export default function Example({
           style={{ marginTop: 16 }}
         >
           <ButtonText
-            variant={{ phone: 'body', tablet: 'title' }}
-            color="secondary"
+            variant={{ '@phone': 'body', '@tablet': 'title' }}
+            color={{ '@sm': 'primary', '@md': 'secondary' }}
           >
             Hello
           </ButtonText>

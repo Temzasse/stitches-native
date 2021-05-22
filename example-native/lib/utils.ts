@@ -21,6 +21,33 @@ export function getCompoundKey(compoundEntries: Array<[string, any]>) {
   ); // Remove last `+` character
 }
 
+export function resolveMediaRangeQuery(query: string, windowWidth: number) {
+  const rangeRegex = /^\(width\s+([><=]+)\s+([0-9]+)px\)$/;
+  const matches = query.match(rangeRegex);
+
+  if (!matches) return false;
+
+  if (matches.length === 3) {
+    const [, sign, _width] = matches;
+    const width = parseInt(_width, 10);
+
+    switch (sign) {
+      case '>=':
+        return windowWidth >= width;
+      case '>':
+        return windowWidth > width;
+      case '<=':
+        return windowWidth <= width;
+      case '<':
+        return windowWidth < width;
+      default:
+        return false;
+    }
+  }
+
+  return false;
+}
+
 export function processStyles({
   styles,
   theme,

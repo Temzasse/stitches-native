@@ -1,4 +1,5 @@
 import { PartialDeep } from 'type-fest';
+import { PixelRatio, useWindowDimensions } from 'react-native';
 
 import React, {
   memo,
@@ -16,8 +17,13 @@ import {
   ThemeDefinition
 } from './types/index';
 
-import { AllStyleProperty, StyledComponent } from './types/react-native';
-import { createStyleSheets, getCompoundKey, processStyles } from './utils';
+import { StyledComponent } from './types/react-native';
+import {
+  createStyleSheets,
+  getCompoundKey,
+  processStyles,
+  resolveMediaRangeQuery
+} from './utils';
 export { DEFAULT_THEME_MAP as defaultThemeMap } from './constants';
 
 const ReactNative = require('react-native');
@@ -102,6 +108,7 @@ export function createCss<C extends Config>(config: C) {
     >((props: any, ref) => {
       const theme = useTheme();
       const styleSheet = styleSheets[theme.id];
+      const { width: windowWidth } = useWindowDimensions();
 
       let variantStyles: any[] = [];
       let compoundVariantStyles: any[] = [];
@@ -117,9 +124,23 @@ export function createCss<C extends Config>(config: C) {
               typeof propValue === 'object' &&
               typeof config.media === 'object'
             ) {
-              Object.entries(config.media).forEach(([key, val]) => {
-                if (val === true && propValue[key] !== undefined) {
+              Object.entries(config.media).forEach(([k, val]) => {
+                const key = `@${k}`;
+
+                if (propValue[key] === undefined) return;
+
+                if (val === true) {
                   styleSheetKey = `${prop}_${propValue[key]}`;
+                } else if (typeof val === 'string') {
+                  // TODO: how do we quarantee the order of breakpoint matches?
+                  const match = resolveMediaRangeQuery(
+                    val,
+                    PixelRatio.getPixelSizeForLayoutSize(windowWidth)
+                  );
+
+                  if (match) {
+                    styleSheetKey = `${prop}_${propValue[key]}`;
+                  }
                 }
               });
             } else {

@@ -94,6 +94,10 @@ type Variant<T extends StyledComponent, C extends Config> = Record<
 
 type ComponentPropValue<T> = T extends 'true' | 'false' ? boolean : T;
 
+type MediaKey<K extends string | number | symbol> = K extends string | number
+  ? `@${K}`
+  : never;
+
 export type ThemeDefinition = {
   id: string;
   values: Config['theme'];
@@ -146,7 +150,7 @@ export type ComponentProps<
 } & {
     [K in keyof V]:
       | ComponentPropValue<keyof V[K]>
-      | { [M in keyof C['media']]: string };
+      | { [M in MediaKey<keyof C['media']>]: string | number };
   };
 
 export type Config = {
