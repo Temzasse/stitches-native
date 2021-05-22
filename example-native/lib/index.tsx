@@ -5,6 +5,7 @@ import React, {
   memo,
   useContext,
   forwardRef,
+  cloneElement,
   createElement,
   createContext
 } from 'react';
@@ -24,7 +25,7 @@ import {
   resolveMediaRangeQuery
 } from './utils';
 
-import { StyledComponent } from './types/react-native';
+import { StyledPrimitive } from './types/react-native';
 
 export { DEFAULT_THEME_MAP as defaultThemeMap } from './constants';
 
@@ -65,9 +66,17 @@ export function createCss<C extends Config>(config: C) {
     return useContext(ThemeContext);
   }
 
-  function styled<T extends StyledComponent, S extends StyledConfig<T, C>>(
+  function styled<
+    T extends Function, // TODO: what is the type of styled component?
+    S extends StyledConfig<StyledPrimitive, C>
+  >(component: T, styledConfig: S): any;
+  function styled<T extends StyledPrimitive, S extends StyledConfig<T, C>>(
     component: T,
     styledConfig: S
+  ): any;
+  function styled<T extends StyledPrimitive, S extends StyledConfig<T, C>>(
+    component: any,
+    styledConfig: any
   ) {
     const {
       variants = {},
@@ -82,6 +91,7 @@ export function createCss<C extends Config>(config: C) {
     if (typeof config.media === 'object') {
       Object.entries(_styles).forEach(([key, val]) => {
         if (key in config.media) {
+          // TODO: do we want to handle media range queries in the styled definition?
           if (config.media[key] === true && typeof val === 'object') {
             styles = { ...styles, ...val };
           } else {
@@ -185,7 +195,7 @@ export function createCss<C extends Config>(config: C) {
           })
         : {};
 
-      return createElement(ReactNative[component], {
+      const componentProps = {
         ...props,
         style: [
           styleSheet.base,
@@ -195,13 +205,21 @@ export function createCss<C extends Config>(config: C) {
           props.style
         ],
         ref
-      });
+      };
+
+      if (typeof component === 'string') {
+        return createElement(ReactNative[component], componentProps);
+      } else if (typeof component === 'object') {
+        return cloneElement(component, componentProps);
+      }
+
+      return null;
     });
 
     return memo(Comp);
   }
 
-  function css<T extends StyledComponent = 'View'>(
+  function css<T extends StyledPrimitive = 'View'>(
     cssStyles: CssFnStyles<T, C>
   ) {
     return cssStyles;

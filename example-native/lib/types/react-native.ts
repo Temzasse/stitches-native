@@ -24,7 +24,7 @@ import {
 export type AllStyleProperty = ViewStyle & ImageStyle & TextStyle;
 export type AnyStyleProperty = ViewStyle | ImageStyle | TextStyle;
 
-export type StyleProperty<T extends StyledComponent> = T extends 'Text'
+export type StyleProperty<T extends StyledPrimitive> = T extends 'Text'
   ? TextStyle
   : T extends 'Image'
   ? ImageStyle
@@ -111,7 +111,7 @@ export type StrictStyleProperty<T extends string> = T extends 'alignContent'
   ? boolean
   : never;
 
-export type StyledComponent =
+export type StyledPrimitive =
   | 'Button'
   | 'FlatList'
   | 'Image'
@@ -131,7 +131,7 @@ export type StyledComponent =
   | 'View'
   | 'VirtualizedList';
 
-export type PolymorphicProps<T extends StyledComponent> = T extends 'Button'
+export type PolymorphicProps<T extends StyledPrimitive> = T extends 'Button'
   ? ButtonProps
   : T extends 'FlatList'
   ? FlatListProps<any>

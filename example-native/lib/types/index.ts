@@ -7,7 +7,7 @@ import {
   FontWeight,
   PolymorphicProps,
   StrictStyleProperty,
-  StyledComponent,
+  StyledPrimitive,
   StyleProperty,
 } from './react-native';
 
@@ -85,7 +85,7 @@ type TokenizedStyleProperty<S extends AnyStyleProperty, C extends Config> = {
 //   [variant in V]: string;
 // }
 
-type Variant<T extends StyledComponent, C extends Config> = Record<
+type Variant<T extends StyledPrimitive, C extends Config> = Record<
   string,
   {
     [variant: string]: TokenizedStyleProperty<StyleProperty<T>, C>;
@@ -122,7 +122,7 @@ export type Theme = {
 };
 
 export type StyledConfig<
-  T extends StyledComponent,
+  T extends StyledPrimitive,
   C extends Config
 > = TokenizedStyleProperty<StyleProperty<T>, C> & {
   variants?: Variant<T, C>;
@@ -136,12 +136,12 @@ export type StyledConfig<
   };
 
 export type CssFnStyles<
-  T extends StyledComponent,
+  T extends StyledPrimitive,
   C extends Config
 > = TokenizedStyleProperty<StyleProperty<T>, C>;
 
 export type ComponentProps<
-  T extends StyledComponent,
+  T extends StyledPrimitive,
   C extends Config,
   V extends Variant<T, C>
 > = PolymorphicProps<T> & {

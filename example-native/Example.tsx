@@ -41,6 +41,8 @@ export default function Example({
         <Rect>
           <Box css={{ backgroundColor: '$secondary', size: 40 }} />
         </Rect>
+
+        <Box2 />
       </Wrapper>
 
       <StatusBar style="auto" />
@@ -61,6 +63,13 @@ const Wrapper = styled('View', {
 });
 
 const Box = styled('View', {});
+
+const Box2 = styled(Box, {
+  backgroundColor: 'red',
+  marginTop: '$3',
+  size: 100,
+  borderRadius: '$lg',
+});
 
 const Rect = styled('View', {
   backgroundColor: '$primary',
@@ -98,7 +107,7 @@ const Button = styled('TouchableOpacity', {
     },
     outlined: {
       true: {
-        borderWidth: 1,
+        // borderWidth: 1,
       },
     },
   },

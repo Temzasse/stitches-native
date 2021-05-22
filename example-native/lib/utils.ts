@@ -52,7 +52,7 @@ export function resolveMediaRangeQuery(query: string, windowWidth: number) {
 
   if (result === undefined) return false;
 
-  if (result !== true || result !== false) {
+  if (typeof result !== 'boolean') {
     console.warn(
       `Unexpected media query result. Expected a boolean but got ${result}. Please make sure your media query syntax is correct.`
     );
