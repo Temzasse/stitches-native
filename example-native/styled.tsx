@@ -51,15 +51,23 @@ const { styled, css, theme, ThemeProvider } = createCss({
     phone: true, // Eg. !DeviceInfo.isTablet()
     tablet: false, // Eg. DeviceInfo.isTablet()
 
-    // You can also provide width based breakpoints
-    sm: '(width >= 750px)', // iPhone SE
-    md: '(width >= 1080px)', // iPhone 6/7/8 Plus
-    lg: '(width >= 1284px)', // iPhone 12 Pro Max
-    xl: '(width >= 1536px)', // iPad Pro 9.7
+    // You can also define min width based media queries that overlap each other
+    // which is a commonly used technique in web development
+    // NOTE: make sure the keys are ordered from smallest to largest screen size!
+    md: '(width >= 750px)',
+    lg: '(width >= 1080px)',
+    xl: '(width >= 1284px)',
+    xxl: '(width >= 1536px)',
+
+    // It's also possible to specify ranges that don't overlap if you want to be
+    // very precise with your media queries and don't prefer the min width based approach
+    // sm: '(width <= 750px)', // Small phone, eg. iPhone SE
+    // md: '(750px < width <= 1080px)', // Regular phone, eg. iPhone 6/7/8 Plus
+    // lg: '(1080px < width <= 1284px)', // Large phone, eg. iPhone 12 Pro Max
+    // xl: '(1284px < width <= 1536px)', // Regular tablet, eg. iPad Pro 9.7
+    // xxl: '(width > 1536px)', // Large tablet
   },
 });
-
-
 
 const darkTheme = theme({
   colors: {

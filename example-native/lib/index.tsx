@@ -17,13 +17,15 @@ import {
   ThemeDefinition
 } from './types/index';
 
-import { StyledComponent } from './types/react-native';
 import {
   createStyleSheets,
   getCompoundKey,
   processStyles,
   resolveMediaRangeQuery
 } from './utils';
+
+import { StyledComponent } from './types/react-native';
+
 export { DEFAULT_THEME_MAP as defaultThemeMap } from './constants';
 
 const ReactNative = require('react-native');
@@ -124,22 +126,29 @@ export function createCss<C extends Config>(config: C) {
               typeof propValue === 'object' &&
               typeof config.media === 'object'
             ) {
-              Object.entries(config.media).forEach(([k, val]) => {
-                const key = `@${k}`;
+              Object.entries(config.media).forEach(([key, val]) => {
+                const breakpoint = `@${key}`;
 
-                if (propValue[key] === undefined) return;
+                if (propValue[breakpoint] === undefined) return;
 
                 if (val === true) {
-                  styleSheetKey = `${prop}_${propValue[key]}`;
+                  styleSheetKey = `${prop}_${propValue[breakpoint]}`;
                 } else if (typeof val === 'string') {
+                  const correctedWindowWidth = PixelRatio.getPixelSizeForLayoutSize(
+                    windowWidth
+                  );
+
                   // TODO: how do we quarantee the order of breakpoint matches?
+                  // The order of the media key value pairs should be constant
+                  // but is that guaranteed? So if the keys are ordered from
+                  // smallest screen size to largest everything should work ok...
                   const match = resolveMediaRangeQuery(
                     val,
-                    PixelRatio.getPixelSizeForLayoutSize(windowWidth)
+                    correctedWindowWidth
                   );
 
                   if (match) {
-                    styleSheetKey = `${prop}_${propValue[key]}`;
+                    styleSheetKey = `${prop}_${propValue[breakpoint]}`;
                   }
                 }
               });

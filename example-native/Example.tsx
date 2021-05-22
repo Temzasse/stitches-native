@@ -32,7 +32,7 @@ export default function Example({
         >
           <ButtonText
             variant={{ '@phone': 'body', '@tablet': 'title' }}
-            color={{ '@sm': 'primary', '@md': 'secondary' }}
+            color={{ '@sm': 'primary', '@xl': 'secondary' }}
           >
             Hello
           </ButtonText>
