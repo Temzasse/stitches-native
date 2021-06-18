@@ -107,6 +107,7 @@ const Button = styled('TouchableOpacity', {
     },
     outlined: {
       true: {
+        // TODO: why does this break TS?
         // borderWidth: 1,
       },
     },
