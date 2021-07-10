@@ -153,30 +153,32 @@ export interface ReactNativeProperties<TLength = (string & {}) | 0> {
   zIndex: SimpleNumberProperty;
 }
 
+type PropsWithChildren<T> = T & { children?: React.ReactNode };
+
 export type ReactNativeElements = {
-  Button: ButtonProps;
+  Button: PropsWithChildren<ButtonProps>;
   FlatList: FlatListProps<any>;
-  Image: ImageProps;
-  ImageBackground: ImageBackgroundProps;
-  InputAccessoryView: InputAccessoryViewProps;
-  KeyboardAvoidingView: KeyboardAvoidingViewProps;
-  Pressable: PressableProps;
-  SafeAreaView: ViewProps;
-  ScrollView: ScrollViewProps;
+  Image: PropsWithChildren<ImageProps>;
+  ImageBackground: PropsWithChildren<ImageBackgroundProps>;
+  InputAccessoryView: PropsWithChildren<InputAccessoryViewProps>;
+  KeyboardAvoidingView: PropsWithChildren<KeyboardAvoidingViewProps>;
+  Pressable: PropsWithChildren<PressableProps>;
+  SafeAreaView: PropsWithChildren<ViewProps>;
+  ScrollView: PropsWithChildren<ScrollViewProps>;
   SectionList: SectionListProps<any>;
-  Text: TextProps;
-  TextInput: TextInputProps;
-  TouchableHighlight: TouchableHighlightProps;
-  TouchableNativeFeedback: TouchableNativeFeedbackProps;
-  TouchableOpacity: TouchableOpacityProps;
-  TouchableWithoutFeedback: TouchableWithoutFeedbackProps;
-  View: ViewProps;
+  Text: PropsWithChildren<TextProps>;
+  TextInput: PropsWithChildren<TextInputProps>;
+  TouchableHighlight: PropsWithChildren<TouchableHighlightProps>;
+  TouchableNativeFeedback: PropsWithChildren<TouchableNativeFeedbackProps>;
+  TouchableOpacity: PropsWithChildren<TouchableOpacityProps>;
+  TouchableWithoutFeedback: PropsWithChildren<TouchableWithoutFeedbackProps>;
+  View: PropsWithChildren<ViewProps>;
   VirtualizedList: VirtualizedListProps<any>;
 };
 
-export type ReactNativeElementsKeys = keyof ReactNativeElements;
+export type ReactNativeElementsKey = keyof ReactNativeElements;
 
 // prettier-ignore
 export type ReactNativeElementType<P = any> =
-  | { [K in ReactNativeElementsKeys]: P extends ReactNativeElements[K] ? K : never }[ReactNativeElementsKeys]
+  | { [K in ReactNativeElementsKey]: P extends ReactNativeElements[K] ? K : never }[ReactNativeElementsKey]
   | React.ComponentType<P>;

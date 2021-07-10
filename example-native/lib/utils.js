@@ -1,10 +1,7 @@
 import { StyleSheet } from 'react-native';
-
-import { AnyStyleProperty } from './types/react-native';
-import { Config, ThemeDefinition } from './types';
 import { DEFAULT_THEME_MAP } from './constants';
 
-export function getCompoundKey(compoundEntries: Array<[string, any]>) {
+export function getCompoundKey(compoundEntries) {
   // Eg. `color_primary+size_small`
   return (
     compoundEntries
@@ -23,13 +20,13 @@ export function getCompoundKey(compoundEntries: Array<[string, any]>) {
 
 const validSigns = ['<=', '<', '>=', '>'];
 
-export function resolveMediaRangeQuery(query: string, windowWidth: number) {
+export function resolveMediaRangeQuery(query, windowWidth) {
   const singleRangeRegex = /^\(width\s+([><=]+)\s+([0-9]+)px\)$/;
   const multiRangeRegex = /^\(([0-9]+)px\s([><=]+)\swidth\s+([><=]+)\s+([0-9]+)px\)$/;
   const singleRangeMatches = query.match(singleRangeRegex);
   const multiRangeMatches = query.match(multiRangeRegex);
 
-  let result: any;
+  let result;
 
   if (multiRangeMatches && multiRangeMatches.length === 5) {
     const [, _width1, sign1, sign2, _width2] = multiRangeMatches;
@@ -61,20 +58,12 @@ export function resolveMediaRangeQuery(query: string, windowWidth: number) {
   return result;
 }
 
-export function processStyles({
-  styles,
-  theme,
-  config,
-}: {
-  styles: { [property: string]: string | number };
-  theme: Config['theme'];
-  config: Config;
-}) {
+export function processStyles({ styles, theme, config }) {
   const { utils, themeMap = DEFAULT_THEME_MAP } = config;
 
   return Object.entries(styles).reduce((acc, [key, val]) => {
     if (typeof val === 'string' && val.indexOf('$') !== -1) {
-      const token = (val as string).replace('$', '');
+      const token = val.replace('$', '');
 
       if (key in (themeMap.colors || {}) && theme?.colors) {
         acc[key] = theme.colors[token];
@@ -111,7 +100,7 @@ export function processStyles({
     }
 
     return acc;
-  }, {} as any);
+  }, {});
 }
 
 export function createStyleSheets({
@@ -120,12 +109,6 @@ export function createStyleSheets({
   config,
   variants,
   compoundVariants,
-}: {
-  themes: ThemeDefinition[];
-  styles: any;
-  config: Config;
-  variants: any;
-  compoundVariants: any;
 }) {
   const styleSheets = themes.reduce((styleSheetAcc, { id, values: theme }) => {
     styleSheetAcc[id] = StyleSheet.create({
@@ -133,13 +116,13 @@ export function createStyleSheets({
       // Variant styles
       ...Object.entries(variants).reduce(
         (variantsAcc, [vartiantProp, variantValues]) => {
-          Object.entries(variantValues as any).forEach(
+          Object.entries(variantValues).forEach(
             ([variantName, variantStyles]) => {
               // Eg. `color_primary` or `size_small`
               const key = `${vartiantProp}_${variantName}`;
 
               variantsAcc[key] = processStyles({
-                styles: variantStyles as any,
+                styles: variantStyles,
                 config,
                 theme,
               });
@@ -147,7 +130,7 @@ export function createStyleSheets({
           );
           return variantsAcc;
         },
-        {} as { [key: string]: AnyStyleProperty }
+        {}
       ),
       // Compound variant styles
       ...compoundVariants.reduce((compoundAcc, compoundVariant) => {
@@ -158,14 +141,14 @@ export function createStyleSheets({
           const key = getCompoundKey(compoundEntries);
 
           compoundAcc[key] = processStyles({
-            styles: (css || {}) as any,
+            styles: css || {},
             config,
             theme,
           });
         }
 
         return compoundAcc;
-      }, {} as { [key: string]: AnyStyleProperty }),
+      }, {}),
     });
 
     return styleSheetAcc;

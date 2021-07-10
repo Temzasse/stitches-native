@@ -7,6 +7,34 @@ import { ReactNativeProperties } from './react-native';
 export interface Properties<TLength = (string & {}) | 0> extends ReactNativeProperties<TLength> {}
 
 export interface CSSPropertiesToTokenScale {
+  backgroundColor: 'colors';
+  border: 'colors';
+  borderBottomColor: 'colors';
+  borderColor: 'colors';
+  borderEndColor: 'colors';
+  borderLeftColor: 'colors';
+  borderRightColor: 'colors';
+  borderStartColor: 'colors';
+  borderTopColor: 'colors';
+  color: 'colors';
+  overlayColor: 'colors';
+  shadowColor: 'colors';
+  textDecoration: 'colors';
+  textShadowColor: 'colors';
+  tintColor: 'colors';
+
+  borderBottomLeftRadius: 'radii';
+  borderBottomRightRadius: 'radii';
+  borderBottomStartRadius: 'radii';
+  borderBottomEndRadius: 'radii';
+  borderRadius: 'radii';
+  borderTopLeftRadius: 'radii';
+  borderTopRightRadius: 'radii';
+  borderTopStartRadius: 'radii';
+  borderTopEndRadius: 'radii';
+
+  bottom: 'space';
+  left: 'space';
   margin: 'space';
   marginBottom: 'space';
   marginEnd: 'space';
@@ -16,7 +44,6 @@ export interface CSSPropertiesToTokenScale {
   marginStart: 'space';
   marginTop: 'space';
   marginVertical: 'space';
-
   padding: 'space';
   paddingBottom: 'space';
   paddingEnd: 'space';
@@ -26,68 +53,36 @@ export interface CSSPropertiesToTokenScale {
   paddingStart: 'space';
   paddingTop: 'space';
   paddingVertical: 'space';
-
-  top: 'space';
   right: 'space';
-  bottom: 'space';
-  left: 'space';
+  top: 'space';
 
-  fontSize: 'fontSizes';
-
-  backgroundColor: 'colors';
-  border: 'colors';
-  borderBottom: 'colors';
-  borderBottomColor: 'colors';
-  borderColor: 'colors';
-  borderLeft: 'colors';
-  borderLeftColor: 'colors';
-  borderRight: 'colors';
-  borderRightColor: 'colors';
-  borderTop: 'colors';
-  borderTopColor: 'colors';
-  color: 'colors';
-  textDecorationColor: 'colors';
+  flexBasis: 'sizes';
+  height: 'sizes';
+  maxHeight: 'sizes';
+  maxWidth: 'sizes';
+  minHeight: 'sizes';
+  minWidth: 'sizes';
+  width: 'sizes';
 
   fontFamily: 'fonts';
 
-  fontWeight: 'fontWeights';
+  fontSize: 'fontSizes';
+
+  fontWeights: 'fontWeights';
+
   lineHeight: 'lineHeights';
 
   letterSpacing: 'letterSpacings';
 
-  width: 'sizes';
-  minWidth: 'sizes';
-  maxWidth: 'sizes';
-  height: 'sizes';
-  minHeight: 'sizes';
-  maxHeight: 'sizes';
-  flexBasis: 'sizes';
+  zIndex: 'zIndices';
 
   borderWidth: 'borderWidths';
   borderTopWidth: 'borderWidths';
-  borderLeftWidth: 'borderWidths';
   borderRightWidth: 'borderWidths';
   borderBottomWidth: 'borderWidths';
-  borderEndWidth: 'borderWidths';
-  borderStartWidth: 'borderWidths';
+  borderLeftWidth: 'borderWidths';
 
   borderStyle: 'borderStyles';
-
-  borderRadius: 'radii';
-  borderTopLeftRadius: 'radii';
-  borderTopRightRadius: 'radii';
-  borderBottomRightRadius: 'radii';
-  borderBottomLeftRadius: 'radii';
-  borderBottomEndRadius: 'radii';
-  borderBottomStartRadius: 'radii';
-  borderTopEndRadius: 'radii';
-  borderTopStartRadius: 'radii';
-
-  // TODO
-  // shadowColor: 'shadows';
-  // textShadowColor: 'shadows';
-
-  zIndex: 'zIndices';
 }
 
 export declare const defaultThemeMap: CSSPropertiesToTokenScale;
@@ -136,7 +131,7 @@ export interface EmptyTheme {
 
 export interface TMedias {
   initial: string;
-  [k: string]: string;
+  [k: string]: string | boolean;
 }
 
 export type TTheme = {
@@ -157,9 +152,7 @@ export interface IConfig<
   media?: { [k in keyof Medias]?: Medias[k] };
   theme?: { [k in keyof Theme]: k extends keyof EmptyTheme ? Theme[k] : never } & { [k in keyof EmptyTheme]?: k extends keyof Theme ? Theme[k] : never };
   themeMap?: { [k in keyof ThemeMap]?: ThemeMap[k] };
-  utils?: {
-    [k in keyof Utils]: (config: UtilConfig<Medias, Theme, ThemeMap>) => (value: Utils[k]) => InternalCSS<Medias, Theme, Utils, ThemeMap>;
-  };
+  utils?: { [k in keyof Utils]: (config: UtilConfig<Medias, Theme, ThemeMap>) => (value: Utils[k]) => InternalCSS<Medias, Theme, Utils, ThemeMap> };
 }
 
 interface UtilConfig<Medias, Theme, ThemeMap> {
@@ -178,9 +171,7 @@ export interface InternalConfig<
   media: Medias;
   theme: Theme;
   themeMap: ThemeMap;
-  utils: {
-    [k in keyof Utils]: (config: UtilConfig<Medias, Theme, ThemeMap>) => (value: Utils[k]) => InternalCSS<Medias, Theme, Utils, ThemeMap>;
-  };
+  utils: { [k in keyof Utils]: (config: UtilConfig<Medias, Theme, ThemeMap>) => (value: Utils[k]) => InternalCSS<Medias, Theme, Utils, ThemeMap> };
 }
 
 // prettier-ignore
@@ -217,11 +208,7 @@ type FlatInternalCSS<
   Theme extends TTheme = TTheme,
   Utils = {},
   ThemeMap extends { [k in keyof Properties]?: keyof Theme } = CSSPropertiesToTokenScale
-> = {
-  [k in keyof Properties]?:
-    | (ThemeMap[k] extends keyof Theme ? `$${Extract<keyof Theme[ThemeMap[k]], string | number>}` : never)
-    | Properties[k];
-} &
+> = { [k in keyof Properties]?: (ThemeMap[k] extends keyof Theme ? `$${Extract<keyof Theme[ThemeMap[k]], string | number>}` : never) | Properties[k] } &
   { [k in `@${string & keyof Medias}`]?: FlatInternalCSS<Medias, Theme, Utils, ThemeMap> & { [k in string]: unknown } } &
   { [k in keyof Utils]?: Utils[k] };
 
@@ -253,6 +240,7 @@ export interface TStyledSheet<
     ...styles: { [k in keyof Vars]: OmitKey<InternalCSS<A, B, C, ThemeMap>, 'variants'> & { variants?: unknown } }
   ): IStyledRule<InferRestVariants<Vars>, A, B, C, ThemeMap>;
 
+  // TODO: fix type
   theme: {
     (theme: Partial<{ [TO in keyof B]: Partial<B[TO]> }>): ThemeRule & string;
     (themeName: string, theme: Partial<{ [TO in keyof B]: Partial<B[TO]> }>): ThemeRule & string;
@@ -262,17 +250,16 @@ export interface TStyledSheet<
 
   config: InternalConfig<A, B, C, ThemeMap>;
 
+  // TODO: fix type
   css: {
     <Vars extends any[]>(
       ...styles: {
         [k in keyof Vars]: (
           | (LessInternalCSS<A, B, C, ThemeMap> & { variants?: Vars[k] & { [a in keyof Vars[k]]: { [b in keyof Vars[k][a]]: InternalCSS<A, B, C, ThemeMap> } } })
           | Record<string, InternalCSS<A, B, C, ThemeMap> | string | number>
-        ) & {
-          defaultVariants?: { [a in keyof Vars[k]]?: keyof Vars[k][a] };
-        } & {
-          compoundVariants?: ({ [a in keyof Vars[k]]?: keyof Vars[k][a] } & { css?: InternalCSS<A, B, C, ThemeMap> })[];
-        };
+        )
+        & { defaultVariants?: { [a in keyof Vars[k]]?: keyof Vars[k][a] } }
+        & { compoundVariants?: ({ [a in keyof Vars[k]]?: keyof Vars[k][a] } & { css?: InternalCSS<A, B, C, ThemeMap> })[] };
       }
     ): IStyledRule<InferRestVariants<Vars>, A, B, C, ThemeMap>;
   };

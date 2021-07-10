@@ -1,12 +1,12 @@
 import { PixelRatio, useWindowDimensions } from 'react-native';
 
 import React, {
+  cloneElement,
+  createContext,
+  createElement,
+  forwardRef,
   memo,
   useContext,
-  forwardRef,
-  cloneElement,
-  createElement,
-  createContext,
 } from 'react';
 
 import {
@@ -15,8 +15,6 @@ import {
   processStyles,
   resolveMediaRangeQuery,
 } from './utils';
-
-export { DEFAULT_THEME_MAP as defaultThemeMap } from './constants';
 
 const ReactNative = require('react-native');
 
@@ -192,5 +190,13 @@ export function createCss(config) {
     return cssStyles;
   }
 
-  return { styled, css, theme, ThemeProvider };
+  return {
+    styled,
+    css,
+    theme,
+    ThemeProvider,
+    config,
+    media: config.media,
+    utils: config.utils,
+  };
 }

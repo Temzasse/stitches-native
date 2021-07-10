@@ -16,7 +16,7 @@ export default function Example({
       <Wrapper>
         <Switch value={mode === 'dark'} onValueChange={toggleMode} />
 
-        <Button variant="primary">
+        <Button variant={{ initial: 'primary', '@lg': 'secondary' }}>
           <ButtonText color="white">Hello</ButtonText>
         </Button>
 
@@ -107,8 +107,7 @@ const Button = styled('TouchableOpacity', {
     },
     outlined: {
       true: {
-        // TODO: why does this break TS?
-        // borderWidth: 1,
+        borderWidth: 1,
       },
     },
   },
