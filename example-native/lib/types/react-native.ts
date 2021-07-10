@@ -182,3 +182,17 @@ export type ReactNativeElementsKey = keyof ReactNativeElements;
 export type ReactNativeElementType<P = any> =
   | { [K in ReactNativeElementsKey]: P extends ReactNativeElements[K] ? K : never }[ReactNativeElementsKey]
   | React.ComponentType<P>;
+
+type ReactNativeComponentProps<
+  T extends ReactNativeElementsKey | React.JSXElementConstructor<any>
+> = T extends React.JSXElementConstructor<infer P>
+  ? P
+  : T extends ReactNativeElementsKey
+  ? ReactNativeElements[T]
+  : {};
+
+export type ReactNativeComponentPropsWithRef<
+  T extends ReactNativeElementType
+> = T extends React.ComponentClass<infer P>
+  ? React.PropsWithoutRef<P> & React.RefAttributes<InstanceType<T>>
+  : React.PropsWithRef<ReactNativeComponentProps<T>>;

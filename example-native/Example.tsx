@@ -16,7 +16,7 @@ export default function Example({
       <Wrapper>
         <Switch value={mode === 'dark'} onValueChange={toggleMode} />
 
-        <Button variant={{ initial: 'primary', '@lg': 'secondary' }}>
+        <Button variant="primary">
           <ButtonText color="white">Hello</ButtonText>
         </Button>
 
@@ -136,7 +136,7 @@ const Button = styled('TouchableOpacity', {
 });
 
 const ButtonText = styled('Text', {
-  color: '#000',
+  color: '$text',
 
   variants: {
     variant: {

@@ -11,6 +11,7 @@ const { styled, css, theme, ThemeProvider } = createCss({
       secondaryDark: '#384d48',
       secondaryLight: '#d9fff6',
       background: '#fff',
+      text: '#222',
     },
     space: {
       1: 4,
@@ -74,6 +75,7 @@ const { styled, css, theme, ThemeProvider } = createCss({
 const darkTheme = theme({
   colors: {
     background: '#222',
+    text: '#fff',
   },
 });
 

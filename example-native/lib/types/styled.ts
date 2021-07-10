@@ -23,6 +23,7 @@ import {
   ReactNativeElements,
   ReactNativeElementsKey,
   ReactNativeElementType,
+  ReactNativeComponentPropsWithRef,
 } from './react-native';
 
 declare const $elm: unique symbol;
@@ -30,7 +31,6 @@ declare const $elm: unique symbol;
 // prettier-ignore
 type ComponentInfer<T> = T extends ReactNativeElementsKey | React.ComponentType<any> ? T : never
 
-// TODO: fix `ComponentInfer` TS error
 // prettier-ignore
 interface StitchesComponentWithAutoCompleteForReactComponents<
   DefaultElement,
@@ -39,10 +39,10 @@ interface StitchesComponentWithAutoCompleteForReactComponents<
   Theme = {},
   Utils = {},
   ThemeMap = {}
-> extends React.ForwardRefExoticComponent<Omit<React.ComponentPropsWithRef<ComponentInfer<DefaultElement>>, keyof Variants | 'css'> & { css?: InternalCSS<Medias, Theme, Utils, ThemeMap> } & VariantsCall<Variants, Medias>> {
+> extends React.ForwardRefExoticComponent<Omit<ReactNativeComponentPropsWithRef<ComponentInfer<DefaultElement>>, keyof Variants | 'css'> & { css?: InternalCSS<Medias, Theme, Utils, ThemeMap> } & VariantsCall<Variants, Medias>> {
   // React components have higher priority here for autocomplete
   <As extends React.ComponentType = DefaultElement extends React.ComponentType ? DefaultElement : never>(
-    props: VariantsCall<Variants, Medias> & Omit<React.ComponentPropsWithRef<As>, keyof Variants | 'css'> & { css?: InternalCSS<Medias, Theme, Utils, ThemeMap> }
+    props: VariantsCall<Variants, Medias> & Omit<ReactNativeComponentPropsWithRef<As>, keyof Variants | 'css'> & { css?: InternalCSS<Medias, Theme, Utils, ThemeMap> }
   ): JSX.Element;
 
   // JSX elements
@@ -56,7 +56,6 @@ interface StitchesComponentWithAutoCompleteForReactComponents<
   [$variants]: Variants;
 }
 
-// TODO: fix `ComponentInfer` TS error
 // prettier-ignore
 interface StitchesComponentWithAutoCompleteForJSXElements<
   DefaultElement extends string,
@@ -65,7 +64,7 @@ interface StitchesComponentWithAutoCompleteForJSXElements<
   Theme = {},
   Utils = {},
   ThemeMap = {}
-> extends React.ForwardRefExoticComponent<Omit<React.ComponentPropsWithRef<ComponentInfer<DefaultElement>>, keyof Variants | 'css'> & { css?: InternalCSS<Medias, Theme, Utils, ThemeMap> } & VariantsCall<Variants, Medias>> {
+> extends React.ForwardRefExoticComponent<Omit<ReactNativeComponentPropsWithRef<ComponentInfer<DefaultElement>>, keyof Variants | 'css'> & { css?: InternalCSS<Medias, Theme, Utils, ThemeMap> } & VariantsCall<Variants, Medias>> {
   // JSX elements have higher priority here when it comes to autocomplete
   <Elm extends ReactNativeElementsKey = DefaultElement extends ReactNativeElementsKey ? DefaultElement : never>(
     props: VariantsCall<Variants, Medias> & Omit<ReactNativeElements[Elm], keyof Variants | 'css'> & { css?: InternalCSS<Medias, Theme, Utils, ThemeMap> },
@@ -73,7 +72,7 @@ interface StitchesComponentWithAutoCompleteForJSXElements<
 
   // React component
   <As extends React.ComponentType = DefaultElement extends React.ComponentType ? DefaultElement : never>(
-    props: VariantsCall<Variants, Medias> & Omit<React.ComponentPropsWithRef<As>, keyof Variants | 'css'> & { css?: InternalCSS<Medias, Theme, Utils, ThemeMap> },
+    props: VariantsCall<Variants, Medias> & Omit<ReactNativeComponentPropsWithRef<As>, keyof Variants | 'css'> & { css?: InternalCSS<Medias, Theme, Utils, ThemeMap> },
   ): JSX.Element
 
   variants: Variants
@@ -114,12 +113,12 @@ export type ProxyStyledElements<
   Utils = {},
   ThemeMap = {}
 > = {
-  [ElKey in ReactNativeElementsKey]: <E extends ReactNativeElementType = ElKey, Variants = {}, CloneVariants extends Variants = {}>(
+  [ElKey in ReactNativeElementsKey]: <E extends ReactNativeElementType = ElKey, Variants = {}>(
     styled: (
       ((LessInternalCSS<Medias, Theme, Utils, ThemeMap> & { [k in string]: unknown }) | Record<string, InternalCSS<Medias, Theme, Utils, ThemeMap>>)
       & { variants?: { [k in keyof Variants]: { [b in keyof Variants[k]]: InternalCSS<Medias, Theme, Utils, ThemeMap> } } }
-      & { defaultVariants?: { [k in keyof CloneVariants]?: StrictMorphVariant<keyof CloneVariants[k]> } }
-      & { compoundVariants?: ({ [k in keyof CloneVariants]?: StrictMorphVariant<keyof CloneVariants[k]> } & { css?: InternalCSS<Medias, Theme, Utils, ThemeMap> })[] }
+      & { defaultVariants?: { [k in keyof Variants]?: StrictMorphVariant<keyof Variants[k]> } }
+      & { compoundVariants?: ({ [k in keyof Variants]?: StrictMorphVariant<keyof Variants[k]> } & { css?: InternalCSS<Medias, Theme, Utils, ThemeMap> })[] }
     )
   ) => E extends string
     // JSX elements

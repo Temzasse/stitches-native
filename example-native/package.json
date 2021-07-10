@@ -5,7 +5,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "eject": "expo eject"
+    "eject": "expo eject",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "expo": "~41.0.1",
