@@ -1,6 +1,8 @@
 // Based on Stitches TS typings
 // https://github.com/modulz/stitches/blob/canary/packages/react/types/core.d.ts
 
+import * as React from 'react';
+
 import { ReactNativeProperties } from './react-native';
 
 // prettier-ignore
@@ -90,27 +92,11 @@ export declare const $variants: unique symbol;
 export declare const $media: unique symbol;
 
 // prettier-ignore
-export type StitchesVariants<T> = T extends { [$variants]: infer V; [$media]: infer C } ? VariantsCall<V, C> : {};
-
-// prettier-ignore
 export type StitchesExtractVariantsStyles<T> = T extends { [$variants]: infer V } ? V : {};
 
-export type StyledSheetCallback = (...cssText: string[]) => void;
-
 export interface ThemeRule {
-  toString(): string;
-  className: string;
-  cssText: string;
-  root: string;
-}
-
-export interface StyledExpression {
-  (): string;
-  toString(): string;
-  className: string;
-  classNames: string[];
-  props: any;
-  selector: string;
+  id: string;
+  values: any; // TODO: fix type
 }
 
 export interface EmptyTheme {
@@ -175,11 +161,6 @@ export interface InternalConfig<
 }
 
 // prettier-ignore
-export type MapUtils<T> = {
-  [k in keyof T]: T[k] extends (theme: any) => (value: infer V) => any ? V : never;
-};
-
-// prettier-ignore
 export type InternalCSS<
   Medias extends TMedias = TMedias,
   Theme extends TTheme = TTheme,
@@ -221,14 +202,6 @@ type Tail<T extends any[]> = ((...t: T) => any) extends (_: any, ...tail: infer 
 
 type OmitKey<T, U extends keyof any> = T & { [P in U]?: unknown };
 
-type ThemeToken = {
-  value: string;
-  token: string;
-  scale: string;
-  computedValue: string;
-  variable: string;
-} & string;
-
 // prettier-ignore
 export interface TStyledSheet<
   A extends TMedias = TMedias,
@@ -240,17 +213,8 @@ export interface TStyledSheet<
     ...styles: { [k in keyof Vars]: OmitKey<InternalCSS<A, B, C, ThemeMap>, 'variants'> & { variants?: unknown } }
   ): IStyledRule<InferRestVariants<Vars>, A, B, C, ThemeMap>;
 
-  // TODO: fix type
-  theme: {
-    (theme: Partial<{ [TO in keyof B]: Partial<B[TO]> }>): ThemeRule & string;
-    (themeName: string, theme: Partial<{ [TO in keyof B]: Partial<B[TO]> }>): ThemeRule & string;
-  } & {
-    [TO in keyof B]: { [k in keyof B[TO]]: ThemeToken };
-  };
-
   config: InternalConfig<A, B, C, ThemeMap>;
 
-  // TODO: fix type
   css: {
     <Vars extends any[]>(
       ...styles: {
@@ -261,13 +225,14 @@ export interface TStyledSheet<
         & { defaultVariants?: { [a in keyof Vars[k]]?: keyof Vars[k][a] } }
         & { compoundVariants?: ({ [a in keyof Vars[k]]?: keyof Vars[k][a] } & { css?: InternalCSS<A, B, C, ThemeMap> })[] };
       }
-    ): IStyledRule<InferRestVariants<Vars>, A, B, C, ThemeMap>;
+    ): InternalCSS<A, B, C, ThemeMap>;
   };
 
   media: A;
   utils: C;
 
-  ThemeProvider: any; // TODO: figure out type
+  theme: (theme: Partial<{ [TO in keyof B]: Partial<B[TO]> }>) => ThemeRule;
+  ThemeProvider: React.FunctionComponent<{ theme?: ThemeRule }>;
 }
 
 export type StrictMorphVariant<T> = T extends number
@@ -278,7 +243,7 @@ export type StrictMorphVariant<T> = T extends number
   ? false | T
   : T;
 
-export type MorphVariant<T> = T extends number
+type MorphVariant<T> = T extends number
   ? `${T}` | T
   : T extends 'true'
   ? boolean | T
@@ -292,22 +257,6 @@ export type VariantsCall<Variants, Medias> = {
   [k in keyof Variants]?: MorphVariant<keyof Variants[k]> | { [I in keyof Medias]?: MorphVariant<keyof Variants[k]> }; // prettier-ignore
 };
 
-export type StitchesCss<T> = T extends {
-  config: {
-    media: infer Medias;
-    theme: infer Theme;
-    utils: infer Utils;
-    themeMap: infer ThemeMap;
-  };
-}
-  ? InternalCSS<
-      Medias extends TMedias ? Medias : never,
-      Theme extends TTheme ? Theme : never,
-      MapUtils<Utils>,
-      ThemeMap
-    >
-  : never;
-
 // prettier-ignore
 export interface IStyledRule<
   Variants,
@@ -316,7 +265,7 @@ export interface IStyledRule<
   Utils = {},
   ThemeMap = {}
 > {
-  (init?: VariantsCall<Variants, Medias> & { css?: InternalCSS<Medias, Theme, Utils, ThemeMap>; className?: string }): StyledExpression & string;
+  (init?: VariantsCall<Variants, Medias> & { css?: InternalCSS<Medias, Theme, Utils, ThemeMap>; className?: string }): string;
   variants: Variants;
   [$media]: Medias;
   [$variants]: Variants;
