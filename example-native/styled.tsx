@@ -43,7 +43,9 @@ const { styled, css, theme, ThemeProvider } = createCss({
       justifyContent: 'center',
       alignItems: 'center',
     }),
-    absoluteFill: () => () => StyleSheet.absoluteFillObject,
+    absoluteFill: () => () => ({
+      ...StyleSheet.absoluteFillObject,
+    }),
   },
   media: {
     // You can provide boolean values for breakpoints when you just need to

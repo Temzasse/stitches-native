@@ -1,18 +1,17 @@
+import * as React from 'react';
+
 import {
-  ViewStyle,
-  TextStyle,
-  ImageStyle,
   ButtonProps,
   FlatListProps,
-  ImageProps,
   ImageBackgroundProps,
+  ImageProps,
   InputAccessoryViewProps,
   KeyboardAvoidingViewProps,
   PressableProps,
   ScrollViewProps,
   SectionListProps,
-  TextProps,
   TextInputProps,
+  TextProps,
   TouchableHighlightProps,
   TouchableNativeFeedbackProps,
   TouchableOpacityProps,
@@ -21,146 +20,163 @@ import {
   VirtualizedListProps,
 } from 'react-native';
 
-export type AllStyleProperty = ViewStyle & ImageStyle & TextStyle;
-export type AnyStyleProperty = ViewStyle | ImageStyle | TextStyle;
+type AlignContentProperty = 'flex-start' | 'flex-end' | 'center' | 'stretch' | 'space-between' | 'space-around' | (string & {}); // prettier-ignore
+type AlignItemsProperty = 'flex-start' | 'flex-end' | 'center' | 'stretch' | 'baseline' | (string & {}); // prettier-ignore
+type AlignSelfProperty = 'auto' | 'flex-start' | 'flex-end' | 'center' | 'stretch' | 'baseline' | (string & {}); // prettier-ignore
+type BackfaceVisibilityProperty = 'visible' | 'hidden' | (string & {});
+type BorderStyleProperty = 'solid' | 'dotted' | 'dashed' | (string & {});
+type DirectionProperty = 'inherit' | 'ltr' | 'rtl' | (string & {});
+type DisplayProperty = 'auto' | 'flex' | (string & {});
+type FlexDirectionProperty = 'row' | 'row-reverse' | 'column' | 'column-reverse' | (string & {}); // prettier-ignore
+type FlexWrapProperty = 'wrap' | 'nowrap' | 'wrap-reverse' | (string & {});
+type FontSizeProperty<TLength> = TLength | number | (string & {});
+type FontStyleProperty = 'italic' | 'normal' | 'oblique' | (string & {});
+type FontVariantProperty = 'small-caps' | 'oldstyle-nums' | 'lining-nums' | 'tabular-nums' | 'proportional-nums' | (string & {}); // prettier-ignore
+type FontWeightProperty = 'normal' | 'bold' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900' | (string & {}); // prettier-ignore
+type IncludeFontPaddingProperty = boolean | (string & {});
+type JustifyContentProperty = 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly' | (string & {}); // prettier-ignore
+type NumberProperty<TLength> = TLength | number | (string & {});
+type OverflowProperty = 'visible' | 'hidden' | 'scroll' | (string & {});
+type PaddingMarginProperty<TLength> = TLength | number | (string & {});
+type PositionProperty = 'absolute' | 'relative' | (string & {});
+type ShadowOffsetProperty = { width?: number; height?: number } | (string & {});
+type SimpleNumberProperty = number | (string & {});
+type StringNumberProperty<TLength> = TLength | number | (string & {});
+type StringProperty = string & {};
+type TextAlignProperty = 'auto' | 'top' | 'bottom' | 'center' | (string & {});
+type TextDecorationLineProperty = 'auto' | 'top' | 'bottom' | 'center' | (string & {}); // prettier-ignore
+type TextDecorationStyleProperty = 'solid' | 'double' | 'dotted' | 'dashed' | (string & {}); // prettier-ignore
+type TextShadowOffsetProperty =  { width?: number; height?: number } | (string & {}); // prettier-ignore
+type TextTransformProperty = 'none' | 'uppercase' | 'lowercase' | 'capitalize' | (string & {}); // prettier-ignore
+type WritingDirectionProperty = 'auto' | 'ltr' | 'rtl' | (string & {});
+type ResizeModeProperty = 'cover' | 'contain' | 'stretch' | 'repeat' | 'center' | (string & {}); // prettier-ignore
 
-export type StyleProperty<T extends StyledPrimitive> = T extends 'Text'
-  ? TextStyle
-  : T extends 'Image'
-  ? ImageStyle
-  : ViewStyle;
+export interface ReactNativeProperties<TLength = (string & {}) | 0> {
+  alignContent: AlignContentProperty;
+  alignItems: AlignItemsProperty;
+  alignSelf: AlignSelfProperty;
+  aspectRatio: SimpleNumberProperty;
+  backfaceVisibility: BackfaceVisibilityProperty;
+  backgroundColor: StringProperty;
+  borderBottomColor: StringProperty;
+  borderBottomEndRadius: SimpleNumberProperty;
+  borderBottomLeftRadius: SimpleNumberProperty;
+  borderBottomRightRadius: SimpleNumberProperty;
+  borderBottomStartRadius: SimpleNumberProperty;
+  borderBottomWidth: NumberProperty<TLength>;
+  borderColor: StringProperty;
+  borderEndColor: StringProperty;
+  borderEndWidth: StringNumberProperty<TLength>;
+  borderLeftColor: StringProperty;
+  borderLeftWidth: NumberProperty<TLength>;
+  borderRadius: SimpleNumberProperty;
+  borderRightColor: StringProperty;
+  borderRightWidth: NumberProperty<TLength>;
+  borderStartColor: StringProperty;
+  borderStartWidth: StringNumberProperty<TLength>;
+  borderStyle: BorderStyleProperty;
+  borderTopColor: StringProperty;
+  borderTopEndRadius: SimpleNumberProperty;
+  borderTopLeftRadius: SimpleNumberProperty;
+  borderTopRightRadius: SimpleNumberProperty;
+  borderTopStartRadius: SimpleNumberProperty;
+  borderTopWidth: NumberProperty<TLength>;
+  borderWidth: NumberProperty<TLength>;
+  bottom: StringNumberProperty<TLength>;
+  color: StringProperty;
+  direction: DirectionProperty;
+  display: DisplayProperty;
+  elevation: NumberProperty<TLength>;
+  end: SimpleNumberProperty;
+  flex: NumberProperty<TLength>;
+  flexBasis: StringNumberProperty<TLength>;
+  flexDirection: FlexDirectionProperty;
+  flexGrow: NumberProperty<TLength>;
+  flexShrink: NumberProperty<TLength>;
+  flexWrap: FlexWrapProperty;
+  fontFamily: StringProperty;
+  fontSize: FontSizeProperty<TLength>;
+  fontStyle: FontStyleProperty;
+  fontVariant: FontVariantProperty;
+  fontWeight: FontWeightProperty;
+  height: StringNumberProperty<TLength>;
+  includeFontPadding: IncludeFontPaddingProperty;
+  justifyContent: JustifyContentProperty;
+  left: StringNumberProperty<TLength>;
+  letterSpacing: NumberProperty<TLength>;
+  lineHeight: NumberProperty<TLength>;
+  margin: PaddingMarginProperty<TLength>;
+  marginBottom: PaddingMarginProperty<TLength>;
+  marginEnd: PaddingMarginProperty<TLength>;
+  marginHorizontal: PaddingMarginProperty<TLength>;
+  marginLeft: PaddingMarginProperty<TLength>;
+  marginRight: PaddingMarginProperty<TLength>;
+  marginStart: PaddingMarginProperty<TLength>;
+  marginTop: PaddingMarginProperty<TLength>;
+  marginVertical: PaddingMarginProperty<TLength>;
+  maxHeight: StringNumberProperty<TLength>;
+  maxWidth: StringNumberProperty<TLength>;
+  minHeight: StringNumberProperty<TLength>;
+  minWidth: StringNumberProperty<TLength>;
+  opacity: SimpleNumberProperty;
+  overflow: OverflowProperty;
+  overlayColor: StringProperty;
+  padding: PaddingMarginProperty<TLength>;
+  paddingBottom: PaddingMarginProperty<TLength>;
+  paddingEnd: PaddingMarginProperty<TLength>;
+  paddingHorizontal: PaddingMarginProperty<TLength>;
+  paddingLeft: PaddingMarginProperty<TLength>;
+  paddingRight: PaddingMarginProperty<TLength>;
+  paddingStart: PaddingMarginProperty<TLength>;
+  paddingTop: PaddingMarginProperty<TLength>;
+  paddingVertical: PaddingMarginProperty<TLength>;
+  position: PositionProperty;
+  resizeMode: ResizeModeProperty;
+  right: StringNumberProperty<TLength>;
+  shadowColor: StringProperty;
+  shadowOffset: ShadowOffsetProperty;
+  shadowOpacity: SimpleNumberProperty;
+  shadowRadius: SimpleNumberProperty;
+  start: StringNumberProperty<TLength>;
+  textAlign: TextAlignProperty;
+  textDecorationColor: StringProperty;
+  textDecorationLine: TextDecorationLineProperty;
+  textDecorationStyle: TextDecorationStyleProperty;
+  textShadowColor: StringProperty;
+  textShadowOffset: TextShadowOffsetProperty;
+  textShadowRadius: SimpleNumberProperty;
+  textTransform: TextTransformProperty;
+  tintColor: StringProperty;
+  top: StringNumberProperty<TLength>;
+  width: StringNumberProperty<TLength>;
+  writingDirection: WritingDirectionProperty;
+  zIndex: SimpleNumberProperty;
+}
 
-export type BorderStyle = 'solid' | 'dotted' | 'dashed';
+export type ReactNativeElements = {
+  Button: ButtonProps;
+  FlatList: FlatListProps<any>;
+  Image: ImageProps;
+  ImageBackground: ImageBackgroundProps;
+  InputAccessoryView: InputAccessoryViewProps;
+  KeyboardAvoidingView: KeyboardAvoidingViewProps;
+  Pressable: PressableProps;
+  SafeAreaView: ViewProps;
+  ScrollView: ScrollViewProps;
+  SectionList: SectionListProps<any>;
+  Text: TextProps;
+  TextInput: TextInputProps;
+  TouchableHighlight: TouchableHighlightProps;
+  TouchableNativeFeedback: TouchableNativeFeedbackProps;
+  TouchableOpacity: TouchableOpacityProps;
+  TouchableWithoutFeedback: TouchableWithoutFeedbackProps;
+  View: ViewProps;
+  VirtualizedList: VirtualizedListProps<any>;
+};
 
-export type FontWeight =
-  | 'normal'
-  | 'bold'
-  | '100'
-  | '200'
-  | '300'
-  | '400'
-  | '500'
-  | '600'
-  | '700'
-  | '800'
-  | '900';
+export type ReactNativeElementsKeys = keyof ReactNativeElements;
 
-export type NumberProperty =
-  | 'aspectRatio'
-  | 'elevation'
-  | 'end'
-  | 'flex'
-  | 'flexGrow'
-  | 'flexShrink'
-  | 'opacity'
-  | 'shadowOpacity'
-  | 'shadowRadius'
-  | 'textShadowRadius';
-
-export type StringProperty =
-  | 'fontStyle'
-  | 'shadowColor'
-  | 'textShadowColor'
-  | 'textDecorationColor';
-
-export type BooleanProperty = 'includeFontPadding';
-
-export type StrictStyleProperty<T extends string> = T extends 'alignContent'
-  ? 'flex-start' | 'flex-end' | 'center' | 'stretch' | 'space-between' | 'space-around' // prettier-ignore
-  : T extends 'alignItems'
-  ? 'flex-start' | 'flex-end' | 'center' | 'stretch' | 'baseline'
-  : T extends 'alignSelf'
-  ? 'auto' | 'flex-start' | 'flex-end' | 'center' | 'stretch' | 'baseline'
-  : T extends 'flexDirection'
-  ? 'row' | 'row-reverse' | 'column' | 'column-reverse'
-  : T extends 'flexWrap'
-  ? 'wrap' | 'nowrap' | 'wrap-reverse'
-  : T extends 'justifyContent'
-  ? 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly' // prettier-ignore
-  : T extends 'direction'
-  ? 'inherit' | 'ltr' | 'rtl'
-  : T extends 'display'
-  ? 'auto' | 'flex'
-  : T extends 'overflow'
-  ? 'visible' | 'hidden' | 'scroll'
-  : T extends 'position'
-  ? 'absolute' | 'relative'
-  : T extends 'shadowOffset' | 'textShadowOffset'
-  ? { width?: number; height?: number }
-  : T extends 'fontWeight'
-  ? 'normal' | 'bold' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900' // prettier-ignore
-  : T extends 'fontVariant'
-  ? 'small-caps' | 'oldstyle-nums' | 'lining-nums' | 'tabular-nums' | 'proportional-nums' // prettier-ignore
-  : T extends 'textAlign'
-  ? 'auto' | 'top' | 'bottom' | 'center'
-  : T extends 'textDecorationLine'
-  ? 'auto' | 'top' | 'bottom' | 'center'
-  : T extends 'textDecorationStyle'
-  ? 'solid' | 'double' | 'dotted' | 'dashed'
-  : T extends 'textTransform'
-  ? 'none' | 'uppercase' | 'lowercase' | 'capitalize'
-  : T extends 'writingDirection'
-  ? 'auto' | 'ltr' | 'rtl'
-  : T extends 'backfaceVisibility'
-  ? 'visible' | 'hidden'
-  : T extends StringProperty
-  ? string
-  : T extends NumberProperty
-  ? number
-  : T extends BooleanProperty
-  ? boolean
-  : never;
-
-export type StyledPrimitive =
-  | 'Button'
-  | 'FlatList'
-  | 'Image'
-  | 'ImageBackground'
-  | 'InputAccessoryView'
-  | 'KeyboardAvoidingView'
-  | 'Pressable'
-  | 'SafeAreaView'
-  | 'ScrollView'
-  | 'SectionList'
-  | 'Text'
-  | 'TextInput'
-  | 'TouchableHighlight'
-  | 'TouchableNativeFeedback'
-  | 'TouchableOpacity'
-  | 'TouchableWithoutFeedback'
-  | 'View'
-  | 'VirtualizedList';
-
-export type PolymorphicProps<T extends StyledPrimitive> = T extends 'Button'
-  ? ButtonProps
-  : T extends 'FlatList'
-  ? FlatListProps<any>
-  : T extends 'Image'
-  ? ImageProps
-  : T extends 'ImageBackground'
-  ? ImageBackgroundProps
-  : T extends 'InputAccessoryView'
-  ? InputAccessoryViewProps
-  : T extends 'KeyboardAvoidingView'
-  ? KeyboardAvoidingViewProps
-  : T extends 'Pressable'
-  ? PressableProps
-  : T extends 'ScrollView'
-  ? ScrollViewProps
-  : T extends 'SectionList'
-  ? SectionListProps<any>
-  : T extends 'Text'
-  ? TextProps
-  : T extends 'TextInput'
-  ? TextInputProps
-  : T extends 'TouchableHighlight'
-  ? TouchableHighlightProps
-  : T extends 'TouchableNativeFeedback'
-  ? TouchableNativeFeedbackProps
-  : T extends 'TouchableOpacity'
-  ? TouchableOpacityProps
-  : T extends 'TouchableWithoutFeedback'
-  ? TouchableWithoutFeedbackProps
-  : T extends 'VirtualizedList'
-  ? VirtualizedListProps<any>
-  : ViewProps;
+// prettier-ignore
+export type ReactNativeElementType<P = any> =
+  | { [K in ReactNativeElementsKeys]: P extends ReactNativeElements[K] ? K : never }[ReactNativeElementsKeys]
+  | React.ComponentType<P>;
