@@ -16,6 +16,8 @@ import {
   resolveMediaRangeQuery,
 } from './utils';
 
+import { DEFAULT_THEME_MAP } from './constants';
+
 const ReactNative = require('react-native');
 
 export function createCss(config) {
@@ -200,3 +202,7 @@ export function createCss(config) {
     utils: config.utils,
   };
 }
+
+export const { styled, css } = createCss({});
+
+export const defaultThemeMap = DEFAULT_THEME_MAP;

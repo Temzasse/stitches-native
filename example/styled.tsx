@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { createCss } from './lib';
+import { createCss } from 'stitches-native';
 
 const { styled, css, theme, ThemeProvider } = createCss({
   theme: {

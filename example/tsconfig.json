@@ -1,18 +1,17 @@
 {
+  "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "allowSyntheticDefaultImports": false,
-    "target": "es5",
-    "module": "commonjs",
-    "jsx": "react",
+    "baseUrl": ".",
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react-native",
+    "lib": ["dom", "esnext"],
     "moduleResolution": "node",
-    "noImplicitAny": false,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "removeComments": true,
-    "strictNullChecks": true,
-    "preserveConstEnums": true,
-    "sourceMap": true,
-    "lib": ["es2015", "es2016", "dom"],
-    "types": ["node"]
+    "noEmit": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "strict": true,
+    "paths": {
+      "stitches-native": ["../src/index"]
+    },
   }
 }
