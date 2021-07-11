@@ -3,7 +3,6 @@
 <p/>
 
 <div align="center" >
-  <br/>
   <h1>
     Stitches Native
   </h1>
@@ -12,12 +11,11 @@
   &middot;
   <br/>
   <br/>
-  <br/>
 </div>
 
 ## Installation
 
-> ⚠️ NOTE: This library is still under development and not yet published in npm.
+> ⚠️ NOTE: This library is still under development and not yet published on npm.
 
 ```sh
 npm install stitches-native
@@ -52,10 +50,10 @@ createCss({
 });
 ```
 
-The return value of `createCss` doesn't include `global`, `keyframes`, `getCssString`, or `config` since they are not needed in native platforms.
+The return value of `createCss` doesn't include `global`, `keyframes`, or `getCssString` since they are not needed in native platforms.
 
 ```js
-const { styled, css, theme } = createCss();
+const { styled, css, theme, config } = createCss();
 ```
 
 ### Using `css` function
@@ -75,11 +73,38 @@ const SomeComp = styled('View', {
 <AnotherComp css={styles} />;
 ```
 
-### Responsive `media` styles
-
-TODO: add documentation...
-
 ### Theming with `theme`
+
+Stitches Native handles theming differently than Stitches. Since there are no CSS Variables in React Native theming is handled via React Context in a similar way as other CSS-in-JS libraries such as [styled-components](https://styled-components.com/docs/advanced#theming) handle theming.
+
+```tsx
+const { theme, ThemeProvider } = createCss({
+  colors: {
+    background: '#fff',
+    text: '#000',
+  }
+});
+
+const darkTheme = theme({
+  colors: {
+    background: '#000',
+    text: '#fff',
+  },
+});
+
+export default function App() {
+  // In a real world scenario this value should probably live in React Context
+  const [darkMode, setDarkMode] = useState(false);
+
+  return (
+    <ThemeProvider theme={darkMode ? darkTheme : undefined}>
+      {/* ... */}
+    </ThemeProvider>
+  );
+}
+```
+
+### Responsive styles with `media`
 
 TODO: add documentation...
 
