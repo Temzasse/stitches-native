@@ -1,5 +1,8 @@
+<p align='center'>
+  <img src="media/logo.jpg" alt="Stitches Native logo"/>
+<p/>
+
 <div align="center" >
-  <br/>
   <br/>
   <h1>
     Stitches Native
@@ -9,9 +12,8 @@
   &middot;
   <br/>
   <br/>
+  <br/>
 </div>
-
----
 
 ## Installation
 
