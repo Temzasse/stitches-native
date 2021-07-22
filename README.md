@@ -33,7 +33,28 @@ For the most part Stitches Native behaves exactly as Stitches so you should foll
 
 ## Differences
 
-Due to the inherit differences between the Web and native platforms the Stitches Native implementation differs slightly from the Web version of Stitches.
+Due to the inherit differences between the Web and native platforms (iOS + Android) the implementation of Stitches Native differs slightly from the original Web version of Stitches.
+
+First of all, CSS in React Native doesn't have CSS Variables, cascade, inheritance, keyframes, pseudo elements/classes, or global styles which means that some features that are available in Stitches are not possible to implement in Stitches Native.
+
+Below you can see a list of all supported and unsupported features of Stitches Native.
+
+### Feature comparison
+
+| Feature               | Supported                               |
+| --------------------- | --------------------------------------- |
+| `styled`              | ✅                                      |
+| `createCss`           | ✅                                      |
+| `defaultThemeMap`     | ✅                                      |
+| `css`                 | ✅ _(Simplified version)_               |
+| `theme`               | ✅ _(Based on React Context)_           |
+| `global`              | ❌ _(No global styles in RN)_           |
+| `keyframes`           | ❌ _(No CSS keyframes in RN)_           |
+| `getCssString`        | ❌ _(SSR not applicable to RN)_         |
+| Nesting               | ❌ _(No CSS cascade in RN)_             |
+| Selectors             | ❌ _(No CSS selectors in RN)_           |
+| Locally scoped tokens | ❌ _(No CSS variables in RN)_           |
+| Pseudo elements       | ❌ _(No pseudo elements/classes in RN)_ |
 
 ### Using `createCss` function
 
@@ -50,13 +71,17 @@ createCss({
 });
 ```
 
-The return value of `createCss` doesn't include `global`, `keyframes`, or `getCssString` since they are not needed in native platforms.
+The return value of `createCss` doesn't include `global`, `keyframes`, or `getCssString` since they are not available in native platforms. React Native doesn't have any CSS keyframes based animations and all animations should be handled by the [Animated API](https://reactnative.dev/docs/animated) or with libraries such as [react-native-reanimated](https://github.com/software-mansion/react-native-reanimated).
+
+The return value of `createCss` consist of the following:
 
 ```js
-const { styled, css, theme, config } = createCss();
+const { styled, css, theme, config } = createCss({
+  /*...*/
+});
 ```
 
-### Using `css` function
+### Using `css` helper
 
 Unlike on the Web there is no concept of `className` in React Native so the `css` function is basically an identity function providing only TS types for the style object and returning exactly the same object back. The returned object can be spread to a styled component or into the css prop of a component.
 
@@ -82,7 +107,7 @@ const { theme, ThemeProvider } = createCss({
   colors: {
     background: '#fff',
     text: '#000',
-  }
+  },
 });
 
 const darkTheme = theme({
@@ -98,7 +123,7 @@ export default function App() {
 
   return (
     <ThemeProvider theme={darkMode ? darkTheme : undefined}>
-      {/* ... */}
+      {/*...*/}
     </ThemeProvider>
   );
 }
@@ -106,11 +131,70 @@ export default function App() {
 
 ### Responsive styles with `media`
 
-TODO: add documentation...
+Responsive styles are not very common in React Native applications since you usually have a clearly constrained device environment where the app is used. However, some times you might need to tweak a style for very small or large phones or build an app that is needs to adapt to tablet devices. For these use cases Stitches Native has support for two kinds of responsive styles:
 
-### Missing features
+1. Device types based media flags
+2. Device dimensions based media queries
 
-- No locally scoped tokens
-- No `global` function
-- No `keyframes` function
-- No `getCssString` function
+#### Device types based media flags
+
+Simple boolean flags in the `media` config can be used to distinguish between phone and tablet devices, eg. by utilizing [`getDeviceType()`](https://github.com/react-native-device-info/react-native-device-info#getDeviceType) or [`isTablet()`](https://github.com/react-native-device-info/react-native-device-info#istablet) from [react-native-device-info](https://github.com/react-native-device-info/react-native-device-info).
+
+```js
+const isTablet = DeviceInfo.isTablet();
+
+const { theme, ThemeProvider } = createCss({
+  media: {
+    phone: !isTablet,
+    tablet: isTablet,
+  },
+});
+```
+
+Then you can apply different prop values for variants of a styled components based on the device type:
+
+```tsx
+const ButtonText = styled('Text', {
+  // base styles
+
+  variants: {
+    color: {
+      primary: {
+        color: '$primary',
+      },
+      secondary: {
+        color: '$secondary',
+      },
+    },
+  },
+});
+
+<ButtonText color={{ '@phone': 'primary', '@tablet': 'secondary' }}>
+  Hello
+</ButtonText>;
+```
+
+#### Device dimensions based media queries
+
+It's also possible to have a more Web-like breakpoint system based on the dimensions of the device. The syntax for the queries follows the CSS [range queries](https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries/Using_media_queries#syntax_improvements_in_level_4) syntax which means that there is no need to use `min-width` or `max-width`.
+
+Examples of supported range queries:
+
+- `(width > 750px)`
+- `(width >= 750px)`
+- `(width < 1080px)`
+- `(width <= 1080px)`
+- `(750px > width >= 1080px)`
+
+> ⚠️ NOTE: Only width based media queries are currently supported.
+
+```js
+const { theme, ThemeProvider } = createCss({
+  media: {
+    md: '(width >= 750px)',
+    lg: '(width >= 1080px)',
+    xl: '(width >= 1284px)',
+    xxl: '(width >= 1536px)',
+  },
+});
+```
