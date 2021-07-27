@@ -20,7 +20,10 @@
   "scripts": {
     "build": "tsdx build --entry src/internals/index.js",
     "test": "tsdx test --passWithNoTests",
-    "lint": "tsdx lint",
+    "lint": "eslint ./src --ext .js --config .eslintrc",
+    "lint:fix": "eslint ./src --ext .js --config .eslintrc --fix",
+    "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
+    "format:write": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "prepare": "yarn build",
     "release": "np",
     "size": "size-limit",
@@ -29,11 +32,24 @@
   "devDependencies": {
     "@babel/preset-react": "7.14.5",
     "@size-limit/preset-small-lib": "4.10.2",
-    "@types/react": "17.0.14",
     "@types/react-native": "0.64.12",
+    "@types/react": "17.0.14",
+    "@typescript-eslint/eslint-plugin": "4.6.1",
+    "@typescript-eslint/parser": "4.6.1",
+    "eslint-config-prettier": "8.3.0",
+    "eslint-config-standard": "16.0.3",
+    "eslint-plugin-import": "2.23.4",
+    "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-prettier": "3.4.0",
+    "eslint-plugin-promise": "5.1.0",
+    "eslint-plugin-react-hooks": "4.2.0",
+    "eslint-plugin-react": "7.24.0",
+    "eslint-plugin-standard": "5.0.0",
+    "eslint": "7.31.0",
     "husky": "6.0.0",
-    "react": "16.13.1",
+    "prettier": "2.3.2",
     "react-native": "0.64.2",
+    "react": "16.13.1",
     "size-limit": "4.10.2",
     "tsdx": "0.14.1",
     "tslib": "2.2.0",
@@ -45,13 +61,14 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "tsdx lint"
+      "pre-commit": "yarn lint"
     }
   },
   "prettier": {
     "printWidth": 80,
     "semi": true,
     "singleQuote": true,
+    "tabWidth": 2,
     "trailingComma": "es5"
   },
   "np": {

@@ -1,3 +1,4 @@
+/* eslint-disable */
 // Based on Stitches TS typings
 // https://github.com/modulz/stitches/blob/canary/packages/react/types/styled.d.ts
 
