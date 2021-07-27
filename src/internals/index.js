@@ -12,6 +12,7 @@ import React, {
 import {
   createStyleSheets,
   getCompoundKey,
+  processTheme,
   processStyles,
   resolveMediaRangeQuery,
 } from './utils';
@@ -22,15 +23,21 @@ import { DEFAULT_THEME_MAP } from './constants';
 const ReactNative = require('react-native');
 
 export function createCss(config) {
-  const themes = [{ id: 'theme-1', values: config.theme }];
+  const themes = [];
+
+  if (config.theme) {
+    themes.push({ id: 'theme-1', values: processTheme(config.theme) });
+  }
 
   function theme(theme) {
     const t = {
       id: `theme-${themes.length + 1}`,
-      values: Object.entries(config.theme || {}).reduce((acc, [key, val]) => {
-        acc[key] = { ...val, ...theme[key] };
-        return acc;
-      }, {}),
+      values: processTheme(
+        Object.entries(config.theme || {}).reduce((acc, [key, val]) => {
+          acc[key] = { ...val, ...theme[key] };
+          return acc;
+        }, {})
+      ),
     };
 
     themes.push(t);
@@ -97,7 +104,7 @@ export function createCss(config) {
 
       if (variants) {
         variantStyles = Object.keys(variants)
-          .map(prop => {
+          .map((prop) => {
             const propValue = props[prop] || defaultVariants[prop];
             let styleSheetKey = '';
 
@@ -122,9 +129,8 @@ export function createCss(config) {
                 if (val === true) {
                   styleSheetKey = `${prop}_${propValue[breakpoint]}`;
                 } else if (typeof val === 'string') {
-                  const correctedWindowWidth = PixelRatio.getPixelSizeForLayoutSize(
-                    windowWidth
-                  );
+                  const correctedWindowWidth =
+                    PixelRatio.getPixelSizeForLayoutSize(windowWidth); // eslint-disable-line
 
                   // TODO: how do we quarantee the order of breakpoint matches?
                   // The order of the media key value pairs should be constant
@@ -151,7 +157,7 @@ export function createCss(config) {
 
       if (compoundVariants) {
         compoundVariantStyles = compoundVariants
-          .map(compoundVariant => {
+          .map((compoundVariant) => {
             // eslint-disable-next-line
             const { css: _css, ...compounds } = compoundVariant;
             const compoundEntries = Object.entries(compounds);

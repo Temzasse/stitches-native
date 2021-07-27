@@ -22,7 +22,7 @@ const validSigns = ['<=', '<', '>=', '>'];
 
 export function resolveMediaRangeQuery(query, windowWidth) {
   const singleRangeRegex = /^\(width\s+([><=]+)\s+([0-9]+)px\)$/;
-  const multiRangeRegex = /^\(([0-9]+)px\s([><=]+)\swidth\s+([><=]+)\s+([0-9]+)px\)$/;
+  const multiRangeRegex = /^\(([0-9]+)px\s([><=]+)\swidth\s+([><=]+)\s+([0-9]+)px\)$/; // prettier-ignore
   const singleRangeMatches = query.match(singleRangeRegex);
   const multiRangeMatches = query.match(multiRangeRegex);
 
@@ -56,6 +56,29 @@ export function resolveMediaRangeQuery(query, windowWidth) {
   }
 
   return result;
+}
+
+export function processTheme(theme) {
+  const processedTheme = { ...theme };
+
+  if (theme.colors) {
+    // Resolve theme aliases
+    const colors = Object.entries(theme.colors).reduce((acc, [key, _val]) => {
+      let val = _val;
+      // Color alias
+      if (typeof val === 'string' && val.length > 1 && val[0] === '$') {
+        val = theme.colors[val.replace('$', '')];
+      }
+
+      acc[key] = val;
+
+      return acc;
+    }, {});
+
+    processedTheme.colors = colors;
+  }
+
+  return processedTheme;
 }
 
 export function processStyles({ styles, theme, config }) {
