@@ -18,6 +18,7 @@ import {
 
 import { DEFAULT_THEME_MAP } from './constants';
 
+// eslint-disable-next-line
 const ReactNative = require('react-native');
 
 export function createCss(config) {
@@ -101,10 +102,18 @@ export function createCss(config) {
             let styleSheetKey = '';
 
             // Handle responsive prop value
+            // NOTE: only one media query will be applied since the `styleSheetKey`
+            // is being rewritten by the last matching media query and defaults to `@initial`
             if (
               typeof propValue === 'object' &&
               typeof config.media === 'object'
             ) {
+              // `@initial` acts as the default value if none of the media query values match
+              // It's basically the as setting `prop="value"`, eg. `color="primary"`
+              if (typeof propValue['@initial'] === 'string') {
+                styleSheetKey = `${prop}_${propValue['@initial']}`;
+              }
+
               Object.entries(config.media).forEach(([key, val]) => {
                 const breakpoint = `@${key}`;
 
@@ -143,7 +152,8 @@ export function createCss(config) {
       if (compoundVariants) {
         compoundVariantStyles = compoundVariants
           .map(compoundVariant => {
-            const { css, ...compounds } = compoundVariant;
+            // eslint-disable-next-line
+            const { css: _css, ...compounds } = compoundVariant;
             const compoundEntries = Object.entries(compounds);
 
             if (
