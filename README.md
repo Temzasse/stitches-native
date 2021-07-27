@@ -131,14 +131,14 @@ export default function App() {
 
 ### Responsive styles with `media`
 
-Responsive styles are not very common in React Native applications since you usually have a clearly constrained device environment where the app is used. However, some times you might need to tweak a style for very small or large phones or build an app that is needs to adapt to tablet devices. For these use cases Stitches Native has support for two kinds of responsive styles:
+Responsive styles are not very common in React Native applications since you usually have a clearly constrained device environment where the app is used. However, some times you might need to tweak a style for very small or large phones or build an app that needs to adapt to tablet devices. For these use cases Stitches Native has support for two kinds of responsive styles:
 
 1. Device types based media flags
 2. Device dimensions based media queries
 
 #### Device types based media flags
 
-Simple boolean flags in the `media` config can be used to distinguish between phone and tablet devices, eg. by utilizing [`getDeviceType()`](https://github.com/react-native-device-info/react-native-device-info#getDeviceType) or [`isTablet()`](https://github.com/react-native-device-info/react-native-device-info#istablet) from [react-native-device-info](https://github.com/react-native-device-info/react-native-device-info).
+Simple boolean flags in the `media` config can be used to distinguish between device types, eg. phone vs. tablet. You can utilize [`getDeviceType()`](https://github.com/react-native-device-info/react-native-device-info#getDeviceType) or [`isTablet()`](https://github.com/react-native-device-info/react-native-device-info#istablet) from [react-native-device-info](https://github.com/react-native-device-info/react-native-device-info) to get the device type.
 
 ```js
 const isTablet = DeviceInfo.isTablet();
@@ -171,7 +171,7 @@ const ButtonText = styled('Text', {
 
 <ButtonText color={{ '@phone': 'primary', '@tablet': 'secondary' }}>
   Hello
-</ButtonText>;
+</ButtonText>
 ```
 
 #### Device dimensions based media queries
@@ -197,4 +197,35 @@ const { theme, ThemeProvider } = createCss({
     xxl: '(width >= 1536px)',
   },
 });
+```
+
+> ⚠️ NOTE: The order of the media query keys matters and the responsive styles are applied in the order determined by `Object.entries` method.
+
+Using media queries works the same way as device type flags:
+
+```tsx
+const ButtonText = styled('Text', {
+  // base styles
+
+  variants: {
+    color: {
+      primary: {
+        color: '$primary',
+      },
+      secondary: {
+        color: '$secondary',
+      },
+    },
+  },
+});
+
+<ButtonText
+  color={{
+    '@initial': 'primary',
+    '@md': 'secondary',
+    '@lg': 'tertiary',
+  }}
+>
+  Hello
+</ButtonText>
 ```
