@@ -11,9 +11,12 @@
   },
   "dependencies": {
     "expo": "42.0.1",
+    "expo-device": "~3.3.0",
     "expo-status-bar": "1.0.4",
     "react": "16.13.1",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz"
+    "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
+    "react-native-gesture-handler": "~1.10.2",
+    "react-native-reanimated": "~2.2.0"
   },
   "devDependencies": {
     "@babel/core": "7.14.6",
