@@ -1,6 +1,6 @@
 {
-  "exclude": ["node_modules", "example"],
-  "include": ["src/index.tsx", "src/types"],
+  "exclude": ["node_modules", "example", "lib"],
+  "include": ["src/index", "src/types"],
   "compilerOptions": {
     "allowJs": true,
     "allowUnreachableCode": false,

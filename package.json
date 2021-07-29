@@ -1,58 +1,62 @@
 {
   "name": "stitches-native",
   "description": "The modern CSS-in-JS library for React Native",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "license": "MIT",
   "author": "Teemu Taskula",
   "repository": "https://github.com/Temzasse/stitches-native",
-  "main": "dist/index.js",
-  "module": "dist/stitches-native.esm.js",
-  "typings": "src/types/index.d.ts",
-  "react-native": "src/index",
-  "source": "src/index",
+  "main": "lib/commonjs/index.js",
+  "module": "lib/module/index.js",
+  "types": "src/types/index.d.ts",
+  "react-native": "src/index.ts",
+  "source": "src/index.ts",
   "files": [
-    "dist",
-    "src"
+    "src",
+    "lib",
+    "!**/tests"
   ],
   "engines": {
-    "node": ">=10"
+    "node": ">=12"
   },
   "scripts": {
-    "build": "tsdx build --entry src/internals/index.js",
-    "test": "tsdx test --passWithNoTests",
+    "build": "bob build",
+    "prepare": "yarn build",
+    "release": "np",
+    "test": "jest",
     "lint": "eslint ./src --ext .js --config .eslintrc",
     "lint:fix": "eslint ./src --ext .js --config .eslintrc --fix",
     "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
-    "format:write": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
-    "prepare": "yarn build",
-    "release": "np",
-    "size": "size-limit",
-    "analyze": "size-limit --why"
+    "format:write": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\""
   },
   "devDependencies": {
-    "@babel/preset-react": "7.14.5",
-    "@size-limit/preset-small-lib": "4.10.2",
-    "@types/react-native": "0.64.12",
+    "@babel/core": "7.14.8",
+    "@babel/runtime": "7.14.8",
+    "@testing-library/jest-native": "4.0.1",
+    "@testing-library/react-native": "7.2.0",
+    "@types/jest": "26.0.24",
     "@types/react": "17.0.14",
+    "@types/react-native": "0.64.12",
     "@typescript-eslint/eslint-plugin": "4.6.1",
     "@typescript-eslint/parser": "4.6.1",
+    "babel-jest": "27.0.6",
+    "eslint": "7.31.0",
     "eslint-config-prettier": "8.3.0",
     "eslint-config-standard": "16.0.3",
     "eslint-plugin-import": "2.23.4",
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-prettier": "3.4.0",
     "eslint-plugin-promise": "5.1.0",
-    "eslint-plugin-react-hooks": "4.2.0",
     "eslint-plugin-react": "7.24.0",
+    "eslint-plugin-react-hooks": "4.2.0",
     "eslint-plugin-standard": "5.0.0",
-    "eslint": "7.31.0",
     "husky": "6.0.0",
+    "jest": "27.0.6",
+    "metro-react-native-babel-preset": "0.66.2",
     "prettier": "2.3.2",
-    "react-native": "0.64.2",
     "react": "16.13.1",
-    "size-limit": "4.10.2",
-    "tsdx": "0.14.1",
-    "tslib": "2.2.0",
+    "react-native": "0.64.2",
+    "react-native-builder-bob": "0.18.1",
+    "react-test-renderer": "17.0.2",
     "typescript": "4.3.5"
   },
   "peerDependencies": {
@@ -64,6 +68,28 @@
       "pre-commit": "yarn lint"
     }
   },
+  "jest": {
+    "preset": "react-native",
+    "modulePathIgnorePatterns": [
+      "<rootDir>/example/node_modules",
+      "<rootDir>/lib/"
+    ],
+    "setupFilesAfterEnv": [
+      "@testing-library/jest-native/extend-expect"
+    ]
+  },
+  "react-native-builder-bob": {
+    "source": "src/internals",
+    "output": "lib",
+    "targets": [
+      "commonjs",
+      "module"
+    ]
+  },
+  "eslintIgnore": [
+    "node_modules/",
+    "lib/"
+  ],
   "prettier": {
     "printWidth": 80,
     "semi": true,
@@ -74,16 +100,6 @@
   "np": {
     "yarn": true
   },
-  "size-limit": [
-    {
-      "path": "dist/stitches-native.cjs.production.min.js",
-      "limit": "10 KB"
-    },
-    {
-      "path": "dist/stitches-native.esm.js",
-      "limit": "10 KB"
-    }
-  ],
   "keywords": [
     "android",
     "ios",
