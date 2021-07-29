@@ -17,16 +17,18 @@ import {
   resolveMediaRangeQuery,
 } from './utils';
 
-import { DEFAULT_THEME_MAP } from './constants';
+import { DEFAULT_THEME_MAP, EMPTY_THEME } from './constants';
 
 // eslint-disable-next-line
 const ReactNative = require('react-native');
 
-export function createCss(config) {
+export function createCss(config = {}) {
   const themes = [];
 
   if (config.theme) {
     themes.push({ id: 'theme-1', values: processTheme(config.theme) });
+  } else {
+    themes.push(EMPTY_THEME);
   }
 
   function theme(theme) {
@@ -219,6 +221,6 @@ export function createCss(config) {
   };
 }
 
-export const { styled, css } = createCss({});
+export const { styled, css } = createCss();
 
 export const defaultThemeMap = DEFAULT_THEME_MAP;

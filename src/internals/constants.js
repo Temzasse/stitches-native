@@ -113,3 +113,18 @@ export const DEFAULT_THEME_MAP = {
   space: SPACE_PROPERTIES,
   zIndices: Z_INDEX_PROPERTIES,
 };
+
+export const EMPTY_THEME = {
+  borderStyles: null,
+  borderWidths: null,
+  colors: null,
+  fonts: null,
+  fontSizes: null,
+  fontWeights: null,
+  letterSpacings: null,
+  lineHeights: null,
+  radii: null,
+  sizes: null,
+  space: null,
+  zIndices: null,
+};
