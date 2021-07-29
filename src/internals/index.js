@@ -190,7 +190,7 @@ export function createCss(config = {}) {
           ...compoundVariantStyles,
           cssStyles,
           props.style,
-        ],
+        ].filter(Boolean),
         ref,
       };
 
