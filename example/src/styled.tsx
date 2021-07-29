@@ -63,7 +63,7 @@ const { styled, css, theme, ThemeProvider } = createCss({
       height: value,
     }),
     // prettier-ignore
-    flexCenter: () => (value: 'row' | 'column' = 'row') => ({
+    flexCenter: () => (value: 'row' | 'column' = 'column') => ({
       flexDirection: value,
       justifyContent: 'center',
       alignItems: 'center',

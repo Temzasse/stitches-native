@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 
 import { darkTheme, ThemeProvider } from './src/styled';
 import Example from './src/Example';
+// import Simple from './src/Simple';
 
 export default function App() {
   const [darkMode, setDarkMode] = React.useState(false);
@@ -15,6 +16,7 @@ export default function App() {
           mode={darkMode ? 'dark' : 'light'}
           toggleMode={() => setDarkMode((p) => !p)}
         />
+        {/* <Simple /> */}
       </ThemeProvider>
 
       <StatusBar style="auto" />
