@@ -59,26 +59,21 @@ export function resolveMediaRangeQuery(query, windowWidth) {
 }
 
 export function processTheme(theme) {
-  const processedTheme = { ...theme };
+  const processed = { ...theme };
 
-  if (theme.colors) {
-    // Resolve theme aliases
-    const colors = Object.entries(theme.colors).reduce((acc, [key, _val]) => {
-      let val = _val;
-      // Color alias
+  Object.keys(theme).forEach((token) => {
+    Object.keys(theme[token]).forEach((key) => {
+      let val = theme[token][key];
+
       if (typeof val === 'string' && val.length > 1 && val[0] === '$') {
-        val = theme.colors[val.replace('$', '')];
+        val = theme[token][val.replace('$', '')];
       }
 
-      acc[key] = val;
+      processed[token][key] = val;
+    });
+  });
 
-      return acc;
-    }, {});
-
-    processedTheme.colors = colors;
-  }
-
-  return processedTheme;
+  return processed;
 }
 
 export function processStyles({ styles, theme, config }) {
