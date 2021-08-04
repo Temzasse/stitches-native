@@ -196,8 +196,8 @@ export function createCss(config = {}) {
 
       if (typeof component === 'string') {
         return createElement(ReactNative[component], componentProps);
-      } else if (typeof component === 'object') {
-        return cloneElement(component, componentProps);
+      } else if (typeof component === 'object' || typeof component === 'function') {
+        return createElement(component, componentProps);
       }
 
       return null;
