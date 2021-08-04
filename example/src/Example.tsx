@@ -40,8 +40,16 @@ export default function Example({
           <Box2 />
           <FunctionBox />
         </RowView>
-        <RowView>
-          <UseThemeExample />
+        <RowView
+          css={{
+            borderWidth: 1,
+            borderStyle: 'solid',
+            borderColor: '$blue500',
+          }}
+        >
+          <EqualPadding>
+            <UseThemeExample />
+          </EqualPadding>
         </RowView>
       </Wrapper>
 
@@ -66,6 +74,13 @@ const RowView = styled('View', {
   flexDirection: 'row',
   alignItems: 'center',
   marginTop: '$3',
+});
+
+const EqualPadding = styled('View', {
+  borderWidth: 1,
+  borderStyle: 'solid',
+  borderColor: '$blue100',
+  equalPaddingMargin: '$4',
 });
 
 const Box = styled('View', {});

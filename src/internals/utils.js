@@ -80,7 +80,12 @@ export function processStyles({ styles, theme, config }) {
   const { utils, themeMap = DEFAULT_THEME_MAP } = config;
 
   return Object.entries(styles).reduce((acc, [key, val]) => {
-    if (typeof val === 'string' && val.indexOf('$') !== -1) {
+    if (utils && key in utils) {
+      acc = {
+        ...acc,
+        ...processStyles({ styles: utils[key](config)(val), theme, config }),
+      };
+    } else if (typeof val === 'string' && val.indexOf('$') !== -1) {
       const token = val.replace('$', '');
 
       if (key in (themeMap.colors || {}) && theme?.colors) {
@@ -111,8 +116,6 @@ export function processStyles({ styles, theme, config }) {
       ) {
         acc[key] = theme.letterSpacings[token];
       }
-    } else if (utils && key in utils) {
-      acc = { ...acc, ...utils[key](config)(val) };
     } else {
       acc[key] = val;
     }

@@ -71,6 +71,10 @@ const { styled, css, theme, ThemeProvider, useTheme } = createCss({
     absoluteFill: () => () => ({
       ...StyleSheet.absoluteFillObject,
     }),
+    equalPaddingMargin: () => (value: string | number) => ({
+      padding: value,
+      margin: value,
+    }),
   },
   media,
   // media: {
