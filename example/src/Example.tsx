@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch } from 'react-native';
+import { Switch, View, ViewProps } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
 import { styled, css } from './styled';
@@ -43,6 +43,8 @@ export default function Example({
         </Rect>
 
         <Box2 />
+
+        <FunctionBox />
       </Wrapper>
 
       <StatusBar style="auto" />
@@ -70,6 +72,18 @@ const Box2 = styled(Box, {
   size: 100,
   borderRadius: '$lg',
 });
+
+const FunctionBox = styled(
+  ({ children, ...props }: ViewProps & { children: React.ReactNode }) => (
+    <View {...props}>{children}</View>
+  ),
+  {
+    backgroundColor: 'blue',
+    marginTop: '$2',
+    size: 100,
+    borderRadius: '$sm'
+  }
+)
 
 const Rect = styled('View', {
   backgroundColor: '$primary',
