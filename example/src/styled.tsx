@@ -70,7 +70,7 @@ const { styled, css, theme, ThemeProvider, useTheme } = createCss({
     }),
     absoluteFill: () => () => ({
       ...StyleSheet.absoluteFillObject,
-    })
+    }),
   },
   media,
   // media: {
