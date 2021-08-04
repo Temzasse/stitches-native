@@ -233,6 +233,7 @@ export interface TStyledSheet<
   utils: C;
 
   theme: (theme: Partial<{ [TO in keyof B]: Partial<B[TO]> }>) => ThemeRule;
+  useTheme: () => Partial<{ [TO in keyof B]: Partial<B[TO]> }>;
   ThemeProvider: React.FunctionComponent<{ theme?: ThemeRule }>;
 }
 
