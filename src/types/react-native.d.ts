@@ -193,5 +193,7 @@ type ReactNativeComponentProps<
 
 export type ReactNativeComponentPropsWithRef<T extends ReactNativeElementType> =
   T extends React.ComponentClass<infer P>
-    ? React.PropsWithoutRef<P> & React.RefAttributes<InstanceType<T>>
+    ? React.PropsWithChildren<
+        React.PropsWithoutRef<P> & React.RefAttributes<InstanceType<T>>
+      >
     : React.PropsWithRef<ReactNativeComponentProps<T>>;
