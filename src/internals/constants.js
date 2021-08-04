@@ -128,3 +128,6 @@ export const EMPTY_THEME = {
   space: null,
   zIndices: null,
 };
+
+export const THEME_PROVIDER_MISSING_MESSAGE =
+  'Your app should have a ThemeProvider in order to access the theme';

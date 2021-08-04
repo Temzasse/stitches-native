@@ -1,7 +1,6 @@
 import { PixelRatio, useWindowDimensions } from 'react-native';
 
 import React, {
-  cloneElement,
   createContext,
   createElement,
   forwardRef,
@@ -17,7 +16,11 @@ import {
   resolveMediaRangeQuery,
 } from './utils';
 
-import { DEFAULT_THEME_MAP, EMPTY_THEME } from './constants';
+import {
+  DEFAULT_THEME_MAP,
+  EMPTY_THEME,
+  THEME_PROVIDER_MISSING_MESSAGE,
+} from './constants';
 
 // eslint-disable-next-line
 const ReactNative = require('react-native');
@@ -55,8 +58,16 @@ export function createCss(config = {}) {
     );
   }
 
+  function useThemeInternal() {
+    const t = useContext(ThemeContext);
+    if (!t) throw new Error(THEME_PROVIDER_MISSING_MESSAGE);
+    return t;
+  }
+
   function useTheme() {
-    return useContext(ThemeContext);
+    const t = useContext(ThemeContext);
+    if (!t) throw new Error(THEME_PROVIDER_MISSING_MESSAGE);
+    return t.values;
   }
 
   function styled(component, styledConfig) {
@@ -97,7 +108,7 @@ export function createCss(config = {}) {
     });
 
     const Comp = forwardRef((props, ref) => {
-      const theme = useTheme();
+      const theme = useThemeInternal();
       const styleSheet = styleSheets[theme.id];
       const { width: windowWidth } = useWindowDimensions();
 
@@ -196,7 +207,10 @@ export function createCss(config = {}) {
 
       if (typeof component === 'string') {
         return createElement(ReactNative[component], componentProps);
-      } else if (typeof component === 'object' || typeof component === 'function') {
+      } else if (
+        typeof component === 'object' ||
+        typeof component === 'function'
+      ) {
         return createElement(component, componentProps);
       }
 
@@ -214,6 +228,7 @@ export function createCss(config = {}) {
     styled,
     css,
     theme,
+    useTheme,
     ThemeProvider,
     config,
     media: config.media,
