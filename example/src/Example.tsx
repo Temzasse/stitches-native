@@ -201,5 +201,5 @@ const ButtonText = styled('Text', {
 
 const UseThemeExample = () => {
   const theme = useTheme();
-  return <ActivityIndicator size="small" color={theme.colors?.blue100} />;
+  return <ActivityIndicator size="small" color={theme.colors.blue100} />;
 };
