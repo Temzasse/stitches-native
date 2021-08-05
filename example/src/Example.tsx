@@ -15,36 +15,42 @@ export default function Example({
     <>
       <Wrapper>
         <Switch value={mode === 'dark'} onValueChange={toggleMode} />
+        <RowView>
+          <Button variant="primary">
+            <ButtonText color="white">Hello</ButtonText>
+          </Button>
 
-        <Button variant="primary">
-          <ButtonText color="white">Hello</ButtonText>
-        </Button>
+          <Button variant="secondary">
+            <ButtonText>Hello</ButtonText>
+          </Button>
 
-        <Button variant="secondary" style={{ marginTop: 16 }}>
-          <ButtonText>Hello</ButtonText>
-        </Button>
-
-        <Button
-          variant="secondary"
-          size="small"
-          outlined
-          style={{ marginTop: 16 }}
+          <Button variant="secondary" size="small" outlined>
+            <ButtonText
+              variant={{ '@phone': 'body', '@tablet': 'title' }}
+              color={{ '@sm': 'primary', '@xl': 'secondary' }}
+            >
+              Hello
+            </ButtonText>
+          </Button>
+        </RowView>
+        <RowView>
+          <Rect>
+            <Box css={{ backgroundColor: '$secondary', size: 40 }} />
+          </Rect>
+          <Box2 />
+          <FunctionBox />
+        </RowView>
+        <RowView
+          css={{
+            borderWidth: 1,
+            borderStyle: 'solid',
+            borderColor: '$blue500',
+          }}
         >
-          <ButtonText
-            variant={{ '@phone': 'body', '@tablet': 'title' }}
-            color={{ '@sm': 'primary', '@xl': 'secondary' }}
-          >
-            Hello
-          </ButtonText>
-        </Button>
-
-        <Rect>
-          <Box css={{ backgroundColor: '$secondary', size: 40 }} />
-        </Rect>
-
-        <Box2 />
-
-        <FunctionBox />
+          <EqualPadding>
+            <View style={{ width: 20, height: 20, backgroundColor: 'red' }} />
+          </EqualPadding>
+        </RowView>
       </Wrapper>
 
       <StatusBar style="auto" />
@@ -64,6 +70,19 @@ const Wrapper = styled('View', {
   ...someStyles,
 });
 
+const RowView = styled('View', {
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginTop: '$3',
+});
+
+const EqualPadding = styled('View', {
+  borderWidth: 1,
+  borderStyle: 'solid',
+  borderColor: '$blue100',
+  equalPaddingMargin: '$4',
+});
+
 const Box = styled('View', {});
 
 const Box2 = styled(Box, {
@@ -81,9 +100,9 @@ const FunctionBox = styled(
     backgroundColor: 'blue',
     marginTop: '$2',
     size: 100,
-    borderRadius: '$sm'
+    borderRadius: '$sm',
   }
-)
+);
 
 const Rect = styled('View', {
   backgroundColor: '$primary',
