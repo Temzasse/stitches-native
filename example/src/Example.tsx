@@ -1,8 +1,8 @@
 import React from 'react';
-import { ActivityIndicator, Switch, View, ViewProps } from 'react-native';
+import { Switch, View, ViewProps } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
-import { styled, css, useTheme } from './styled';
+import { styled, css } from './styled';
 
 export default function Example({
   mode,
@@ -48,7 +48,7 @@ export default function Example({
           }}
         >
           <EqualPadding>
-            <UseThemeExample />
+            <View style={{ width: 20, height: 20, backgroundColor: 'red' }} />
           </EqualPadding>
         </RowView>
       </Wrapper>
@@ -198,8 +198,3 @@ const ButtonText = styled('Text', {
     variant: 'body',
   },
 });
-
-const UseThemeExample = () => {
-  const theme = useTheme();
-  return <ActivityIndicator size="small" color={theme.colors.blue100} />;
-};
