@@ -48,7 +48,13 @@ export default function Example({
           }}
         >
           <EqualPadding>
-            <Box css={{ width: '$space$4', height: '$space$4', backgroundColor: '$blue900' }} />
+            <Box
+              css={{
+                width: '$space$4',
+                height: '$space$4',
+                backgroundColor: '$blue900',
+              }}
+            />
           </EqualPadding>
         </RowView>
       </Wrapper>
