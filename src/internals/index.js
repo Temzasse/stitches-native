@@ -192,7 +192,6 @@ export function createCss(config = {}) {
             config,
           })
         : {};
-
       const componentProps = {
         ...props,
         style: [
