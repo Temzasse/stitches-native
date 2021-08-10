@@ -233,6 +233,7 @@ export interface TStyledSheet<
   utils: C;
 
   theme: (theme: Partial<{ [TO in keyof B]: Partial<B[TO]> }>) => ThemeRule;
+  useTheme: () => B; // TODO: figure out a way to get correct types for token aliases
   ThemeProvider: React.FunctionComponent<{ theme?: ThemeRule }>;
 }
 

@@ -17,7 +17,7 @@ getDeviceTypeAsync().then((deviceType) => {
   media.tablet = deviceType === DeviceType.TABLET;
 });
 
-const { styled, css, theme, ThemeProvider } = createCss({
+const { styled, css, theme, useTheme, ThemeProvider } = createCss({
   theme: {
     colors: {
       // Palette
@@ -108,4 +108,4 @@ const darkTheme = theme({
   },
 });
 
-export { styled, css, theme, darkTheme, ThemeProvider };
+export { styled, css, theme, darkTheme, useTheme, ThemeProvider };
