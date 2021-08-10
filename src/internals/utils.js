@@ -86,9 +86,12 @@ export function processStyles({ styles, theme, config }) {
         ...processStyles({ styles: utils[key](config)(val), theme, config }),
       };
     } else if (typeof val === 'string' && val.indexOf('$') !== -1) {
-      const token = val.replace('$', '');
-
-      if (key in (themeMap.colors || {}) && theme?.colors) {
+      const arr = val.split('$');
+      const token = arr.pop();
+      const scaleName = arr.pop();
+      if (scaleName && theme[scaleName]) {
+        acc[key] = theme[scaleName][token];
+      } else if (key in (themeMap.colors || {}) && theme?.colors) {
         acc[key] = theme.colors[token];
       } else if (key in (themeMap.radii || {}) && theme?.radii) {
         acc[key] = theme.radii[token];
