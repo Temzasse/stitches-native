@@ -23,8 +23,11 @@
     "prepare": "yarn build",
     "release": "np",
     "test": "jest",
-    "lint": "eslint ./src --ext .js --config .eslintrc",
-    "lint:fix": "eslint ./src --ext .js --config .eslintrc --fix",
+    "lint": "yarn lint:lib & yarn lint:example",
+    "lint:lib": "eslint ./src --ext .js --config .eslintrc",
+    "lint:lib:fix": "eslint ./src --ext .js --config .eslintrc --fix",
+    "lint:example": "eslint ./example --ext .ts,.tsx --config .eslintrc",
+    "lint:example:fix": "eslint ./example --ext .ts,.tsx --config .eslintrc --fix",
     "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
     "format:write": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\""
   },
