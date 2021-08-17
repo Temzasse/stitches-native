@@ -21,7 +21,7 @@
   "scripts": {
     "build": "bob build",
     "prepare": "yarn build",
-    "release": "np",
+    "release": "np --any-branch",
     "test": "jest",
     "lint": "yarn lint:lib & yarn lint:example",
     "lint:lib": "eslint ./src --ext .js --config .eslintrc",
