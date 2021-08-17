@@ -89,6 +89,7 @@ export function processStyles({ styles, theme, config }) {
       const arr = val.split('$');
       const token = arr.pop();
       const scaleName = arr.pop();
+
       if (scaleName && theme[scaleName]) {
         acc[key] = theme[scaleName][token];
       } else if (key in (themeMap.colors || {}) && theme?.colors) {

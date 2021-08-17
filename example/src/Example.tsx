@@ -15,6 +15,7 @@ export default function Example({
     <>
       <Wrapper>
         <Switch value={mode === 'dark'} onValueChange={toggleMode} />
+
         <RowView>
           <Button variant="primary">
             <ButtonText color="white">Hello</ButtonText>
@@ -33,6 +34,7 @@ export default function Example({
             </ButtonText>
           </Button>
         </RowView>
+
         <RowView>
           <Rect>
             <Box css={{ backgroundColor: '$secondary', size: 40 }} />
@@ -40,6 +42,7 @@ export default function Example({
           <Box2 />
           <FunctionBox />
         </RowView>
+
         <RowView
           css={{
             borderWidth: 1,
@@ -124,6 +127,7 @@ const Button = styled('TouchableOpacity', {
   borderRadius: 999,
   minWidth: 100,
   backgroundColor: '$primary',
+  shadow: 'large',
 
   variants: {
     variant: {

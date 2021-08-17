@@ -1,5 +1,5 @@
 import { getDeviceTypeAsync, DeviceType } from 'expo-device';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import { createCss } from 'stitches-native';
 
 const media = {
@@ -62,6 +62,37 @@ const { styled, css, theme, useTheme, ThemeProvider } = createCss({
       width: value,
       height: value,
     }),
+    shadow: () => (level: 'small' | 'medium' | 'large') => {
+      return {
+        small:
+          Platform.OS === 'android'
+            ? { elevation: 2 }
+            : {
+                shadowOffset: { width: 0, height: 1 },
+                shadowRadius: 3,
+                shadowOpacity: 0.1,
+                shadowColor: '#000',
+              },
+        medium:
+          Platform.OS === 'android'
+            ? { elevation: 5 }
+            : {
+                shadowOffset: { width: 0, height: 3 },
+                shadowRadius: 6,
+                shadowOpacity: 0.2,
+                shadowColor: '#000',
+              },
+        large:
+          Platform.OS === 'android'
+            ? { elevation: 10 }
+            : {
+                shadowOffset: { width: 0, height: 6 },
+                shadowRadius: 12,
+                shadowOpacity: 0.4,
+                shadowColor: '#000',
+              },
+      }[level];
+    },
     // prettier-ignore
     flexCenter: () => (value: 'row' | 'column' = 'column') => ({
       flexDirection: value,
