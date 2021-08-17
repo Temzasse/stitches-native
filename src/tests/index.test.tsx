@@ -1,10 +1,10 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
-import { createCss } from '../index';
+import { createStitches } from '../index';
 
 describe('Basic', () => {
   it('Functionality of styled()', () => {
-    const { styled } = createCss();
+    const { styled } = createStitches();
 
     const Comp = styled('View', {
       backgroundColor: 'red',

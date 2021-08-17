@@ -25,7 +25,7 @@ import {
 // eslint-disable-next-line
 const ReactNative = require('react-native');
 
-export function createCss(config = {}) {
+export function createStitches(config = {}) {
   const themes = [];
 
   if (config.theme) {
@@ -34,7 +34,7 @@ export function createCss(config = {}) {
     themes.push(EMPTY_THEME);
   }
 
-  function theme(theme) {
+  function createTheme(theme) {
     const t = {
       id: `theme-${themes.length + 1}`,
       values: processTheme(
@@ -227,7 +227,7 @@ export function createCss(config = {}) {
   return {
     styled,
     css,
-    theme,
+    createTheme,
     useTheme,
     ThemeProvider,
     config,
@@ -236,6 +236,8 @@ export function createCss(config = {}) {
   };
 }
 
-export const { styled, css } = createCss();
+export const { styled, css } = createStitches();
 
 export const defaultThemeMap = DEFAULT_THEME_MAP;
+
+export default createStitches;

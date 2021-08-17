@@ -1,6 +1,6 @@
 import { getDeviceTypeAsync, DeviceType } from 'expo-device';
 import { StyleSheet, Platform } from 'react-native';
-import { createCss } from 'stitches-native';
+import { createStitches } from 'stitches-native';
 
 const media = {
   phone: true,
@@ -17,7 +17,7 @@ getDeviceTypeAsync().then((deviceType) => {
   media.tablet = deviceType === DeviceType.TABLET;
 });
 
-const { styled, css, theme, useTheme, ThemeProvider } = createCss({
+const { styled, css, createTheme, useTheme, ThemeProvider } = createStitches({
   theme: {
     colors: {
       // Palette
@@ -58,11 +58,11 @@ const { styled, css, theme, useTheme, ThemeProvider } = createCss({
     },
   },
   utils: {
-    size: () => (value: number) => ({
+    size: (value: number) => ({
       width: value,
       height: value,
     }),
-    shadow: () => (level: 'small' | 'medium' | 'large') => {
+    shadow: (level: 'small' | 'medium' | 'large') => {
       return {
         small:
           Platform.OS === 'android'
@@ -93,16 +93,15 @@ const { styled, css, theme, useTheme, ThemeProvider } = createCss({
               },
       }[level];
     },
-    // prettier-ignore
-    flexCenter: () => (value: 'row' | 'column' = 'column') => ({
+    flexCenter: (value: 'row' | 'column' = 'column') => ({
       flexDirection: value,
       justifyContent: 'center',
       alignItems: 'center',
     }),
-    absoluteFill: () => () => ({
+    absoluteFill: () => ({
       ...StyleSheet.absoluteFillObject,
     }),
-    equalPaddingMargin: () => (value: string | number) => ({
+    equalPaddingMargin: (value: string | number) => ({
       padding: value,
       margin: value,
     }),
@@ -132,11 +131,11 @@ const { styled, css, theme, useTheme, ThemeProvider } = createCss({
   // },
 });
 
-const darkTheme = theme({
+const darkTheme = createTheme({
   colors: {
     background: '$black',
     text: '$white',
   },
 });
 
-export { styled, css, theme, darkTheme, useTheme, ThemeProvider };
+export { styled, css, createTheme, darkTheme, useTheme, ThemeProvider };

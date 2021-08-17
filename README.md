@@ -31,6 +31,8 @@ yarn add stitches-native
 
 For the most part Stitches Native behaves exactly as Stitches so you should follow the [Stitches documentation](https://stitches.dev/) to learn the basic principles and how to setup everything.
 
+> ⚠️ NOTE: The API of Stitches Native is implemented based on the upcoming [v1 release](https://github.com/modulz/stitches-site/blob/v1/data/blog/migrating-from-beta-to-v1.mdx) of Stitches.
+
 ## Differences
 
 Due to the inherit differences between the Web and native platforms (iOS + Android) the implementation of Stitches Native differs slightly from the original Web version of Stitches.
@@ -44,26 +46,26 @@ Below you can see a list of all supported and unsupported features of Stitches N
 | Feature               | Supported                               |
 | --------------------- | --------------------------------------- |
 | `styled`              | ✅                                      |
-| `createCss`           | ✅                                      |
+| `createStitches`      | ✅                                      |
 | `defaultThemeMap`     | ✅                                      |
 | `css`                 | ✅ _(Simplified version)_               |
-| `theme`               | ✅ _(Based on React Context)_           |
-| `global`              | ❌ _(No global styles in RN)_           |
+| `createTheme`         | ✅ _(Based on React Context)_           |
+| `globalCss`           | ❌ _(No global styles in RN)_           |
 | `keyframes`           | ❌ _(No CSS keyframes in RN)_           |
-| `getCssString`        | ❌ _(SSR not applicable to RN)_         |
+| `getCssText`          | ❌ _(SSR not applicable to RN)_         |
 | Nesting               | ❌ _(No CSS cascade in RN)_             |
 | Selectors             | ❌ _(No CSS selectors in RN)_           |
 | Locally scoped tokens | ❌ _(No CSS variables in RN)_           |
 | Pseudo elements       | ❌ _(No pseudo elements/classes in RN)_ |
 
-### Using `createCss` function
+### Using `createStitches` function
 
-The `createCss` function doesn't need `prefix` or `insertionMethod` since they are not used in the native implementation.
+The `createStitches` function doesn't need `prefix` or `insertionMethod` since they are not used in the native implementation.
 
 ```js
-import { createCss } from 'stitches-native';
+import { createStitches } from 'stitches-native';
 
-createCss({
+createStitches({
   theme: object,
   media: object,
   utils: object,
@@ -71,12 +73,12 @@ createCss({
 });
 ```
 
-The return value of `createCss` doesn't include `global`, `keyframes`, or `getCssString` since they are not available in native platforms. React Native doesn't have any CSS keyframes based animations and all animations should be handled by the [Animated API](https://reactnative.dev/docs/animated) or with libraries such as [react-native-reanimated](https://github.com/software-mansion/react-native-reanimated).
+The return value of `createStitches` doesn't include `globalCss`, `keyframes`, or `getCssText` since they are not available in native platforms. React Native doesn't have any CSS keyframes based animations and all animations should be handled by the [Animated API](https://reactnative.dev/docs/animated) or with libraries such as [react-native-reanimated](https://github.com/software-mansion/react-native-reanimated).
 
-The return value of `createCss` consist of the following:
+The return value of `createStitches` consist of the following:
 
 ```js
-const { styled, css, theme, config } = createCss({
+const { styled, css, createTheme, config } = createStitches({
   /*...*/
 });
 ```
@@ -98,19 +100,19 @@ const SomeComp = styled('View', {
 <AnotherComp css={styles} />;
 ```
 
-### Theming with `theme`
+### Theming with `createTheme`
 
 Stitches Native handles theming differently than Stitches. Since there are no CSS Variables in React Native theming is handled via React Context in a similar way as other CSS-in-JS libraries such as [styled-components](https://styled-components.com/docs/advanced#theming) handle theming.
 
 ```tsx
-const { theme, ThemeProvider } = createCss({
+const { createTheme, ThemeProvider } = createStitches({
   colors: {
     background: '#fff',
     text: '#000',
   },
 });
 
-const darkTheme = theme({
+const darkTheme = createTheme({
   colors: {
     background: '#000',
     text: '#fff',
@@ -143,7 +145,7 @@ Simple boolean flags in the `media` config can be used to distinguish between de
 ```js
 const isTablet = DeviceInfo.isTablet();
 
-const { theme, ThemeProvider } = createCss({
+const { ... } = createStitches({
   media: {
     phone: !isTablet,
     tablet: isTablet,
@@ -171,7 +173,7 @@ const ButtonText = styled('Text', {
 
 <ButtonText color={{ '@phone': 'primary', '@tablet': 'secondary' }}>
   Hello
-</ButtonText>
+</ButtonText>;
 ```
 
 #### Device dimensions based media queries
@@ -189,7 +191,7 @@ Examples of supported range queries:
 > ⚠️ NOTE: Only width based media queries are currently supported.
 
 ```js
-const { theme, ThemeProvider } = createCss({
+const { ... } = createStitches({
   media: {
     md: '(width >= 750px)',
     lg: '(width >= 1080px)',
@@ -227,5 +229,5 @@ const ButtonText = styled('Text', {
   }}
 >
   Hello
-</ButtonText>
+</ButtonText>;
 ```

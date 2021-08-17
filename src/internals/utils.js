@@ -83,7 +83,7 @@ export function processStyles({ styles, theme, config }) {
     if (utils && key in utils) {
       acc = {
         ...acc,
-        ...processStyles({ styles: utils[key](config)(val), theme, config }),
+        ...processStyles({ styles: utils[key](val), theme, config }),
       };
     } else if (typeof val === 'string' && val.indexOf('$') !== -1) {
       const arr = val.split('$');

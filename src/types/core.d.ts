@@ -112,7 +112,6 @@ export interface EmptyTheme {
   borderWidths?: {};
   borderStyles?: {};
   radii?: {};
-  shadows?: {};
   zIndices?: {};
 }
 
@@ -136,10 +135,20 @@ export interface IConfig<
   Utils = {},
   ThemeMap = {}
 > {
-  media?: { [k in keyof Medias]?: Medias[k] };
-  theme?: { [k in keyof Theme]: k extends keyof EmptyTheme ? Theme[k] : never } & { [k in keyof EmptyTheme]?: k extends keyof Theme ? Theme[k] : never };
-  themeMap?: { [k in keyof ThemeMap]?: ThemeMap[k] };
-  utils?: { [k in keyof Utils]: (config: UtilConfig<Medias, Theme, ThemeMap>) => (value: Utils[k]) => InternalCSS<Medias, Theme, Utils, ThemeMap> };
+  media?: {
+    [k in keyof Medias]?: Medias[k]
+  };
+  theme?: {
+    [k in keyof Theme]: k extends keyof EmptyTheme ? Theme[k] : never
+  } & {
+    [k in keyof EmptyTheme]?: k extends keyof Theme ? Theme[k] : never
+  };
+  themeMap?: {
+    [k in keyof ThemeMap]?: ThemeMap[k]
+  };
+  utils?: {
+    [k in keyof Utils]: (value: Utils[k]) => InternalCSS<Medias, Theme, Utils, ThemeMap>
+  };
 }
 
 interface UtilConfig<Medias, Theme, ThemeMap> {
@@ -158,7 +167,9 @@ export interface InternalConfig<
   media: Medias;
   theme: Theme;
   themeMap: ThemeMap;
-  utils: { [k in keyof Utils]: (config: UtilConfig<Medias, Theme, ThemeMap>) => (value: Utils[k]) => InternalCSS<Medias, Theme, Utils, ThemeMap> };
+  utils: {
+    [k in keyof Utils]: (value: Utils[k]) => InternalCSS<Medias, Theme, Utils, ThemeMap>
+  };
 }
 
 // prettier-ignore
@@ -232,7 +243,7 @@ export interface TStyledSheet<
   media: A;
   utils: C;
 
-  theme: (theme: Partial<{ [TO in keyof B]: Partial<B[TO]> }>) => ThemeRule;
+  createTheme: (theme: Partial<{ [TO in keyof B]: Partial<B[TO]> }>) => ThemeRule;
   useTheme: () => B; // TODO: figure out a way to get correct types for token aliases
   ThemeProvider: React.FunctionComponent<{ theme?: ThemeRule }>;
 }
