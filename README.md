@@ -15,7 +15,7 @@
 
 ## Installation
 
-> ⚠️ NOTE: This library is still under development and not yet published on npm.
+> ⚠️ NOTE: This library is still under development and there only exists a canary release on npm.
 
 ```sh
 npm install stitches-native
@@ -31,8 +31,6 @@ yarn add stitches-native
 
 For the most part Stitches Native behaves exactly as Stitches so you should follow the [Stitches documentation](https://stitches.dev/) to learn the basic principles and how to setup everything.
 
-> ⚠️ NOTE: The API of Stitches Native is implemented based on the upcoming [v1 release](https://github.com/modulz/stitches-site/blob/v1/data/blog/migrating-from-beta-to-v1.mdx) of Stitches.
-
 ## Differences
 
 Due to the inherit differences between the Web and native platforms (iOS + Android) the implementation of Stitches Native differs slightly from the original Web version of Stitches.
@@ -43,20 +41,21 @@ Below you can see a list of all supported and unsupported features of Stitches N
 
 ### Feature comparison
 
-| Feature               | Supported                               |
-| --------------------- | --------------------------------------- |
-| `styled`              | ✅                                      |
-| `createStitches`      | ✅                                      |
-| `defaultThemeMap`     | ✅                                      |
-| `css`                 | ✅ _(Simplified version)_               |
-| `createTheme`         | ✅ _(Based on React Context)_           |
-| `globalCss`           | ❌ _(No global styles in RN)_           |
-| `keyframes`           | ❌ _(No CSS keyframes in RN)_           |
-| `getCssText`          | ❌ _(SSR not applicable to RN)_         |
-| Nesting               | ❌ _(No CSS cascade in RN)_             |
-| Selectors             | ❌ _(No CSS selectors in RN)_           |
-| Locally scoped tokens | ❌ _(No CSS variables in RN)_           |
-| Pseudo elements       | ❌ _(No pseudo elements/classes in RN)_ |
+| Feature               | Supported                                |
+| --------------------- | ---------------------------------------- |
+| `styled`              | ✅                                       |
+| `createStitches`      | ✅                                       |
+| `defaultThemeMap`     | ✅                                       |
+| `css`                 | ✅ _(Simplified version)_                |
+| `theme`               | ✅                                       |
+| `createTheme`         | ✅ _(Only returned by `createStitches`)_ |
+| `globalCss`           | ❌ _(No global styles in RN)_            |
+| `keyframes`           | ❌ _(No CSS keyframes in RN)_            |
+| `getCssText`          | ❌ _(SSR not applicable to RN)_          |
+| Nesting               | ❌ _(No CSS cascade in RN)_              |
+| Selectors             | ❌ _(No CSS selectors in RN)_            |
+| Locally scoped tokens | ❌ _(No CSS variables in RN)_            |
+| Pseudo elements       | ❌ _(No pseudo elements/classes in RN)_  |
 
 ### Using `createStitches` function
 
@@ -78,9 +77,10 @@ The return value of `createStitches` doesn't include `globalCss`, `keyframes`, o
 The return value of `createStitches` consist of the following:
 
 ```js
-const { styled, css, createTheme, config } = createStitches({
-  /*...*/
-});
+const { styled, css, theme, createTheme, useTheme, ThemeProvider, config } =
+  createStitches({
+    /*...*/
+  });
 ```
 
 ### Using `css` helper
