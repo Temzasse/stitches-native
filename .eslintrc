@@ -36,7 +36,6 @@
     "semi": ["error", "always"],
     "prefer-const": "error",
     "prefer-arrow-callback": "error",
-    "@typescript-eslint/array-type": ["error", { "default": "array-simple" }],
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/explicit-member-accessibility": "off",
@@ -44,6 +43,7 @@
     "@typescript-eslint/no-use-before-define": "off",
     "@typescript-eslint/prefer-interface": "off",
     "@typescript-eslint/ban-types": "off",
+    "@typescript-eslint/array-type": "off",
     "eslint-comments/no-unlimited-disable": "off",
     "import/order": [
       "error",
