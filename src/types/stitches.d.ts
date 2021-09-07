@@ -29,7 +29,7 @@ export default interface Stitches<
   };
   createTheme: {
     <
-      Argument0 extends {
+      Arg extends {
         [Scale in keyof Theme]?: {
           [Token in keyof Theme[Scale]]?: boolean | number | string;
         };
@@ -40,8 +40,8 @@ export default interface Stitches<
           };
         }
     >(
-      arg0: Argument0
-    ): string & ThemeTokens<Argument0>;
+      arg: Arg
+    ): string & ThemeTokens<Arg>;
   };
   theme: string &
     {
@@ -63,18 +63,7 @@ export default interface Stitches<
         >;
       };
     };
-  ThemeProvider: React.FunctionComponent<{
-    theme?: string &
-      {
-        [Scale in keyof Theme]: {
-          [Token in keyof Theme[Scale]]: ThemeUtil.Token<
-            Extract<Token, string | number>,
-            string,
-            Extract<Scale, string | void>
-          >;
-        };
-      };
-  }>;
+  ThemeProvider: React.FunctionComponent<{ theme?: any }>; // TODO: fix `any`
   css: {
     <
       Composers extends (
