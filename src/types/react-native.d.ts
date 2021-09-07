@@ -176,18 +176,18 @@ export type ReactNativeElements = {
   VirtualizedList: VirtualizedListProps<any>;
 };
 
-export type ReactNativeElementsKey = keyof ReactNativeElements;
+export type ReactNativeElementsKeys = keyof ReactNativeElements;
 
 // prettier-ignore
 export type ReactNativeElementType<P = any> =
-  | { [K in ReactNativeElementsKey]: P extends ReactNativeElements[K] ? K : never }[ReactNativeElementsKey]
+  | { [K in ReactNativeElementsKeys]: P extends ReactNativeElements[K] ? K : never }[ReactNativeElementsKeys]
   | React.ComponentType<P>;
 
 type ReactNativeComponentProps<
-  T extends ReactNativeElementsKey | React.JSXElementConstructor<any>
+  T extends ReactNativeElementsKeys | React.JSXElementConstructor<any>
 > = T extends React.JSXElementConstructor<infer P>
   ? P
-  : T extends ReactNativeElementsKey
+  : T extends ReactNativeElementsKeys
   ? ReactNativeElements[T]
   : {};
 

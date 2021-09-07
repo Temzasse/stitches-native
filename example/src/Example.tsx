@@ -2,7 +2,7 @@ import React from 'react';
 import { Switch, View, ViewProps } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
-import { styled, css } from './styled';
+import { styled, css, useTheme, theme } from './styled';
 
 export default function Example({
   mode,
@@ -11,6 +11,9 @@ export default function Example({
   mode: 'dark' | 'light';
   toggleMode: () => void;
 }) {
+  const t = useTheme();
+  console.log('> theme | useTheme', t);
+
   return (
     <>
       <Wrapper>
@@ -88,7 +91,7 @@ const RowView = styled('View', {
 const EqualPadding = styled('View', {
   borderWidth: 1,
   borderStyle: 'solid',
-  borderColor: '$blue100',
+  borderColor: theme.colors.blue500,
   equalPaddingMargin: '$4',
 });
 
@@ -102,7 +105,7 @@ const Box2 = styled(Box, {
 });
 
 const FunctionBox = styled(
-  ({ children, ...props }: ViewProps & { children: React.ReactNode }) => (
+  ({ children, ...props }: ViewProps & { children?: React.ReactNode }) => (
     <View {...props}>{children}</View>
   ),
   {

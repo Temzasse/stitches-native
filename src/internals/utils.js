@@ -59,17 +59,24 @@ export function resolveMediaRangeQuery(query, windowWidth) {
 }
 
 export function processTheme(theme) {
-  const processed = { ...theme };
+  const processed = {};
 
-  Object.keys(theme).forEach((token) => {
-    Object.keys(theme[token]).forEach((key) => {
-      let val = theme[token][key];
+  Object.keys(theme).forEach((scale) => {
+    if (!processed[scale]) processed[scale] = {};
 
-      if (typeof val === 'string' && val.length > 1 && val[0] === '$') {
-        val = theme[token][val.replace('$', '')];
+    Object.keys(theme[scale]).forEach((token) => {
+      let value = theme[scale][token];
+
+      if (typeof value === 'string' && value.length > 1 && value[0] === '$') {
+        value = theme[scale][value.replace('$', '')];
       }
 
-      processed[token][key] = val;
+      processed[scale][token] = {
+        token,
+        scale,
+        value,
+        toString: () => `$${token}`,
+      };
     });
   });
 
@@ -86,40 +93,44 @@ export function processStyles({ styles, theme, config }) {
         ...processStyles({ styles: utils[key](val), theme, config }),
       };
     } else if (typeof val === 'string' && val.indexOf('$') !== -1) {
+      // Handle theme tokens, eg. `color: "$primary"` or `color: "$colors$primary"`
       const arr = val.split('$');
       const token = arr.pop();
-      const scaleName = arr.pop();
+      const scale = arr.pop();
 
-      if (scaleName && theme[scaleName]) {
-        acc[key] = theme[scaleName][token];
+      if (scale && theme[scale]) {
+        acc[key] = theme[scale][token].value;
       } else if (key in (themeMap.colors || {}) && theme?.colors) {
-        acc[key] = theme.colors[token];
+        acc[key] = theme.colors[token].value;
       } else if (key in (themeMap.radii || {}) && theme?.radii) {
-        acc[key] = theme.radii[token];
+        acc[key] = theme.radii[token].value;
       } else if (key in (themeMap.sizes || {}) && theme?.sizes) {
-        acc[key] = theme.sizes[token];
+        acc[key] = theme.sizes[token].value;
       } else if (key in (themeMap.space || {}) && theme?.space) {
-        acc[key] = theme.space[token];
+        acc[key] = theme.space[token].value;
       } else if (key in (themeMap.borderStyles || {}) && theme?.borderStyles) {
-        acc[key] = theme.borderStyles[token];
+        acc[key] = theme.borderStyles[token].value;
       } else if (key in (themeMap.borderWidths || {}) && theme?.borderWidths) {
-        acc[key] = theme.borderWidths[token];
+        acc[key] = theme.borderWidths[token].value;
       } else if (key in (themeMap.fonts || {}) && theme?.fonts) {
-        acc[key] = theme.fonts[token];
+        acc[key] = theme.fonts[token].value;
       } else if (key in (themeMap.fontSizes || {}) && theme?.fontSizes) {
-        acc[key] = theme.fontSizes[token];
+        acc[key] = theme.fontSizes[token].value;
       } else if (key in (themeMap.fontWeights || {}) && theme?.fontWeights) {
-        acc[key] = theme.fontWeights[token];
+        acc[key] = theme.fontWeights[token].value;
       } else if (key in (themeMap.lineHeights || {}) && theme?.lineHeights) {
-        acc[key] = theme.lineHeights[token];
+        acc[key] = theme.lineHeights[token].value;
       } else if (key in (themeMap.zIndices || {}) && theme?.zIndices) {
-        acc[key] = theme.zIndices[token];
+        acc[key] = theme.zIndices[token].value;
       } else if (
         key in (themeMap.letterSpacings || {}) &&
         theme?.letterSpacings
       ) {
-        acc[key] = theme.letterSpacings[token];
+        acc[key] = theme.letterSpacings[token].value;
       }
+    } else if (typeof val === 'object' && val.value !== undefined) {
+      // Handle cases where the value comes from the `theme` returned by `createStitches`
+      acc[key] = val.value;
     } else {
       acc[key] = val;
     }

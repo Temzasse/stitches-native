@@ -8,19 +8,8 @@ import React, {
   useContext,
 } from 'react';
 
-import {
-  createStyleSheets,
-  getCompoundKey,
-  processTheme,
-  processStyles,
-  resolveMediaRangeQuery,
-} from './utils';
-
-import {
-  DEFAULT_THEME_MAP,
-  EMPTY_THEME,
-  THEME_PROVIDER_MISSING_MESSAGE,
-} from './constants';
+import * as utils from './utils';
+import * as constants from './constants';
 
 // eslint-disable-next-line
 const ReactNative = require('react-native');
@@ -29,15 +18,17 @@ export function createStitches(config = {}) {
   const themes = [];
 
   if (config.theme) {
-    themes.push({ id: 'theme-1', values: processTheme(config.theme) });
+    const processedTheme = utils.processTheme(config.theme);
+
+    themes.push({ id: 'theme-1', values: processedTheme });
   } else {
-    themes.push(EMPTY_THEME);
+    themes.push(constants.EMPTY_THEME);
   }
 
   function createTheme(theme) {
     const t = {
       id: `theme-${themes.length + 1}`,
-      values: processTheme(
+      values: utils.processTheme(
         Object.entries(config.theme || {}).reduce((acc, [key, val]) => {
           acc[key] = { ...val, ...theme[key] };
           return acc;
@@ -60,13 +51,13 @@ export function createStitches(config = {}) {
 
   function useThemeInternal() {
     const t = useContext(ThemeContext);
-    if (!t) throw new Error(THEME_PROVIDER_MISSING_MESSAGE);
+    if (!t) throw new Error(constants.THEME_PROVIDER_MISSING_MESSAGE);
     return t;
   }
 
   function useTheme() {
     const t = useContext(ThemeContext);
-    if (!t) throw new Error(THEME_PROVIDER_MISSING_MESSAGE);
+    if (!t) throw new Error(constants.THEME_PROVIDER_MISSING_MESSAGE);
     return t.values;
   }
 
@@ -99,7 +90,7 @@ export function createStitches(config = {}) {
       styles = _styles;
     }
 
-    const styleSheets = createStyleSheets({
+    const styleSheets = utils.createStyleSheets({
       styles,
       config,
       themes,
@@ -149,7 +140,7 @@ export function createStitches(config = {}) {
                   // The order of the media key value pairs should be constant
                   // but is that guaranteed? So if the keys are ordered from
                   // smallest screen size to largest everything should work ok...
-                  const match = resolveMediaRangeQuery(
+                  const match = utils.resolveMediaRangeQuery(
                     val,
                     correctedWindowWidth
                   );
@@ -178,7 +169,7 @@ export function createStitches(config = {}) {
             if (
               compoundEntries.every(([prop, value]) => props[prop] === value)
             ) {
-              const key = getCompoundKey(compoundEntries);
+              const key = utils.getCompoundKey(compoundEntries);
               return styleSheet[key];
             }
           })
@@ -186,7 +177,7 @@ export function createStitches(config = {}) {
       }
 
       const cssStyles = props.css
-        ? processStyles({
+        ? utils.processStyles({
             styles: props.css || {},
             theme: theme.values,
             config,
@@ -227,6 +218,7 @@ export function createStitches(config = {}) {
   return {
     styled,
     css,
+    theme: themes[0].values,
     createTheme,
     useTheme,
     ThemeProvider,
@@ -238,6 +230,6 @@ export function createStitches(config = {}) {
 
 export const { styled, css } = createStitches();
 
-export const defaultThemeMap = DEFAULT_THEME_MAP;
+export const defaultThemeMap = constants.DEFAULT_THEME_MAP;
 
 export default createStitches;
