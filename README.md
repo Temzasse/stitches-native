@@ -18,13 +18,13 @@
 > ⚠️ NOTE: This library is still under development and there only exists a canary release on npm.
 
 ```sh
-npm install stitches-native
+npm install stitches-native@canary
 ```
 
 or if you use `yarn`:
 
 ```sh
-yarn add stitches-native
+yarn add stitches-native@canary
 ```
 
 ## Documentation
