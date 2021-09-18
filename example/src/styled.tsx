@@ -1,5 +1,5 @@
 import { getDeviceTypeAsync, DeviceType } from 'expo-device';
-import { StyleSheet, Platform } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { createStitches } from 'stitches-native';
 import type * as Stitches from 'stitches-native';
 
@@ -66,33 +66,27 @@ const { styled, css, theme, createTheme, useTheme, ThemeProvider, config } =
       }),
       shadow: (level: 'small' | 'medium' | 'large') => {
         return {
-          small:
-            Platform.OS === 'android'
-              ? { elevation: 2 }
-              : {
-                  shadowOffset: { width: 0, height: 1 },
-                  shadowRadius: 3,
-                  shadowOpacity: 0.1,
-                  shadowColor: '#000',
-                },
-          medium:
-            Platform.OS === 'android'
-              ? { elevation: 5 }
-              : {
-                  shadowOffset: { width: 0, height: 3 },
-                  shadowRadius: 6,
-                  shadowOpacity: 0.2,
-                  shadowColor: '#000',
-                },
-          large:
-            Platform.OS === 'android'
-              ? { elevation: 10 }
-              : {
-                  shadowOffset: { width: 0, height: 6 },
-                  shadowRadius: 12,
-                  shadowOpacity: 0.4,
-                  shadowColor: '#000',
-                },
+          small: {
+            elevation: 2,
+            shadowOffset: { width: 0, height: 1 },
+            shadowRadius: 3,
+            shadowOpacity: 0.1,
+            shadowColor: '#000',
+          },
+          medium: {
+            elevation: 5,
+            shadowOffset: { width: 0, height: 3 },
+            shadowRadius: 6,
+            shadowOpacity: 0.2,
+            shadowColor: '#000',
+          },
+          large: {
+            elevation: 10,
+            shadowOffset: { width: 0, height: 6 },
+            shadowRadius: 12,
+            shadowOpacity: 0.4,
+            shadowColor: '#000',
+          },
         }[level];
       },
       flexCenter: (value?: Stitches.PropertyValue<'flexDirection'>) => ({

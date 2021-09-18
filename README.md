@@ -83,19 +83,87 @@ const { styled, css, theme, createTheme, useTheme, ThemeProvider, config } =
   });
 ```
 
+#### Supported token types
+
+The following token types are supported in React Native: `borderStyles`, `borderWidths`, `colors`, `fonts`, `fontSizes`, `fontWeights`, `letterSpacings`, `lineHeights`, `radii`, `sizes`, `space`, `zIndices`.
+
+The only unsupported token types are `shadows` and `transitions`. Shadows in React Native cannot be expressed with a single string token like on the Web where CSS `box-shadow` accepts a string that fully describes the shadow. In React Native shadows are defined differently on iOS and Android. On [iOS](https://reactnative.dev/docs/shadow-props) you need to set the various shadow properties separately:
+
+```ts
+shadowOffset: {
+  width: number,
+  height: number
+},
+shadowOpacity: number,
+shadowRadius: number
+```
+
+On [Android](https://developer.android.com/training/material/shadows-clipping#Elevation) there is a completely different elevation system that doesn't let you alter individual shadow properties but instead you have to set a single number as the elevation level:
+
+```ts
+elevation: number;
+```
+
+So, instead of having shadows as part of the design tokens in the `theme` we can quite easily define shadow utilities inside `utils`:
+
+```js
+createStitches({
+  utils: {
+    shadow: (level: 'small' | 'medium' | 'large') => {
+      return {
+        small: {
+          elevation: 2,
+          shadowOffset: { width: 0, height: 1 },
+          shadowRadius: 3,
+          shadowOpacity: 0.1,
+          shadowColor: '#000',
+        },
+        medium: {
+          elevation: 5,
+          shadowOffset: { width: 0, height: 3 },
+          shadowRadius: 6,
+          shadowOpacity: 0.2,
+          shadowColor: '#000',
+        },
+        large: {
+          elevation: 10,
+          shadowOffset: { width: 0, height: 6 },
+          shadowRadius: 12,
+          shadowOpacity: 0.4,
+          shadowColor: '#000',
+        },
+      }[level];
+    },
+  },
+});
+```
+
+You can then use the shadow util like this:
+
+```js
+const Comp = styled('View', {
+  shadow: 'medium',
+});
+```
+
+The other unsupported token type is `transitions` which conflicts with how animations are handled in React Native. Read more about animations in the [Animations docs](https://reactnative.dev/docs/animations).
+
 ### Using `css` helper
 
-Unlike on the Web there is no concept of `className` in React Native so the `css` function is basically an identity function providing only TS types for the style object and returning exactly the same object back. The returned object can be spread to a styled component or into the css prop of a component.
+Unlike on the Web there is no concept of `className` in React Native so the `css` function is basically an identity function providing only TS types for the style object and returning exactly the same object back (or if given multiple objects merges them together). The returned object can be appended after the first argument of a styled component.
 
 ```jsx
 const styles = css({
   backgroundColor: '$background', // <- get autocomplete for theme values
 });
 
-const SomeComp = styled('View', {
-  // ...other styles...
-  ...styles,
-});
+const SomeComp = styled(
+  'View',
+  {
+    /* ...other styles... */
+  },
+  styles // <- you can add as many shared styles as you want
+);
 
 <AnotherComp css={styles} />;
 ```
