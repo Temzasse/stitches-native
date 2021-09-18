@@ -92,7 +92,7 @@ export default interface Stitches<
                   [Pair in number | string]: CSS;
                 };
               };
-              /** The **variants** property lets you to set a subclass of styles based on a combination of active variants.
+              /** The **compoundVariants** property lets you to set a subclass of styles based on a combination of active variants.
                *
                * [Read Documentation](https://stitches.dev/docs/variants#compound-variants)
                */
@@ -128,8 +128,13 @@ export default interface Stitches<
                   : unknown;
               };
       }
-    ): any; // TODO: figure out what this type should be...
-  };
+    ): StyledComponent.CssComponent<
+      StyledComponent.StyledComponentType<Composers>,
+      StyledComponent.StyledComponentProps<Composers>,
+      Media,
+      CSS
+    >;
+  }; // TODO: `variants` inside `css` break TS...
   styled: {
     <
       Type extends
@@ -161,7 +166,7 @@ export default interface Stitches<
                   [Pair in number | string]: CSS;
                 };
               };
-              /** The **variants** property lets you to set a subclass of styles based on a combination of active variants.
+              /** The **compoundVariants** property lets you to set a subclass of styles based on a combination of active variants.
                *
                * [Read Documentation](https://stitches.dev/docs/variants#compound-variants)
                */

@@ -25,7 +25,7 @@ export default function Example({
           </Button>
 
           <Button variant="secondary">
-            <ButtonText>Hello</ButtonText>
+            <ButtonText variant="body">Hello</ButtonText>
           </Button>
 
           <Button variant="secondary" size="small" outlined>
@@ -70,17 +70,17 @@ export default function Example({
   );
 }
 
-const someStyles = css({
+const centered = css({
+  justifyContent: 'center',
+  alignItems: 'center',
+});
+
+const wrapperStyles = css({
   flex: 1,
   backgroundColor: '$background',
 });
 
-const Wrapper = styled('View', {
-  flexShrink: 0,
-  justifyContent: 'center',
-  alignItems: 'center',
-  ...someStyles,
-});
+const Wrapper = styled('View', wrapperStyles, centered);
 
 const RowView = styled('View', {
   flexDirection: 'row',

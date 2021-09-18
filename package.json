@@ -31,6 +31,9 @@
     "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
     "format:write": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\""
   },
+  "dependencies": {
+    "lodash.merge": "4.6.2"
+  },
   "devDependencies": {
     "@babel/core": "7.14.8",
     "@babel/runtime": "7.14.8",

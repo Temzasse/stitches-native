@@ -5,7 +5,7 @@ import type * as Util from './util';
 
 /** Returns a new Styled Component. */
 export interface StyledComponent<
-  Type = 'span',
+  Type = 'View',
   Props = {},
   Media = {},
   CSS = {}
@@ -58,26 +58,21 @@ export interface StyledComponent<
 }
 
 /** Returns a new CSS Component. */
-// export interface CssComponent<Type = 'View', Props = {}, Media = {}, CSS = {}> {
-//   (
-//     props?: TransformProps<Props, Media> & {
-//       css?: CSS;
-//     } & {
-//         [name in number | string]: any;
-//       }
-//   ): string & {
-//     className: string;
-//     selector: string;
-//     props: {};
-//   };
+export interface CssComponent<Type = 'View', Props = {}, Media = {}, CSS = {}> {
+  (
+    props?: TransformProps<Props, Media> & {
+      css?: CSS;
+    } & {
+        [name in number | string]: any;
+      }
+  ): string & {
+    props: {};
+  };
 
-//   className: string;
-//   selector: string;
-
-//   [$$StyledComponentType]: Type;
-//   [$$StyledComponentProps]: Props;
-//   [$$StyledComponentMedia]: Media;
-// }
+  [$$StyledComponentType]: Type;
+  [$$StyledComponentProps]: Props;
+  [$$StyledComponentMedia]: Media;
+}
 
 export type TransformProps<Props, Media> = {
   [K in keyof Props]:

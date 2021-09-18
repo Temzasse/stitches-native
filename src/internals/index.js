@@ -1,3 +1,4 @@
+import merge from 'lodash.merge';
 import { PixelRatio, useWindowDimensions } from 'react-native';
 
 import React, {
@@ -61,13 +62,15 @@ export function createStitches(config = {}) {
     return t.values;
   }
 
-  function styled(component, styledConfig) {
+  function styled(component, ...styleObjects) {
+    const styleObject = styleObjects.reduce((a, v) => merge(a, v), {});
+
     const {
       variants = {},
       compoundVariants = [],
       defaultVariants = {},
       ..._styles
-    } = styledConfig;
+    } = styleObject;
 
     let styles = {};
 
@@ -211,8 +214,8 @@ export function createStitches(config = {}) {
     return memo(Comp);
   }
 
-  function css(cssStyles) {
-    return cssStyles;
+  function css(...cssObjects) {
+    return cssObjects.reduce((a, v) => merge(a, v), {});
   }
 
   return {
