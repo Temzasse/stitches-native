@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, View, ViewProps } from 'react-native';
+import { Switch, View, ViewProps, SafeAreaView, Text } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
 import { styled, css, useTheme, theme } from './styled';
@@ -18,7 +18,20 @@ export default function Example({
     <>
       <Wrapper>
         <Switch value={mode === 'dark'} onValueChange={toggleMode} />
-
+        <SafeAreaView>
+          <StyledPressable
+            style={({ pressed }) => {
+              console.log({ pressed });
+              return [
+                {
+                  backgroundColor: pressed ? 'red' : 'blue',
+                },
+              ];
+            }}
+          >
+            <Text style={{ color: '#FFFFFF' }}>Styled function Pressable</Text>
+          </StyledPressable>
+        </SafeAreaView>
         <RowView>
           <Button variant="primary">
             <ButtonText color="white">Hello</ButtonText>
@@ -211,3 +224,5 @@ const ButtonText = styled('Text', {
     variant: 'body',
   },
 });
+
+const StyledPressable = styled('Pressable', {});
