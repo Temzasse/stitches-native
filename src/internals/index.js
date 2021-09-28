@@ -187,15 +187,22 @@ export function createStitches(config = {}) {
           })
         : {};
 
+      const stitchesStyles = [
+        styleSheet.base,
+        ...variantStyles,
+        ...compoundVariantStyles,
+        cssStyles,
+      ];
+
+      const allStyles =
+        typeof props.style === 'function'
+          ? (...rest) =>
+              [props.style(...rest), ...stitchesStyles].filter(Boolean)
+          : [...stitchesStyles, props.style].filter(Boolean);
+
       const componentProps = {
         ...props,
-        style: [
-          styleSheet.base,
-          ...variantStyles,
-          ...compoundVariantStyles,
-          cssStyles,
-          props.style,
-        ].filter(Boolean),
+        style: allStyles,
         ref,
       };
 
