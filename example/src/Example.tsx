@@ -114,6 +114,8 @@ const Box2 = styled(Box, {
   marginTop: '$3',
   size: 100,
   borderRadius: theme.radii.lg,
+  marginRight: '-$space$6',
+  marginBottom: '-$4',
 });
 
 const FunctionBox = styled(

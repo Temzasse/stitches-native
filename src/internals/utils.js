@@ -96,7 +96,10 @@ export function processStyles({ styles, theme, config }) {
       // Handle theme tokens, eg. `color: "$primary"` or `color: "$colors$primary"`
       const arr = val.split('$');
       const token = arr.pop();
-      const scale = arr.pop();
+      const scaleOrSign = arr.pop();
+      const maybeSign = arr.pop(); // handle negative values
+      const scale = scaleOrSign !== '-' ? scaleOrSign : undefined;
+      const sign = scaleOrSign === '-' || maybeSign === '-' ? -1 : undefined;
 
       if (scale && theme[scale]) {
         acc[key] = theme[scale][token].value;
@@ -127,6 +130,10 @@ export function processStyles({ styles, theme, config }) {
         theme?.letterSpacings
       ) {
         acc[key] = theme.letterSpacings[token].value;
+      }
+
+      if (typeof acc[key] === 'number' && sign) {
+        acc[key] *= sign;
       }
     } else if (typeof val === 'object' && val.value !== undefined) {
       // Handle cases where the value comes from the `theme` returned by `createStitches`
