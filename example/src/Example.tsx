@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, View, ViewProps, SafeAreaView, Text } from 'react-native';
+import { Switch, View, ViewProps, Text } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
 import { styled, css, useTheme, theme } from './styled';
@@ -17,65 +17,64 @@ export default function Example({
   return (
     <>
       <Wrapper>
-        <Switch value={mode === 'dark'} onValueChange={toggleMode} />
-        <SafeAreaView>
+        <Content contentContainerStyle={{ alignItems: 'center' }}>
+          <Switch value={mode === 'dark'} onValueChange={toggleMode} />
+
           <StyledPressable
             style={({ pressed }) => {
               console.log({ pressed });
-              return [
-                {
-                  backgroundColor: pressed ? 'red' : 'blue',
-                },
-              ];
+              return [{ backgroundColor: pressed ? 'red' : 'blue' }];
             }}
           >
             <Text style={{ color: '#FFFFFF' }}>Styled function Pressable</Text>
           </StyledPressable>
-        </SafeAreaView>
-        <RowView>
-          <Button variant="primary">
-            <ButtonText color="white">Hello</ButtonText>
-          </Button>
 
-          <Button variant="secondary">
-            <ButtonText variant="body">Hello</ButtonText>
-          </Button>
+          <RowView>
+            <Button variant="primary">
+              <ButtonText color="white">Hello</ButtonText>
+            </Button>
 
-          <Button variant="secondary" size="small" outlined>
-            <ButtonText
-              variant={{ '@phone': 'body', '@tablet': 'title' }}
-              color={{ '@sm': 'primary', '@xl': 'secondary' }}
-            >
-              Hello
-            </ButtonText>
-          </Button>
-        </RowView>
+            <Button variant="secondary">
+              <ButtonText variant="body">Hello</ButtonText>
+            </Button>
 
-        <RowView>
-          <Rect>
-            <Box css={{ backgroundColor: '$secondary', size: 40 }} />
-          </Rect>
-          <Box2 />
-          <FunctionBox />
-        </RowView>
+            <Button variant="secondary" size="small" outlined>
+              <ButtonText
+                variant={{ '@phone': 'body', '@tablet': 'title' }}
+                color={{ '@sm': 'primary', '@xl': 'secondary' }}
+              >
+                Hello
+              </ButtonText>
+            </Button>
+          </RowView>
 
-        <RowView
-          css={{
-            borderWidth: 1,
-            borderStyle: 'solid',
-            borderColor: '$blue500',
-          }}
-        >
-          <EqualPadding>
-            <Box
-              css={{
-                width: '$space$4',
-                height: '$space$4',
-                backgroundColor: '$blue900',
-              }}
-            />
-          </EqualPadding>
-        </RowView>
+          <RowView>
+            <Rect>
+              <Box css={{ backgroundColor: '$secondary', size: 40 }} />
+            </Rect>
+            <Box2 />
+            <FunctionBox />
+          </RowView>
+
+          <RowView
+            css={{
+              borderWidth: 1,
+              borderStyle: 'solid',
+              borderColor: '$blue500',
+            }}
+          >
+            <EqualPadding>
+              <Box
+                css={{
+                  width: '$space$4',
+                  height: '$space$4',
+                  backgroundColor: '$blue900',
+                }}
+              />
+              <SomeText>Some text</SomeText>
+            </EqualPadding>
+          </RowView>
+        </Content>
       </Wrapper>
 
       <StatusBar style="auto" />
@@ -83,17 +82,16 @@ export default function Example({
   );
 }
 
-const centered = css({
-  justifyContent: 'center',
-  alignItems: 'center',
-});
-
 const wrapperStyles = css({
   flex: 1,
   backgroundColor: '$background',
 });
 
-const Wrapper = styled('View', wrapperStyles, centered);
+const Wrapper = styled('SafeAreaView', wrapperStyles);
+
+const Content = styled('ScrollView', {
+  flex: 1,
+});
 
 const RowView = styled('View', {
   flexDirection: 'row',
@@ -106,6 +104,7 @@ const EqualPadding = styled('View', {
   borderStyle: 'solid',
   borderColor: theme.colors.blue500,
   equalPaddingMargin: '$4',
+  zIndex: '$modal',
 });
 
 const Box = styled('View', {});
@@ -114,7 +113,7 @@ const Box2 = styled(Box, {
   backgroundColor: 'red',
   marginTop: '$3',
   size: 100,
-  borderRadius: '$lg',
+  borderRadius: theme.radii.lg,
 });
 
 const FunctionBox = styled(
@@ -135,6 +134,8 @@ const Rect = styled('View', {
   marginTop: '$3',
   borderRadius: '$sm',
   flexCenter: 'row',
+  borderStyle: '$solid',
+  borderColor: '$background',
 });
 
 const Button = styled('TouchableOpacity', {
@@ -143,7 +144,7 @@ const Button = styled('TouchableOpacity', {
   borderRadius: 999,
   minWidth: 100,
   backgroundColor: '$primary',
-  shadow: 'large',
+  shadow: 'medium',
 
   variants: {
     variant: {
@@ -167,6 +168,7 @@ const Button = styled('TouchableOpacity', {
     outlined: {
       true: {
         borderWidth: 1,
+        shadow: 'none',
       },
     },
   },
@@ -196,6 +198,9 @@ const Button = styled('TouchableOpacity', {
 
 const ButtonText = styled('Text', {
   color: '$text',
+  fontWeight: '$bold',
+  lineHeight: '$lg',
+  letterSpacing: '$sparse',
 
   variants: {
     variant: {
@@ -225,4 +230,14 @@ const ButtonText = styled('Text', {
   },
 });
 
-const StyledPressable = styled('Pressable', {});
+const StyledPressable = styled('Pressable', {
+  alignItems: 'center',
+});
+
+const SomeText = styled('Text', {
+  fontSize: '$lg',
+  color: '$text',
+  lineHeight: '$lg',
+  letterSpacing: '$sparse',
+  fontStyle: 'italic',
+});

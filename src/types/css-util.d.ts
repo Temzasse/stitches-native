@@ -39,7 +39,6 @@ export type CSS<
       | ValueByPropertyName<K>
       | TokenByPropertyName<K, Theme, ThemeMap>
       | ThemeUtil.ScaleValue
-      | Util.Index
       | undefined;
   } &
   // known utility styles

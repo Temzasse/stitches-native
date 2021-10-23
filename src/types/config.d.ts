@@ -114,7 +114,7 @@ export interface DefaultThemeMap {
 
   fontSize: 'fontSizes';
 
-  fontWeights: 'fontWeights';
+  fontWeight: 'fontWeights';
 
   lineHeight: 'lineHeights';
 
@@ -127,6 +127,8 @@ export interface DefaultThemeMap {
   borderRightWidth: 'borderWidths';
   borderBottomWidth: 'borderWidths';
   borderLeftWidth: 'borderWidths';
+  borderStartWidth: 'borderWidths';
+  borderEndWidth: 'borderWidths';
 
   borderStyle: 'borderStyles';
 }

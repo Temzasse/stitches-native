@@ -38,6 +38,34 @@ const { styled, css, theme, createTheme, useTheme, ThemeProvider, config } =
         background: '$white',
         text: '$black',
       },
+      fontWeights: {
+        bold: '700',
+      },
+      borderStyles: {
+        solid: 'solid',
+      },
+      borderWidths: {
+        thin: 1,
+      },
+      fontSizes: {
+        xs: 12,
+        sm: 14,
+        md: 16,
+        lg: 18,
+      },
+      lineHeights: {
+        xs: 16,
+        sm: 21,
+        md: 24,
+        lg: 28,
+      },
+      letterSpacings: {
+        tight: 0.1,
+        sparse: 1,
+      },
+      zIndices: {
+        modal: 1000,
+      },
       space: {
         1: 4,
         2: 8,
@@ -64,8 +92,15 @@ const { styled, css, theme, createTheme, useTheme, ThemeProvider, config } =
         width: value,
         height: value,
       }),
-      shadow: (level: 'small' | 'medium' | 'large') => {
+      shadow: (level: 'none' | 'small' | 'medium' | 'large') => {
         return {
+          none: {
+            elevation: 0,
+            shadowOffset: { width: 0, height: 0 },
+            shadowRadius: 0,
+            shadowOpacity: 0,
+            shadowColor: '#000',
+          },
           small: {
             elevation: 2,
             shadowOffset: { width: 0, height: 1 },
