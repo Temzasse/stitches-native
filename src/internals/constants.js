@@ -72,7 +72,7 @@ export const FONT_SIZE_PROPERTIES = {
 };
 
 export const FONT_WEIGHT_PROPERTIES = {
-  fontWeights: 'fontWeights',
+  fontWeight: 'fontWeights',
 };
 
 export const LINE_HEIGHT_PROPERTIES = {
@@ -93,6 +93,8 @@ export const BORDER_WIDTH_PROPERTIES = {
   borderRightWidth: 'borderWidths',
   borderBottomWidth: 'borderWidths',
   borderLeftWidth: 'borderWidths',
+  borderEndWidth: 'borderWidths',
+  borderStartWidth: 'borderWidths',
 };
 
 export const BORDER_STYLE_PROPERTIES = {
