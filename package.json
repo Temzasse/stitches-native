@@ -5,15 +5,27 @@
   "license": "MIT",
   "author": "Teemu Taskula",
   "repository": "https://github.com/Temzasse/stitches-native",
+  "type": "module",
   "main": "lib/commonjs/index.js",
   "module": "lib/module/index.js",
   "types": "src/types/index.d.ts",
-  "react-native": "src/index.ts",
-  "source": "src/index.ts",
+  "typesVersions": {
+    ">= 4.1": {
+      "*": [
+        "types/index.d.ts"
+      ]
+    }
+  },
+  "exports": {
+    ".": {
+      "require": "./lib/commonjs/index.js",
+      "import": "./lib/module/index.js",
+      "types": "./src/types/index.d.ts"
+    }
+  },
   "files": [
-    "src",
-    "lib",
-    "!**/tests"
+    "src/types",
+    "lib"
   ],
   "engines": {
     "node": ">=12"
