@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
-import { createStitches } from '../index';
+import { createStitches } from '../internals';
 
 describe('Basic', () => {
   it('Functionality of styled()', () => {
