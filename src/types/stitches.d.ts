@@ -5,15 +5,6 @@ import type * as Native from './react-native';
 import type * as Util from './util';
 import type * as ThemeUtil from './theme';
 
-/** Remove an index signature from a type */
-export type RemoveIndex<T> = {
-  [k in keyof T as string extends k
-    ? never
-    : number extends k
-    ? never
-    : k]: T[k];
-};
-
 /** Stitches interface. */
 export default interface Stitches<
   Media extends {} = {},
@@ -82,7 +73,7 @@ export default interface Stitches<
           | React.JSXElementConstructor<any>
           | Util.Function
           ? Composers[K]
-          : RemoveIndex<CSS> & {
+          : CSS & {
               /** The **variants** property lets you set a subclass of styles based on a key-value pair.
                *
                * [Read Documentation](https://stitches.dev/docs/variants)
@@ -156,7 +147,7 @@ export default interface Stitches<
           | React.ComponentType<any>
           | Util.Function
           ? Composers[K]
-          : RemoveIndex<CSS> & {
+          : CSS & {
               /** The **variants** property lets you set a subclass of styles based on a key-value pair.
                *
                * [Read Documentation](https://stitches.dev/docs/variants)
