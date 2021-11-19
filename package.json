@@ -16,6 +16,7 @@
     }
   },
   "exports": {
+    "./package.json": "./package.json",
     ".": {
       "require": "./lib/commonjs/index.js",
       "import": "./lib/module/index.js",
