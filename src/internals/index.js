@@ -120,7 +120,12 @@ export function createStitches(config = {}) {
       if (variants) {
         variantStyles = Object.keys(variants)
           .map((prop) => {
-            const propValue = props[prop] || defaultVariants[prop];
+            let propValue = props[prop];
+
+            if (propValue === undefined) {
+              propValue = defaultVariants[prop];
+            }
+
             let styleSheetKey = '';
 
             // Handle responsive prop value
