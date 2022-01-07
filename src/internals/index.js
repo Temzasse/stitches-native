@@ -12,9 +12,13 @@ import React, {
 import * as utils from './utils';
 import * as constants from './constants';
 
+/** @typedef {import('../types').__Stitches__} Stitches */
+/** @typedef {import('../types').CreateStitches} CreateStitches */
+
 // eslint-disable-next-line
 const ReactNative = require('react-native');
 
+/** @type {CreateStitches} */
 export function createStitches(config = {}) {
   const themes = [];
 
@@ -26,6 +30,7 @@ export function createStitches(config = {}) {
     themes.push(constants.EMPTY_THEME);
   }
 
+  /** @type {Stitches['createTheme']} */
   function createTheme(theme) {
     const t = {
       id: `theme-${themes.length + 1}`,
@@ -44,6 +49,7 @@ export function createStitches(config = {}) {
 
   const ThemeContext = createContext(themes[0]);
 
+  /** @type {Stitches['ThemeProvider']} */
   function ThemeProvider({ theme = themes[0], children }) {
     return (
       <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>
@@ -56,12 +62,14 @@ export function createStitches(config = {}) {
     return t;
   }
 
+  /** @type {Stitches['useTheme']} */
   function useTheme() {
     const t = useContext(ThemeContext);
     if (!t) throw new Error(constants.THEME_PROVIDER_MISSING_MESSAGE);
     return t.values;
   }
 
+  /** @type {Stitches['styled']} */
   function styled(component, ...styleObjects) {
     const styleObject = styleObjects.reduce((a, v) => merge(a, v), {});
 
@@ -221,6 +229,7 @@ export function createStitches(config = {}) {
     return memo(Comp);
   }
 
+  /** @type {Stitches['css']} */
   function css(...cssObjects) {
     return cssObjects.reduce((a, v) => merge(a, v), {});
   }

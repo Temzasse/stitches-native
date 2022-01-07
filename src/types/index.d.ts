@@ -7,6 +7,7 @@ import type * as StyledComponent from './styled-component';
 export type CreateStitches = Config.CreateStitches;
 export type CSSProperties = CSSUtil.CSSProperties;
 export type DefaultThemeMap = Config.DefaultThemeMap;
+export type __Stitches__ = Stitches;
 
 /** Returns a Style interface from a configuration, leveraging the given media and style map. */
 
