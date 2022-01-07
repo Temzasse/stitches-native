@@ -1,4 +1,3 @@
-import React from 'react';
 import { Switch, View, ViewProps, Text } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 

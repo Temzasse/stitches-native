@@ -1,10 +1,7 @@
 {
-  "packagerOpts": {
-    "config": "metro.config.js"
-  },
   "expo": {
-    "name": "app",
-    "slug": "app",
+    "name": "example",
+    "slug": "example",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

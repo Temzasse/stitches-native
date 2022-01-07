@@ -1,34 +1,50 @@
+/* eslint-disable */
 const path = require('path');
-const blacklist = require('metro-config/src/defaults/blacklist');
-const escape = require('escape-string-regexp');
-const pak = require('../package.json');
+const { mapValues } = require('lodash');
+const { getDefaultConfig } = require('expo/metro-config');
 
-const root = path.resolve(__dirname, '..');
-const modules = Object.keys({ ...pak.peerDependencies });
-
-module.exports = {
-  projectRoot: __dirname,
-  watchFolders: [root],
-
-  resolver: {
-    blacklistRE: blacklist(
-      modules.map(
-        (m) =>
-          new RegExp(`^${escape(path.join(root, 'node_modules', m))}\\/.*$`)
-      )
-    ),
-    extraNodeModules: modules.reduce((acc, name) => {
-      acc[name] = path.join(__dirname, 'node_modules', name);
-      return acc;
-    }, {}),
-  },
-
-  transformer: {
-    getTransformOptions: async () => ({
-      transform: {
-        experimentalImportSupport: false,
-        inlineRequires: false,
-      },
-    }),
-  },
+const packagesRelative = {
+  'stitches-native': '../src/internals',
 };
+
+const packages = mapValues(packagesRelative, (relativePath) =>
+  path.resolve(relativePath),
+);
+
+function createMetroConfiguration(projectPath) {
+  projectPath = path.resolve(projectPath);
+
+  const defaultConfig = getDefaultConfig(projectPath);
+
+  const watchFolders = [
+    ...Object.values(packages),
+    ...defaultConfig.watchFolders,
+  ];
+
+  const extraNodeModules = {
+    ...packages,
+    ...defaultConfig.resolver.extraNodeModules,
+  };
+
+  const extraNodeModulesProxy = new Proxy(extraNodeModules, {
+    get: (target, name) => {
+      if (target[name]) {
+        return target[name];
+      } else {
+        return path.join(projectPath, `node_modules/${name}`);
+      }
+    },
+  });
+
+  return {
+    ...defaultConfig,
+    projectRoot: projectPath,
+    watchFolders,
+    resolver: {
+      ...defaultConfig.resolver,
+      extraNodeModules: extraNodeModulesProxy,
+    },
+  };
+}
+
+module.exports = createMetroConfiguration(__dirname);

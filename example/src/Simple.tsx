@@ -1,4 +1,3 @@
-import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { styled, css } from 'stitches-native';
 
