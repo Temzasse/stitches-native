@@ -46,6 +46,7 @@
     "@typescript-eslint/prefer-interface": "off",
     "@typescript-eslint/ban-types": "off",
     "@typescript-eslint/array-type": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
     "eslint-comments/no-unlimited-disable": "off",
     "import/order": [
       "error",
