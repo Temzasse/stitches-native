@@ -6,43 +6,40 @@ export type TypographyVariant =
   | 'body'
   | 'bodySmall'
   | 'bodyExtraSmall'
-  | 'headline'
   | 'title1'
   | 'title2'
   | 'title3';
 
 type TypographyVariantVar = `$${TypographyVariant}`;
 
+// TODO: is there a way to type tokens? Using `CSS` from `styled.ts` doesn't work
+// because it causes a circular type dependency since `typography` is used in `utils`.
 const typographyVariants: {
   [variant in TypographyVariantVar]: CSSProperties;
 } = {
-  $body: {
-    fontSize: 16,
-    fontWeight: '400',
-  },
-  $bodySmall: {
-    fontSize: 14,
-    fontWeight: '400',
-  },
-  $bodyExtraSmall: {
-    fontSize: 10,
-    fontWeight: '500',
-  },
-  $headline: {
-    fontSize: 18,
-    fontWeight: '600',
-  },
   $title1: {
-    fontSize: 32,
-    fontWeight: '700',
+    fontSize: '$xxl',
+    fontWeight: '$bold',
   },
   $title2: {
-    fontSize: 24,
-    fontWeight: '700',
+    fontSize: '$xl',
+    fontWeight: '$bold',
   },
   $title3: {
-    fontSize: 20,
-    fontWeight: '700',
+    fontSize: '$lg',
+    fontWeight: '$bold',
+  },
+  $body: {
+    fontSize: '$md',
+    fontWeight: '$normal',
+  },
+  $bodySmall: {
+    fontSize: '$sm',
+    fontWeight: '$normal',
+  },
+  $bodyExtraSmall: {
+    fontSize: '$xs',
+    fontWeight: '$semibold',
   },
 };
 

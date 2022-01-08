@@ -6,12 +6,35 @@ import type * as Stitches from 'stitches-native';
 import { size, shadow, typography, flexCenter, absoluteFill } from './utils';
 
 const media = {
+  // You can provide boolean values for breakpoints when you just need to
+  // distinguish between phone and tablet devices
   phone: true,
   tablet: false,
+
+  // If you are not using Expo you should use react-native-device-info
+  // to get the device type synchronously
+  /*
+  phone: true, // !DeviceInfo.isTablet()
+  tablet: false, // DeviceInfo.isTablet()
+  */
+
+  // You can also define min width based media queries that overlap each other
+  // which is a commonly used technique in web development
+  // NOTE: make sure the keys are ordered from smallest to largest screen size!
   md: '(width >= 750px)',
   lg: '(width >= 1080px)',
   xl: '(width >= 1284px)',
   xxl: '(width >= 1536px)',
+
+  // It's also possible to specify ranges that don't overlap if you want to be
+  // very precise with your media queries and don't prefer the min width based approach
+  /*
+  sm: '(width <= 750px)', // Small phone, eg. iPhone SE
+  md: '(750px < width <= 1080px)', // Regular phone, eg. iPhone 6/7/8 Plus
+  lg: '(1080px < width <= 1284px)', // Large phone, eg. iPhone 12 Pro Max
+  xl: '(1284px < width <= 1536px)', // Regular tablet, eg. iPad Pro 9.7
+  xxl: '(width > 1536px)', // Large tablet
+  */
 };
 
 // This is a bit hacky but Expo doesn't have a sync way to get the device type
@@ -24,7 +47,7 @@ const { styled, css, createTheme, config, theme, useTheme, ThemeProvider } =
   createStitches({
     theme: {
       colors: {
-        // Palette
+        // Main palette (these should not be used directly but via aliases instead)
         blue100: '#ab9cf7',
         blue500: '#301b96',
         blue900: '#0D0630',
@@ -45,18 +68,35 @@ const { styled, css, createTheme, config, theme, useTheme, ThemeProvider } =
         gray850: '#2c2c2e',
         gray900: '#1d1d1f',
 
-        // Color value agnostic names to be used in components
+        // Brand colors
         primary: '$blue500',
         primaryText: '$blue900',
         primaryMuted: '$blue100',
         secondary: '$green500',
         secondaryText: '$green900',
         secondaryMuted: '$green100',
+
+        // Informative colors
+        info: '#3B82F6',
+        infoText: '#0A45A6',
+        infoMuted: '#cfdef7',
+        success: '#10B981',
+        successText: '#06734E',
+        successMuted: '#cee8df',
+        warn: '#FBBF24',
+        warnText: '#8a6200',
+        warnMuted: '#f3ead1',
+        error: '#EF4444',
+        errorText: '#8C0606',
+        errorMuted: '#f3d2d3',
+
+        // General colors
+        text: '$black',
+        textInverted: '$white',
+        border: 'rgba(150, 150, 150, 0.3)',
         backdrop: 'rgba(0,0,0,0.5)',
         background: '$white',
         surface: '$white',
-        text: '$black',
-        textInverted: '$white',
         elevated: '$white',
         muted1: '$gray500',
         muted2: '$gray400',
@@ -67,24 +107,34 @@ const { styled, css, createTheme, config, theme, useTheme, ThemeProvider } =
       },
       fontWeights: {
         bold: '700',
+        semibold: '500',
+        normal: '400',
       },
       borderStyles: {
         solid: 'solid',
       },
       borderWidths: {
-        thin: 1,
+        thin: StyleSheet.hairlineWidth,
+        normal: 1,
+        thick: 2,
       },
       fontSizes: {
-        xs: 12,
-        sm: 14,
-        md: 16,
-        lg: 18,
+        xxs: 10,
+        xs: 14,
+        sm: 16,
+        md: 18,
+        lg: 20,
+        xl: 24,
+        xxl: 32,
       },
       lineHeights: {
+        xxs: 12,
         xs: 16,
-        sm: 21,
-        md: 24,
-        lg: 28,
+        sm: 18,
+        md: 20,
+        lg: 24,
+        xl: 28,
+        xxl: 36,
       },
       letterSpacings: {
         tight: 0.1,
@@ -116,50 +166,43 @@ const { styled, css, createTheme, config, theme, useTheme, ThemeProvider } =
       },
     },
     utils: {
-      typography,
       size,
       shadow,
+      typography,
       flexCenter,
       absoluteFill,
     },
     media,
-    /*
-    media: {
-      // You can provide boolean values for breakpoints when you just need to
-      // distinguish between phone and tablet devices
-      phone: true, // Eg. !DeviceInfo.isTablet()
-      tablet: false, // Eg. DeviceInfo.isTablet()
-
-      // You can also define min width based media queries that overlap each other
-      // which is a commonly used technique in web development
-      // NOTE: make sure the keys are ordered from smallest to largest screen size!
-      md: '(width >= 750px)',
-      lg: '(width >= 1080px)',
-      xl: '(width >= 1284px)',
-      xxl: '(width >= 1536px)',
-
-      // It's also possible to specify ranges that don't overlap if you want to be
-      // very precise with your media queries and don't prefer the min width based approach
-      // sm: '(width <= 750px)', // Small phone, eg. iPhone SE
-      // md: '(750px < width <= 1080px)', // Regular phone, eg. iPhone 6/7/8 Plus
-      // lg: '(1080px < width <= 1284px)', // Large phone, eg. iPhone 12 Pro Max
-      // xl: '(1284px < width <= 1536px)', // Regular tablet, eg. iPad Pro 9.7
-      // xxl: '(width > 1536px)', // Large tablet
-    },
-    */
   });
 
 const darkTheme = createTheme({
   colors: {
+    // Brand colors
     primary: '$blue500',
     primaryText: '$blue100',
     primaryMuted: '$blue900',
     secondary: '$green500',
     secondaryText: '$green100',
     secondaryMuted: '$green900',
-    background: '$black',
+
+    // Informative colors
+    info: '#3B82F6',
+    infoText: '#81aef7',
+    infoMuted: '#1b2940',
+    success: '#10B981',
+    successText: '#1ee8a5',
+    successMuted: '#193328',
+    warn: '#FBBF24',
+    warnText: '#ffc93d',
+    warnMuted: '#40351a',
+    error: '#EF4444',
+    errorText: '#ff7070',
+    errorMuted: '#3e1c1d',
+
+    // General colors
     text: '$white',
     textInverted: '$black',
+    background: '$black',
     backdrop: 'rgba(0,0,0,0.5)',
     surface: '$gray800',
     elevated: '$gray600',
