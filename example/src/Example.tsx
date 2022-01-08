@@ -10,7 +10,7 @@ export default function Example() {
 
   return (
     <Wrapper>
-      <Content contentContainerStyle={{ padding: theme.space[2].value }}>
+      <Content contentContainerStyle={{ padding: theme.space[2] }}>
         <Stack axis="y" space="4">
           <Text variant="title1">Example app</Text>
 
