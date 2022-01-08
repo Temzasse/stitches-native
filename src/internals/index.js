@@ -47,10 +47,11 @@ export function createStitches(config = {}) {
     return newTheme.definition;
   }
 
-  const ThemeContext = createContext(themes[0]);
+  const defaultTheme = themes[0].definition;
+  const ThemeContext = createContext(defaultTheme);
 
   /** @type {Stitches['ThemeProvider']} */
-  function ThemeProvider({ theme = themes[0], children }) {
+  function ThemeProvider({ theme = defaultTheme, children }) {
     return (
       <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>
     );

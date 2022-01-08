@@ -116,7 +116,7 @@ export const DEFAULT_THEME_MAP = {
   zIndices: Z_INDEX_PROPERTIES,
 };
 
-export const EMPTY_THEME = {
+const THEME_VALUES = {
   borderStyles: null,
   borderWidths: null,
   colors: null,
@@ -129,6 +129,16 @@ export const EMPTY_THEME = {
   sizes: null,
   space: null,
   zIndices: null,
+};
+
+export const EMPTY_THEME = {
+  definition: {
+    __ID__: 'theme-0',
+    ...THEME_VALUES,
+  },
+  values: {
+    ...THEME_VALUES,
+  },
 };
 
 export const THEME_PROVIDER_MISSING_MESSAGE =
