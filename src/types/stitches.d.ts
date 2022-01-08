@@ -1,4 +1,5 @@
 /* eslint-disable */
+import type * as React from 'react';
 import type * as CSSUtil from './css-util';
 import type * as StyledComponent from './styled-component';
 import type * as Native from './react-native';
@@ -194,7 +195,24 @@ export default interface Stitches<
       StyledComponent.StyledComponentProps<Composers>,
       Media,
       CSSUtil.CSS<Media, Theme, ThemeMap, Utils>
-    >;
+    > & {
+      attrs: (
+        cb: (
+          props: {
+            theme: Theme;
+          } & StyledComponent.StyledComponentProps<Composers>
+        ) => Type extends
+          | Native.ReactNativeElementsKeys
+          | React.ComponentType<any>
+          ? Native.ReactNativeComponentPropsWithRef<Type>
+          : {}
+      ) => StyledComponent.StyledComponent<
+        Type,
+        StyledComponent.StyledComponentProps<Composers>,
+        Media,
+        CSSUtil.CSS<Media, Theme, ThemeMap, Utils>
+      >;
+    };
   };
 }
 

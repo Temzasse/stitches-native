@@ -43,7 +43,7 @@ Below you can see a list of all supported and unsupported features of Stitches N
 
 | Feature               | Supported                                |
 | --------------------- | ---------------------------------------- |
-| `styled`              | ✅                                       |
+| `styled`              | ✅ (with additional `.attrs` support)    |
 | `createStitches`      | ✅                                       |
 | `defaultThemeMap`     | ✅                                       |
 | `css`                 | ✅ _(Simplified version)_                |
@@ -173,7 +173,7 @@ const SomeComp = styled(
 Stitches Native handles theming differently than Stitches. Since there are no CSS Variables in React Native theming is handled via React Context in a similar way as other CSS-in-JS libraries such as [styled-components](https://styled-components.com/docs/advanced#theming) handle theming.
 
 ```tsx
-const { createTheme, ThemeProvider } = createStitches({
+const { theme, createTheme, ThemeProvider } = createStitches({
   colors: {
     background: '#fff',
     text: '#000',
@@ -187,12 +187,12 @@ const darkTheme = createTheme({
   },
 });
 
-export default function App() {
+function App() {
   // In a real world scenario this value should probably live in React Context
   const [darkMode, setDarkMode] = useState(false);
 
   return (
-    <ThemeProvider theme={darkMode ? darkTheme : undefined}>
+    <ThemeProvider theme={darkMode ? darkTheme : theme}>
       {/*...*/}
     </ThemeProvider>
   );
@@ -298,4 +298,68 @@ const ButtonText = styled('Text', {
 >
   Hello
 </ButtonText>;
+```
+
+### Additional props with `.attrs`
+
+In React Native it is quite common that a component exposes props (other than `style`) that accept a style object - a good example of this is the `ScrollView` component that has `contentContainerStyle` prop. Using theme tokens with these kind of props can be accomplished with the `useTheme` hook:
+
+```tsx
+function Comp() {
+  const theme = useTheme();
+
+  return (
+    <ScrollView contentContainerStyle={{ padding: theme.space[2] }}>
+      {/* ... */}
+    </ScrollView>
+  );
+}
+
+const ScrollView = styled('ScrollView', {
+  flex: 1,
+});
+```
+
+This approach is fine but a bit convoluted since you have to import a hook just to access the theme tokens. There is a better way with the chainable `.attrs` method which can be used to attach additional props to a Stitches styled component (this method was popularized by [styled-components](https://styled-components.com/docs/api#attrs)).
+
+> ⚠️ NOTE: this method does not exist in the original Web version of Stitches.
+
+```tsx
+function Example() {
+  return <ScrollView>{/*...*/}</ScrollView>;
+}
+
+const ScrollView = styled('ScrollView', {
+  flex: 1,
+}).attrs((props) => ({
+  contentContainerStyle: {
+    padding: props.theme.space[2],
+  },
+}));
+```
+
+It is also possible to access the variants of the component within `.attrs`:
+
+```tsx
+function Example() {
+  return <ScrollView spacious>{/*...*/}</ScrollView>;
+}
+
+const ScrollView = styled('ScrollView', {
+  flex: 1,
+  variants: {
+    spacious: {
+      true: {
+        // some styles...
+      },
+      false: {
+        // some styles...
+      },
+    },
+  },
+}).attrs((props) => ({
+  contentContainerStyle: {
+    padding: props.theme.space[props.spacious ? 4 : 2],
+  },
+}));
 ```

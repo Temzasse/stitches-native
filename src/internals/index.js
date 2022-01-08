@@ -118,7 +118,9 @@ export function createStitches(config = {}) {
       compoundVariants,
     });
 
-    const Comp = forwardRef((props, ref) => {
+    let attrsFn;
+
+    let Comp = forwardRef((props, ref) => {
       const theme = useThemeInternal();
       const styleSheet = styleSheets[theme.definition.__ID__];
       const { width: windowWidth } = useWindowDimensions();
@@ -222,7 +224,14 @@ export function createStitches(config = {}) {
               [props.style(...rest), ...stitchesStyles].filter(Boolean)
           : [...stitchesStyles, props.style].filter(Boolean);
 
+      let attrsProps = {};
+
+      if (typeof attrsFn === 'function') {
+        attrsProps = attrsFn({ ...props, theme: theme.values });
+      }
+
       const componentProps = {
+        ...attrsProps,
         ...props,
         style: allStyles,
         ref,
@@ -240,7 +249,14 @@ export function createStitches(config = {}) {
       return null;
     });
 
-    return memo(Comp);
+    Comp = memo(Comp);
+
+    Comp.attrs = (cb) => {
+      attrsFn = cb;
+      return Comp;
+    };
+
+    return Comp;
   }
 
   /** @type {Stitches['css']} */

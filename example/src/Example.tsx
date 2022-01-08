@@ -2,15 +2,14 @@ import { Switch } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
 import { Stack, Text, useColorMode } from './components';
-import { styled, useTheme } from './styles';
+import { styled } from './styles';
 
 export default function Example() {
-  const theme = useTheme();
   const { toggleColorMode, colorMode } = useColorMode();
 
   return (
     <Wrapper>
-      <Content contentContainerStyle={{ padding: theme.space[2] }}>
+      <Content>
         <Stack axis="y" space="4">
           <Text variant="title1">Example app</Text>
 
@@ -55,7 +54,11 @@ const Wrapper = styled('SafeAreaView', {
 
 const Content = styled('ScrollView', {
   flex: 1,
-});
+}).attrs((p) => ({
+  contentContainerStyle: {
+    padding: p.theme.space[2],
+  },
+}));
 
 const Box = styled('View', {
   minHeight: 100,
