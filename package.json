@@ -1,7 +1,7 @@
 {
   "name": "stitches-native",
   "description": "The modern CSS-in-JS library for React Native",
-  "version": "0.0.1-11",
+  "version": "0.0.1-12",
   "license": "MIT",
   "author": "Teemu Taskula",
   "repository": "https://github.com/Temzasse/stitches-native",
