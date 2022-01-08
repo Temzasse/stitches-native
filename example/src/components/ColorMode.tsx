@@ -6,7 +6,7 @@ import {
   useCallback,
 } from 'react';
 
-import { darkTheme, ThemeProvider } from '../styles';
+import { theme as lightTheme, darkTheme, ThemeProvider } from '../styles';
 
 type ColorMode = 'light' | 'dark';
 
@@ -20,7 +20,7 @@ const ColorModeContext = createContext<undefined | ContextValue>(undefined);
 
 export function ColorModeProvider({ children }: { children: ReactNode }) {
   const [colorMode, setColorMode] = useState<ColorMode>('light');
-  const theme = colorMode === 'light' ? undefined : darkTheme;
+  const theme = colorMode === 'light' ? lightTheme : darkTheme;
 
   const toggleColorMode = useCallback(() => {
     setColorMode((p) => (p === 'dark' ? 'light' : 'dark'));

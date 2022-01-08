@@ -24,27 +24,27 @@ export function createStitches(config = {}) {
 
   if (config.theme) {
     const processedTheme = utils.processTheme(config.theme);
+    processedTheme.definition.__ID__ = 'theme-1';
 
-    themes.push({ id: 'theme-1', values: processedTheme });
+    themes.push(processedTheme);
   } else {
     themes.push(constants.EMPTY_THEME);
   }
 
   /** @type {Stitches['createTheme']} */
   function createTheme(theme) {
-    const t = {
-      id: `theme-${themes.length + 1}`,
-      values: utils.processTheme(
-        Object.entries(config.theme || {}).reduce((acc, [key, val]) => {
-          acc[key] = { ...val, ...theme[key] };
-          return acc;
-        }, {})
-      ),
-    };
+    const newTheme = utils.processTheme(
+      Object.entries(config.theme || {}).reduce((acc, [key, val]) => {
+        acc[key] = { ...val, ...theme[key] };
+        return acc;
+      }, {})
+    );
 
-    themes.push(t);
+    newTheme.definition.__ID__ = `theme-${themes.length + 1}`;
 
-    return t;
+    themes.push(newTheme);
+
+    return newTheme.definition;
   }
 
   const ThemeContext = createContext(themes[0]);
@@ -57,16 +57,24 @@ export function createStitches(config = {}) {
   }
 
   function useThemeInternal() {
-    const t = useContext(ThemeContext);
-    if (!t) throw new Error(constants.THEME_PROVIDER_MISSING_MESSAGE);
-    return t;
+    const themeDefinition = useContext(ThemeContext);
+
+    if (!themeDefinition) {
+      throw new Error(constants.THEME_PROVIDER_MISSING_MESSAGE);
+    }
+
+    return themes.find((x) => x.definition.__ID__ === themeDefinition.__ID__);
   }
 
   /** @type {Stitches['useTheme']} */
   function useTheme() {
-    const t = useContext(ThemeContext);
-    if (!t) throw new Error(constants.THEME_PROVIDER_MISSING_MESSAGE);
-    return t.values;
+    const themeDefinition = useContext(ThemeContext);
+
+    if (!themeDefinition) {
+      throw new Error(constants.THEME_PROVIDER_MISSING_MESSAGE);
+    }
+
+    return themes.find((x) => x.definition.__ID__ === themeDefinition.__ID__).values; // prettier-ignore
   }
 
   /** @type {Stitches['styled']} */
@@ -111,7 +119,7 @@ export function createStitches(config = {}) {
 
     const Comp = forwardRef((props, ref) => {
       const theme = useThemeInternal();
-      const styleSheet = styleSheets[theme.id];
+      const styleSheet = styleSheets[theme.definition.__ID__];
       const { width: windowWidth } = useWindowDimensions();
 
       let variantStyles = [];
@@ -242,7 +250,7 @@ export function createStitches(config = {}) {
   return {
     styled,
     css,
-    theme: themes[0].values,
+    theme: themes[0].definition,
     createTheme,
     useTheme,
     ThemeProvider,

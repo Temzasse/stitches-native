@@ -47,11 +47,7 @@ export default interface Stitches<
   useTheme: () => string &
     {
       [Scale in keyof Theme]: {
-        [Token in keyof Theme[Scale]]: ThemeUtil.Token<
-          Extract<Token, string | number>,
-          string,
-          Extract<Scale, string | void>
-        >;
+        [Token in keyof Theme[Scale]]: number | string;
       };
     };
   ThemeProvider: React.FunctionComponent<{ theme?: any }>; // TODO: fix `any`

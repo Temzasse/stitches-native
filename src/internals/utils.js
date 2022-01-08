@@ -59,10 +59,12 @@ export function resolveMediaRangeQuery(query, windowWidth) {
 }
 
 export function processTheme(theme) {
-  const processed = {};
+  const definition = {};
+  const values = {};
 
   Object.keys(theme).forEach((scale) => {
-    if (!processed[scale]) processed[scale] = {};
+    if (!definition[scale]) definition[scale] = {};
+    if (!values[scale]) values[scale] = {};
 
     Object.keys(theme[scale]).forEach((token) => {
       let value = theme[scale][token];
@@ -71,7 +73,9 @@ export function processTheme(theme) {
         value = theme[scale][value.replace('$', '')];
       }
 
-      processed[scale][token] = {
+      values[scale][token] = value;
+
+      definition[scale][token] = {
         token,
         scale,
         value,
@@ -80,7 +84,7 @@ export function processTheme(theme) {
     });
   });
 
-  return processed;
+  return { definition, values };
 }
 
 export function processStyles({ styles, theme, config }) {
@@ -102,34 +106,34 @@ export function processStyles({ styles, theme, config }) {
       const sign = scaleOrSign === '-' || maybeSign === '-' ? -1 : undefined;
 
       if (scale && theme[scale]) {
-        acc[key] = theme[scale][token].value;
+        acc[key] = theme[scale][token];
       } else if (key in (themeMap.colors || {}) && theme?.colors) {
-        acc[key] = theme.colors[token].value;
+        acc[key] = theme.colors[token];
       } else if (key in (themeMap.radii || {}) && theme?.radii) {
-        acc[key] = theme.radii[token].value;
+        acc[key] = theme.radii[token];
       } else if (key in (themeMap.sizes || {}) && theme?.sizes) {
-        acc[key] = theme.sizes[token].value;
+        acc[key] = theme.sizes[token];
       } else if (key in (themeMap.space || {}) && theme?.space) {
-        acc[key] = theme.space[token].value;
+        acc[key] = theme.space[token];
       } else if (key in (themeMap.borderStyles || {}) && theme?.borderStyles) {
-        acc[key] = theme.borderStyles[token].value;
+        acc[key] = theme.borderStyles[token];
       } else if (key in (themeMap.borderWidths || {}) && theme?.borderWidths) {
-        acc[key] = theme.borderWidths[token].value;
+        acc[key] = theme.borderWidths[token];
       } else if (key in (themeMap.fonts || {}) && theme?.fonts) {
-        acc[key] = theme.fonts[token].value;
+        acc[key] = theme.fonts[token];
       } else if (key in (themeMap.fontSizes || {}) && theme?.fontSizes) {
-        acc[key] = theme.fontSizes[token].value;
+        acc[key] = theme.fontSizes[token];
       } else if (key in (themeMap.fontWeights || {}) && theme?.fontWeights) {
-        acc[key] = theme.fontWeights[token].value;
+        acc[key] = theme.fontWeights[token];
       } else if (key in (themeMap.lineHeights || {}) && theme?.lineHeights) {
-        acc[key] = theme.lineHeights[token].value;
+        acc[key] = theme.lineHeights[token];
       } else if (key in (themeMap.zIndices || {}) && theme?.zIndices) {
-        acc[key] = theme.zIndices[token].value;
+        acc[key] = theme.zIndices[token];
       } else if (
         key in (themeMap.letterSpacings || {}) &&
         theme?.letterSpacings
       ) {
-        acc[key] = theme.letterSpacings[token].value;
+        acc[key] = theme.letterSpacings[token];
       }
 
       if (typeof acc[key] === 'number' && sign) {
@@ -153,9 +157,11 @@ export function createStyleSheets({
   variants,
   compoundVariants,
 }) {
-  const styleSheets = themes.reduce((styleSheetAcc, { id, values: theme }) => {
-    styleSheetAcc[id] = StyleSheet.create({
-      base: styles ? processStyles({ styles, config, theme }) : {},
+  const styleSheets = themes.reduce((styleSheetAcc, theme) => {
+    styleSheetAcc[theme.definition.__ID__] = StyleSheet.create({
+      base: styles
+        ? processStyles({ styles, config, theme: theme.values })
+        : {},
       // Variant styles
       ...Object.entries(variants).reduce(
         (variantsAcc, [vartiantProp, variantValues]) => {
@@ -167,7 +173,7 @@ export function createStyleSheets({
               variantsAcc[key] = processStyles({
                 styles: variantStyles,
                 config,
-                theme,
+                theme: theme.values,
               });
             }
           );
@@ -186,7 +192,7 @@ export function createStyleSheets({
           compoundAcc[key] = processStyles({
             styles: css || {},
             config,
-            theme,
+            theme: theme.values,
           });
         }
 
