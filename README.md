@@ -15,16 +15,14 @@
 
 ## Installation
 
-> ⚠️ NOTE: This library is still under development and there only exists a canary release on npm.
-
 ```sh
-npm install stitches-native@canary
+npm install stitches-native
 ```
 
 or if you use `yarn`:
 
 ```sh
-yarn add stitches-native@canary
+yarn add stitches-native
 ```
 
 ## Documentation
