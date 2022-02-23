@@ -204,7 +204,7 @@ export default interface Stitches<
         ) => Type extends
           | Native.ReactNativeElementsKeys
           | React.ComponentType<any>
-          ? Native.ReactNativeComponentPropsWithRef<Type>
+          ? Partial<Native.ReactNativeComponentPropsWithRef<Type>>
           : {}
       ) => StyledComponent.StyledComponent<
         Type,
