@@ -45,12 +45,15 @@ export default interface Stitches<
         >;
       };
     };
-  useTheme: () => string &
-    {
-      [Scale in keyof Theme]: {
-        [Token in keyof Theme[Scale]]: number | string;
-      };
+  useTheme: () => {
+    [Scale in keyof Theme]: {
+      [Token in keyof Theme[Scale]]: Theme[Scale][Token] extends string
+        ? ThemeUtil.AliasedToken<Theme[Scale][Token]> extends never
+          ? string
+          : Theme[Scale][ThemeUtil.AliasedToken<Theme[Scale][Token]>]
+        : Theme[Scale][Token];
     };
+  };
   ThemeProvider: React.FunctionComponent<{ theme?: any }>; // TODO: fix `any`
   css: {
     <

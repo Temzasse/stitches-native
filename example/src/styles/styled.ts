@@ -154,6 +154,7 @@ const { styled, css, createTheme, config, theme, useTheme, ThemeProvider } =
         7: 56,
         8: 72,
         9: 96,
+        max: '$9' as const,
       },
       sizes: {
         hairlineWidth: StyleSheet.hairlineWidth,

@@ -1,5 +1,12 @@
 /* eslint-disable */
 
+export type AliasedToken<T extends string> =
+  T extends `${infer Head}${infer Tail}`
+    ? Head extends '$'
+      ? Tail
+      : never
+    : never;
+
 export interface ScaleValue {
   token: number | string;
   value: number | string;

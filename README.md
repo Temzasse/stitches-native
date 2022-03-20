@@ -39,21 +39,24 @@ Below you can see a list of all supported and unsupported features of Stitches N
 
 ### Feature comparison
 
-| Feature               | Supported                                |
-| --------------------- | ---------------------------------------- |
-| `styled`              | ✅ (with additional `.attrs` support)    |
-| `createStitches`      | ✅                                       |
-| `defaultThemeMap`     | ✅                                       |
-| `css`                 | ✅ _(Simplified version)_                |
-| `theme`               | ✅                                       |
-| `createTheme`         | ✅ _(Only returned by `createStitches`)_ |
-| `globalCss`           | ❌ _(No global styles in RN)_            |
-| `keyframes`           | ❌ _(No CSS keyframes in RN)_            |
-| `getCssText`          | ❌ _(SSR not applicable to RN)_          |
-| Nesting               | ❌ _(No CSS cascade in RN)_              |
-| Selectors             | ❌ _(No CSS selectors in RN)_            |
-| Locally scoped tokens | ❌ _(No CSS variables in RN)_            |
-| Pseudo elements       | ❌ _(No pseudo elements/classes in RN)_  |
+| Feature               | Supported                                 |
+| --------------------- | ----------------------------------------- |
+| `styled`              | ✅                                        |
+| `createStitches`      | ✅                                        |
+| `defaultThemeMap`     | ✅                                        |
+| `css`                 | ✅ _(Simplified version)_                 |
+| `theme`               | ✅ _(Use `useTheme` in components/hooks)_ |
+| `createTheme`         | ✅ _(Only returned by `createStitches`)_  |
+| `useTheme`            | 🆕 (Stitches Native specific)             |
+| `ThemeProvider`       | 🆕 (Stitches Native specific)             |
+| `styled().attrs()`    | 🆕 (Stitches Native specific)             |
+| `globalCss`           | ❌ _(No global styles in RN)_             |
+| `keyframes`           | ❌ _(No CSS keyframes in RN)_             |
+| `getCssText`          | ❌ _(SSR not applicable to RN)_           |
+| Nesting               | ❌ _(No CSS cascade in RN)_               |
+| Selectors             | ❌ _(No CSS selectors in RN)_             |
+| Locally scoped tokens | ❌ _(No CSS variables in RN)_             |
+| Pseudo elements       | ❌ _(No pseudo elements/classes in RN)_   |
 
 ### Using `createStitches` function
 
@@ -196,6 +199,63 @@ function App() {
   );
 }
 ```
+
+### Accessing the theme
+
+You can get the current theme via the `useTheme` hook:
+
+```tsx
+import { useTheme } from '../your-stitches-config';
+
+function Example() {
+  const theme = useTheme();
+
+  // Access theme tokens
+  // theme.colors|space|radii|etc.x
+
+  return (
+    <View style={{ backgroundColor: theme.colors.background }}>{/*...*/}</View>
+  );
+}
+```
+
+### Typing token aliases
+
+Stitches Native supports theme token aliases the same way as Stitches with a minor difference related to TypeScript support:
+
+```ts
+createStitches({
+  colors: {
+    black: '#000',
+    primary: '$black' as const,
+  },
+  space: {
+    1: 8,
+    2: 16,
+    3: 32,
+    max: '$3' as const,
+  },
+});
+```
+
+Note the usage of `as const` for token alias values. It is required if you want to have the correct type for the theme token value when accessing it via `useTheme` hook:
+
+```tsx
+import { useTheme } from '../your-stitches-config';
+
+function Example() {
+  const theme = useTheme();
+
+  const x = theme.colors.primary; // <-- type of `x` is `string`
+  const y = theme.space.max; // <--- type of `y` is `number` even though the value in the theme is `'$3'`, yey 😎
+
+  return <View style={{ backgroundColor: x, padding: y }}>{/*...*/}</View>;
+}
+```
+
+> ⚠️ NOTE: without `as const` the type of the token will always be `string`!
+
+For `string` type tokens, you don't necessarily need to use `as const` since the types align correctly without it, but you might want to do so anyway to be consistent.
 
 ### Responsive styles with `media`
 
