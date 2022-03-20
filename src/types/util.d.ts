@@ -36,3 +36,10 @@ export type Function = (...args: any[]) => unknown;
 export type WideObject = {
   [name in number | string]: boolean | number | string | undefined | WideObject;
 };
+
+/* Util for aliases tokens. Returns the aliased token if it's an alias, returns never if it's not. */
+export type AliasedToken<V extends string> = V extends `${infer Head}${infer Tail}`
+  ? Head extends "$"
+    ? Tail
+    : never
+  : never;

@@ -48,7 +48,11 @@ export default interface Stitches<
   useTheme: () => string &
     {
       [Scale in keyof Theme]: {
-        [Token in keyof Theme[Scale]]: number | string;
+        [Token in keyof Theme[Scale]]: Theme[Scale][Token] extends string
+          ? Util.AliasedToken<Theme[Scale][Token]> extends never
+            ? string
+            : Theme[Scale][Util.AliasedToken<Theme[Scale][Token]>]
+          : Theme[Scale][Token];
       };
     };
   ThemeProvider: React.FunctionComponent<{ theme?: any }>; // TODO: fix `any`
