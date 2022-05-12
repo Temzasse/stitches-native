@@ -230,9 +230,14 @@ export function createStitches(config = {}) {
         attrsProps = attrsFn({ ...props, theme: theme.values });
       }
 
+      const propsWithoutVariant = { ...props };
+      for (const variantKey of Object.keys(variants)) {
+        delete propsWithoutVariant[variantKey];
+      }
+
       const componentProps = {
         ...attrsProps,
-        ...props,
+        ...propsWithoutVariant,
         style: allStyles,
         ref,
       };
