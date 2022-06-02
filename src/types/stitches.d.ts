@@ -142,7 +142,9 @@ export default interface Stitches<
     >(
       type: Type,
       ...composers: {
-        [K in keyof Composers]: Composers[K] extends  // Strings, React Components, and Functions can be skipped over
+        [K in keyof Composers]: string extends Composers[K] // Strings and Functions can be skipped over
+          ? Composers[K]
+          : Composers[K] extends
           | string
           | React.ComponentType<any>
           | Util.Function
