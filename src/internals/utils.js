@@ -60,15 +60,17 @@ export function resolveMediaRangeQuery(query, windowWidth) {
 
 export function processThemeMap(themeMap) {
   const definition = {};
-  
-  Object.keys(themeMap).forEach(token => {
+
+  Object.keys(themeMap).forEach((token) => {
     const scale = themeMap[token];
-  
-    if (!definition[scale]) definition[scale] = {};
-  
+
+    if (!definition[scale]) {
+      definition[scale] = {};
+    }
+
     definition[scale][token] = scale;
   });
-  
+
   return definition;
 }
 
@@ -102,7 +104,8 @@ export function processTheme(theme) {
 }
 
 export function processStyles({ styles, theme, config }) {
-  const { utils, themeMap = DEFAULT_THEME_MAP } = config;
+  const { utils, themeMap: customThemeMap } = config;
+  const themeMap = processThemeMap(customThemeMap || DEFAULT_THEME_MAP);
 
   return Object.entries(styles).reduce((acc, [key, val]) => {
     if (utils && key in utils) {

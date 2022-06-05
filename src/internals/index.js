@@ -21,8 +21,6 @@ const ReactNative = require('react-native');
 /** @type {CreateStitches} */
 export function createStitches(config = {}) {
   const themes = [];
-  
-  config.themeMap = utils.processThemeMap(config.themeMap || constants.DEFAULT_THEME_MAP);
 
   if (config.theme) {
     const processedTheme = utils.processTheme(config.theme);
