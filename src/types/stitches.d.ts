@@ -145,9 +145,9 @@ export default interface Stitches<
         [K in keyof Composers]: string extends Composers[K] // Strings and Functions can be skipped over
           ? Composers[K]
           : Composers[K] extends
-          | string
-          | React.ComponentType<any>
-          | Util.Function
+              | string
+              | React.ComponentType<any>
+              | Util.Function
           ? Composers[K]
           : CSS & {
               /** The **variants** property lets you set a subclass of styles based on a key-value pair.
