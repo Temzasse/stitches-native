@@ -25,6 +25,7 @@ export interface StyledComponent<
       TransformProps<Props, Media> & {
         as?: never;
         css?: CSS;
+        ref?: any; // TODO: remove this hack and fix the real `ref` type
       }
     >
   ): React.ReactElement | null;
