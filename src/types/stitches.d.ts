@@ -54,7 +54,7 @@ export default interface Stitches<
         : Theme[Scale][Token];
     };
   };
-  ThemeProvider: React.FunctionComponent<{ theme?: any }>; // TODO: fix `any`
+  ThemeProvider: React.FunctionComponent<{ theme?: any; children: React.ReactNode }>; // TODO: fix `any`
   css: {
     <
       Composers extends (
