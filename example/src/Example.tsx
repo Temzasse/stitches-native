@@ -33,7 +33,6 @@ export default function Example() {
 
           <Stack axis="x" space="3" align="center" justify="end">
             <Text variant="body">Toggle color mode</Text>
-
             <Switch
               value={colorMode === 'dark'}
               onValueChange={toggleColorMode}
