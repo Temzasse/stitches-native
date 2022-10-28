@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import merge from 'lodash.merge';
 import { DEFAULT_THEME_MAP } from './constants';
 
 export function getCompoundKey(compoundEntries) {
@@ -117,16 +118,41 @@ export function processTheme(theme) {
   return { definition, values };
 }
 
+const THEME_PRIORITIZED_KEYS = [
+  'colors',
+  'radii',
+  'sizes',
+  'space',
+  'borderStyles',
+  'borderWidths',
+  'fonts',
+  'fontSizes',
+  'fontWeights',
+  'lineHeights',
+  'zIndices',
+  'letterSpacings',
+];
+
+function searchHaveTokenConfigKey(theme, themeMap, key) {
+  for (let i = 0, len = THEME_PRIORITIZED_KEYS.length; i < len; i++) {
+    const configKey = THEME_PRIORITIZED_KEYS[i];
+    if (key in (themeMap[configKey] || {}) && theme?.[configKey]) {
+      return configKey;
+    }
+  }
+}
+
 export function processStyles({ styles, theme, config }) {
   const { utils, themeMap: customThemeMap } = config;
   const themeMap = processThemeMap(customThemeMap || DEFAULT_THEME_MAP);
 
   return Object.entries(styles).reduce((acc, [key, val]) => {
     if (utils && key in utils) {
-      acc = {
-        ...acc,
-        ...processStyles({ styles: utils[key](val), theme, config }),
-      };
+      // NOTE: Deepmerge for media propeties.
+      acc = merge(
+        acc,
+        processStyles({ styles: utils[key](val), theme, config })
+      );
     } else if (typeof val === 'string' && val.indexOf('$') !== -1) {
       // Handle theme tokens, eg. `color: "$primary"` or `color: "$colors$primary"`
       const arr = val.split('$');
@@ -138,33 +164,11 @@ export function processStyles({ styles, theme, config }) {
 
       if (scale && theme[scale]) {
         acc[key] = theme[scale][token];
-      } else if (key in (themeMap.colors || {}) && theme?.colors) {
-        acc[key] = theme.colors[token];
-      } else if (key in (themeMap.radii || {}) && theme?.radii) {
-        acc[key] = theme.radii[token];
-      } else if (key in (themeMap.sizes || {}) && theme?.sizes) {
-        acc[key] = theme.sizes[token];
-      } else if (key in (themeMap.space || {}) && theme?.space) {
-        acc[key] = theme.space[token];
-      } else if (key in (themeMap.borderStyles || {}) && theme?.borderStyles) {
-        acc[key] = theme.borderStyles[token];
-      } else if (key in (themeMap.borderWidths || {}) && theme?.borderWidths) {
-        acc[key] = theme.borderWidths[token];
-      } else if (key in (themeMap.fonts || {}) && theme?.fonts) {
-        acc[key] = theme.fonts[token];
-      } else if (key in (themeMap.fontSizes || {}) && theme?.fontSizes) {
-        acc[key] = theme.fontSizes[token];
-      } else if (key in (themeMap.fontWeights || {}) && theme?.fontWeights) {
-        acc[key] = theme.fontWeights[token];
-      } else if (key in (themeMap.lineHeights || {}) && theme?.lineHeights) {
-        acc[key] = theme.lineHeights[token];
-      } else if (key in (themeMap.zIndices || {}) && theme?.zIndices) {
-        acc[key] = theme.zIndices[token];
-      } else if (
-        key in (themeMap.letterSpacings || {}) &&
-        theme?.letterSpacings
-      ) {
-        acc[key] = theme.letterSpacings[token];
+      } else {
+        const configKey = searchHaveTokenConfigKey(theme, themeMap, key);
+        if (configKey) {
+          acc[key] = theme[configKey][token];
+        }
       }
 
       if (typeof acc[key] === 'number' && sign) {
@@ -173,6 +177,8 @@ export function processStyles({ styles, theme, config }) {
     } else if (typeof val === 'object' && val.value !== undefined) {
       // Handle cases where the value comes from the `theme` returned by `createStitches`
       acc[key] = val.value;
+    } else if (typeof acc[key] === 'object' && typeof val === 'object') {
+      acc[key] = merge(acc[key], val);
     } else {
       acc[key] = val;
     }
