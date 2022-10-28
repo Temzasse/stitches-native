@@ -1,35 +1,29 @@
-import { styled, themeProp } from '../styles';
+import { styled } from '../styles';
 
 export const Media = styled('Text', {
   color: '$text',
+  '@xxl': {
+    fontSize: 64,
+  },
+  '@xl': {
+    fontSize: 48,
+  },
   '@lg': {
-    fontSize: 16,
+    fontSize: 32,
   },
   '@md': {
-    fontSize: 14,
+    fontSize: 24,
   },
   '@sm': {
     fontSize: 12,
   },
   variants: {
-    ...themeProp('color', 'colors', (value) => ({
-      color: value,
-    })),
-    variant: {
-      body: { typography: '$body' },
-      bodySmall: { typography: '$bodySmall' },
-      bodyExtraSmall: { typography: '$bodyExtraSmall' },
-      title1: { typography: '$title1' },
-      title2: { typography: '$title2' },
-      title3: { typography: '$title3' },
+    color: {
+      primary: { color: 'red' },
+      secondary: { color: 'blue' },
+      third: { color: 'purple' },
+      forth: { color: 'green' },
+      fifth: { color: 'black' },
     },
-    align: {
-      left: { textAlign: 'left' },
-      right: { textAlign: 'right' },
-      center: { textAlign: 'center' },
-    },
-  },
-  defaultVariants: {
-    variant: 'body',
   },
 });

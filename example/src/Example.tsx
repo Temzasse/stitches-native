@@ -31,7 +31,17 @@ export default function Example() {
             ))}
           </Stack>
 
-          <Media>Font size should change as viewport changes</Media>
+          <Media
+            color={{
+              '@xxl': 'primary',
+              '@xl': 'secondary',
+              '@lg': 'third',
+              '@md': 'forth',
+              '@sm': 'fifth',
+            }}
+          >
+            Font size and color should change as viewport changes
+          </Media>
 
           <Stack axis="x" space="3" align="center" justify="end">
             <Text variant="body">Toggle color mode</Text>

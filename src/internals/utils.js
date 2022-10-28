@@ -20,7 +20,7 @@ export function getCompoundKey(compoundEntries) {
 
 const validSigns = ['<=', '<', '>=', '>'];
 
-export function resolveMediaRangeQuery(query, windowWidth) {
+function matchMediaRangeQuery(query, windowWidth) {
   const singleRangeRegex = /^\(width\s+([><=]+)\s+([0-9]+)px\)$/;
   const multiRangeRegex = /^\(([0-9]+)px\s([><=]+)\swidth\s+([><=]+)\s+([0-9]+)px\)$/; // prettier-ignore
   const singleRangeMatches = query.match(singleRangeRegex);
@@ -55,6 +55,20 @@ export function resolveMediaRangeQuery(query, windowWidth) {
     );
   }
 
+  return result;
+}
+
+export function resolveMediaRangeQuery(queryObjects, windowWidth) {
+  const iterator = Object.entries(queryObjects);
+  let result;
+  for (let i = 0; i < iterator.length; i++) {
+    const [key, query] = iterator[i];
+    if (typeof query !== 'string') continue;
+    const match = matchMediaRangeQuery(query, windowWidth);
+    if (match) {
+      result = key;
+    }
+  }
   return result;
 }
 
