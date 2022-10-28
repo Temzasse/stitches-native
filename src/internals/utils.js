@@ -148,7 +148,7 @@ export function processStyles({ styles, theme, config }) {
 
   return Object.entries(styles).reduce((acc, [key, val]) => {
     if (utils && key in utils) {
-      // NOTE: Deepmerge for media propeties.
+      // NOTE: Deepmerge for media properties.
       acc = merge(
         acc,
         processStyles({ styles: utils[key](val), theme, config })
