@@ -3,7 +3,14 @@ import { getDeviceTypeAsync, DeviceType } from 'expo-device';
 import { createStitches } from 'stitches-native';
 import type * as Stitches from 'stitches-native';
 
-import { size, shadow, typography, flexCenter, absoluteFill } from './utils';
+import {
+  size,
+  shadow,
+  typography,
+  flexCenter,
+  absoluteFill,
+  remFunction,
+} from './utils';
 
 const media = {
   // You can provide boolean values for breakpoints when you just need to
@@ -172,6 +179,23 @@ const { styled, css, createTheme, config, theme, useTheme, ThemeProvider } =
       typography,
       flexCenter,
       absoluteFill,
+      fontSizeRem: remFunction('fontSize'),
+      widthRem: remFunction('width'),
+      heightRem: remFunction('height'),
+      lineHeightRem: remFunction('lineHeight'),
+      minWidthRem: remFunction('minWidth'),
+      minHeightRem: remFunction('minHeight'),
+      maxWidthRem: remFunction('maxWidth'),
+      maxHeightRem: remFunction('maxHeight'),
+      marginRightRem: remFunction('marginRight'),
+      marginLeftRem: remFunction('marginLeft'),
+      marginTopRem: remFunction('marginTop'),
+      marginBottomRem: remFunction('marginBottom'),
+      paddingRightRem: remFunction('paddingRight'),
+      paddingLeftRem: remFunction('paddingLeft'),
+      paddingTopRem: remFunction('paddingTop'),
+      paddingBottomRem: remFunction('paddingBottom'),
+      borderRadiusRem: remFunction('borderRadius'),
     },
     media,
   });

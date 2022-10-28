@@ -96,3 +96,70 @@ export const flexCenter = (
 export const absoluteFill = () => ({
   ...StyleSheet.absoluteFillObject,
 });
+
+export const generateSameMediaProperty = <
+  Property extends keyof CSSProperties,
+  Value
+>(
+  property: Property,
+  value: Value
+) => {
+  return {
+    '@xl': {
+      [property]: value,
+    },
+    '@lg': {
+      [property]: value,
+    },
+    '@md': {
+      [property]: value,
+    },
+    '@sm': {
+      [property]: value,
+    },
+    '@xsm': {
+      [property]: value,
+    },
+    '@xxsm': {
+      [property]: value,
+    },
+  };
+};
+
+const fontSizes = {
+  xxs: 10,
+  xs: 14,
+  sm: 16,
+  md: 18,
+  lg: 20,
+  xl: 24,
+  xxl: 32,
+};
+
+export const remFunction =
+  <Property extends keyof CSSProperties>(property: Property) =>
+  (rValue: number) => {
+    return {
+      '@xxl': {
+        [property]: fontSizes.xxl * rValue,
+      },
+      '@xl': {
+        [property]: fontSizes.xl * rValue,
+      },
+      '@lg': {
+        [property]: fontSizes.lg * rValue,
+      },
+      '@md': {
+        [property]: fontSizes.md * rValue,
+      },
+      '@sm': {
+        [property]: fontSizes.sm * rValue,
+      },
+      '@xs': {
+        [property]: fontSizes.xs * rValue,
+      },
+      '@xxs': {
+        [property]: fontSizes.xs * rValue,
+      },
+    } as Record<`@${keyof typeof fontSizes}`, CSSProperties>;
+  };

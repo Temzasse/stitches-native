@@ -17,6 +17,8 @@ export const Media = styled('Text', {
   '@sm': {
     fontSize: 12,
   },
+  marginTopRem: 1,
+  marginBottomRem: 1,
   variants: {
     color: {
       primary: { color: 'red' },

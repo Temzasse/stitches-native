@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import merge from 'lodash.merge';
 import { DEFAULT_THEME_MAP } from './constants';
 
 export function getCompoundKey(compoundEntries) {
@@ -123,10 +124,11 @@ export function processStyles({ styles, theme, config }) {
 
   return Object.entries(styles).reduce((acc, [key, val]) => {
     if (utils && key in utils) {
-      acc = {
-        ...acc,
-        ...processStyles({ styles: utils[key](val), theme, config }),
-      };
+      // NOTE: Deepmerge for media propeties.
+      acc = merge(
+        acc,
+        processStyles({ styles: utils[key](val), theme, config })
+      );
     } else if (typeof val === 'string' && val.indexOf('$') !== -1) {
       // Handle theme tokens, eg. `color: "$primary"` or `color: "$colors$primary"`
       const arr = val.split('$');
@@ -173,6 +175,8 @@ export function processStyles({ styles, theme, config }) {
     } else if (typeof val === 'object' && val.value !== undefined) {
       // Handle cases where the value comes from the `theme` returned by `createStitches`
       acc[key] = val.value;
+    } else if (typeof acc[key] === 'object' && typeof val === 'object') {
+      acc[key] = merge(acc[key], val);
     } else {
       acc[key] = val;
     }
