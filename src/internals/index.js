@@ -6,6 +6,7 @@ import React, {
   createElement,
   forwardRef,
   memo,
+  useMemo,
   useContext,
 } from 'react';
 
@@ -128,6 +129,23 @@ export function createStitches(config = {}) {
       let variantStyles = [];
       let compoundVariantStyles = [];
 
+      const mediaKey = useMemo(() => {
+        if (typeof config.media === 'object') {
+          const correctedWindowWidth =
+          PixelRatio.getPixelSizeForLayoutSize(windowWidth); // eslint-disable-line
+
+          // TODO: how do we quarantee the order of breakpoint matches?
+          // The order of the media key value pairs should be constant
+          // but is that guaranteed? So if the keys are ordered from
+          // smallest screen size to largest everything should work ok...
+          return utils.resolveMediaRangeQuery(
+            config.media,
+            correctedWindowWidth
+          );
+        }
+        return undefined;
+      }, [windowWidth]);
+
       if (variants) {
         variantStyles = Object.keys(variants)
           .map((prop) => {
@@ -152,31 +170,16 @@ export function createStitches(config = {}) {
                 styleSheetKey = `${prop}_${propValue['@initial']}`;
               }
 
-              Object.entries(config.media).forEach(([key, val]) => {
-                const breakpoint = `@${key}`;
-
+              if (mediaKey) {
+                const breakpoint = `@${mediaKey}`;
                 if (propValue[breakpoint] === undefined) return;
-
+                const val = config.media[mediaKey];
                 if (val === true) {
                   styleSheetKey = `${prop}_${propValue[breakpoint]}`;
                 } else if (typeof val === 'string') {
-                  const correctedWindowWidth =
-                    PixelRatio.getPixelSizeForLayoutSize(windowWidth); // eslint-disable-line
-
-                  // TODO: how do we quarantee the order of breakpoint matches?
-                  // The order of the media key value pairs should be constant
-                  // but is that guaranteed? So if the keys are ordered from
-                  // smallest screen size to largest everything should work ok...
-                  const match = utils.resolveMediaRangeQuery(
-                    val,
-                    correctedWindowWidth
-                  );
-
-                  if (match) {
-                    styleSheetKey = `${prop}_${propValue[breakpoint]}`;
-                  }
+                  styleSheetKey = `${prop}_${propValue[breakpoint]}`;
                 }
-              });
+              }
             } else {
               styleSheetKey = `${prop}_${propValue}`;
             }
@@ -211,8 +214,11 @@ export function createStitches(config = {}) {
           })
         : {};
 
+      const mediaStyle = styleSheet.base[`@${mediaKey}`] || {};
+
       const stitchesStyles = [
         styleSheet.base,
+        mediaStyle,
         ...variantStyles,
         ...compoundVariantStyles,
         cssStyles,

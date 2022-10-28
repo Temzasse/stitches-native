@@ -1,7 +1,7 @@
 import { Switch } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
-import { Stack, Text, useColorMode } from './components';
+import { Stack, Text, useColorMode, Media } from './components';
 import { styled } from './styles';
 
 export default function Example() {
@@ -31,9 +31,20 @@ export default function Example() {
             ))}
           </Stack>
 
+          <Media
+            color={{
+              '@xxl': 'primary',
+              '@xl': 'secondary',
+              '@lg': 'third',
+              '@md': 'forth',
+              '@sm': 'fifth',
+            }}
+          >
+            Font size and color should change as viewport changes
+          </Media>
+
           <Stack axis="x" space="3" align="center" justify="end">
             <Text variant="body">Toggle color mode</Text>
-
             <Switch
               value={colorMode === 'dark'}
               onValueChange={toggleColorMode}
