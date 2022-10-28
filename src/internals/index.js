@@ -108,7 +108,7 @@ export function createStitches(config = {}) {
         }
       });
     } else {
-      compoundVariants = _styles;
+      styles = _styles;
     }
 
     const styleSheets = utils.createStyleSheets({
