@@ -128,7 +128,7 @@ export function createStitches(config = {}) {
             breakpoint: _mediaKey && `@${_mediaKey}`,
           };
         }
-        return undefined;
+        return {};
       }, [windowWidth]);
 
       if (variants) {
