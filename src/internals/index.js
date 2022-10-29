@@ -90,26 +90,7 @@ export function createStitches(config = {}) {
       ..._styles
     } = styleObject;
 
-    let styles = {};
-
-    // Handle responsive base styles
-    if (typeof config.media === 'object') {
-      Object.entries(_styles).forEach(([key, val]) => {
-        if (key in config.media) {
-          // TODO: do we want to handle media range queries in the styled definition?
-          if (config.media[key] === true && typeof val === 'object') {
-            styles = { ...styles, ...val };
-          } else {
-            // Make sure other media styles are removed so they won't be passed on to StyleSheet
-            delete _styles[key];
-          }
-        } else {
-          styles[key] = val;
-        }
-      });
-    } else {
-      styles = _styles;
-    }
+    const styles = _styles;
 
     const styleSheets = utils.createStyleSheets({
       styles,
@@ -129,19 +110,23 @@ export function createStitches(config = {}) {
       let variantStyles = [];
       let compoundVariantStyles = [];
 
-      const mediaKey = useMemo(() => {
+      const { mediaKey, breakpoint } = useMemo(() => {
         if (typeof config.media === 'object') {
           const correctedWindowWidth =
-          PixelRatio.getPixelSizeForLayoutSize(windowWidth); // eslint-disable-line
+            PixelRatio.getPixelSizeForLayoutSize(windowWidth);
 
           // TODO: how do we quarantee the order of breakpoint matches?
           // The order of the media key value pairs should be constant
           // but is that guaranteed? So if the keys are ordered from
           // smallest screen size to largest everything should work ok...
-          return utils.resolveMediaRangeQuery(
+          const _mediaKey = utils.resolveMediaRangeQuery(
             config.media,
             correctedWindowWidth
           );
+          return {
+            mediaKey: _mediaKey,
+            breakpoint: _mediaKey && `@${_mediaKey}`,
+          };
         }
         return undefined;
       }, [windowWidth]);
@@ -155,7 +140,7 @@ export function createStitches(config = {}) {
               propValue = defaultVariants[prop];
             }
 
-            let styleSheetKey = '';
+            let styleSheetKey = `${prop}_${propValue}`;
 
             // Handle responsive prop value
             // NOTE: only one media query will be applied since the `styleSheetKey`
@@ -170,8 +155,7 @@ export function createStitches(config = {}) {
                 styleSheetKey = `${prop}_${propValue['@initial']}`;
               }
 
-              if (mediaKey) {
-                const breakpoint = `@${mediaKey}`;
+              if (breakpoint) {
                 if (propValue[breakpoint] === undefined) return;
                 const val = config.media[mediaKey];
                 if (val === true) {
@@ -180,11 +164,18 @@ export function createStitches(config = {}) {
                   styleSheetKey = `${prop}_${propValue[breakpoint]}`;
                 }
               }
-            } else {
-              styleSheetKey = `${prop}_${propValue}`;
             }
 
-            return styleSheetKey ? styleSheet[styleSheetKey] : undefined;
+            const extractedStyle = styleSheetKey
+              ? styleSheet[styleSheetKey]
+              : undefined;
+
+            if (extractedStyle && breakpoint in extractedStyle) {
+              // WARNING: lodash merge modify first argument reference or skip if freezed object.
+              return merge({}, extractedStyle, extractedStyle[breakpoint]);
+            }
+
+            return extractedStyle;
           })
           .filter(Boolean);
       }
@@ -200,7 +191,12 @@ export function createStitches(config = {}) {
               compoundEntries.every(([prop, value]) => props[prop] === value)
             ) {
               const key = utils.getCompoundKey(compoundEntries);
-              return styleSheet[key];
+              const extractedStyle = styleSheet[key];
+              if (extractedStyle && breakpoint in extractedStyle) {
+                // WARNING: lodash merge modify first argument reference or skip if freezed object.
+                return merge({}, extractedStyle, extractedStyle[breakpoint]);
+              }
+              return extractedStyle;
             }
           })
           .filter(Boolean);
@@ -214,7 +210,7 @@ export function createStitches(config = {}) {
           })
         : {};
 
-      const mediaStyle = styleSheet.base[`@${mediaKey}`] || {};
+      const mediaStyle = styleSheet.base[breakpoint] || {};
 
       const stitchesStyles = [
         styleSheet.base,
