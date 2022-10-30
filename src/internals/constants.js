@@ -116,7 +116,7 @@ export const DEFAULT_THEME_MAP = {
   ...Z_INDEX_PROPERTIES,
 };
 
-const THEME_VALUES = {
+export const THEME_VALUES = {
   borderStyles: null,
   borderWidths: null,
   colors: null,

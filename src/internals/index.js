@@ -128,7 +128,7 @@ export function createStitches(config = {}) {
             breakpoint: _mediaKey && `@${_mediaKey}`,
           };
         }
-        return undefined;
+        return {};
       }, [windowWidth]);
 
       if (variants) {
@@ -155,12 +155,9 @@ export function createStitches(config = {}) {
                 styleSheetKey = `${prop}_${propValue['@initial']}`;
               }
 
-              if (breakpoint) {
-                if (propValue[breakpoint] === undefined) return;
+              if (breakpoint && propValue[breakpoint] !== undefined) {
                 const val = config.media[mediaKey];
-                if (val === true) {
-                  styleSheetKey = `${prop}_${propValue[breakpoint]}`;
-                } else if (typeof val === 'string') {
+                if (val === true || typeof val === 'string') {
                   styleSheetKey = `${prop}_${propValue[breakpoint]}`;
                 }
               }
