@@ -165,6 +165,7 @@ export function processStyles({ styles, theme, config }) {
       // Handle cases where the value comes from the `theme` returned by `createStitches`
       acc[key] = val.value;
     } else if (typeof acc[key] === 'object' && typeof val === 'object') {
+      // Handle cases where media object value comes from top of a style prop and variants' ones
       acc[key] = merge(acc[key], val);
     } else {
       acc[key] = val;
