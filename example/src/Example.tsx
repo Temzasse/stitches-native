@@ -14,8 +14,10 @@ export default function Example() {
         <Stack axis="y" space="4">
           <Stack axis="x" space="3" align="center">
             <Text variant="title1">Example app</Text>
-            <Text variant="body">Switch Example</Text>
-            <Switch value={example} onValueChange={changeExample} />
+            <Stack axis="y" space="2">
+              <Text variant="body">Switch Examples</Text>
+              <Switch value={example} onValueChange={changeExample} />
+            </Stack>
           </Stack>
           {example && (
             <Stack axis="y" space="2">
