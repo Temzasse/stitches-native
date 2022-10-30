@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import merge from 'lodash.merge';
-import { DEFAULT_THEME_MAP } from './constants';
+import { DEFAULT_THEME_MAP, THEME_VALUES } from './constants';
 
 export function getCompoundKey(compoundEntries) {
   // Eg. `color_primary+size_small`
@@ -118,26 +118,13 @@ export function processTheme(theme) {
   return { definition, values };
 }
 
-const THEME_PRIORITIZED_KEYS = [
-  'colors',
-  'radii',
-  'sizes',
-  'space',
-  'borderStyles',
-  'borderWidths',
-  'fonts',
-  'fontSizes',
-  'fontWeights',
-  'lineHeights',
-  'zIndices',
-  'letterSpacings',
-];
+const THEME_KEYS = Object.keys(THEME_VALUES);
 
-function searchHaveTokenConfigKey(theme, themeMap, key) {
-  for (let i = 0, len = THEME_PRIORITIZED_KEYS.length; i < len; i++) {
-    const configKey = THEME_PRIORITIZED_KEYS[i];
-    if (key in (themeMap[configKey] || {}) && theme?.[configKey]) {
-      return configKey;
+function getThemeKey(theme, themeMap, key) {
+  for (let i = 0, len = THEME_KEYS.length; i < len; i++) {
+    const themeKey = THEME_KEYS[i];
+    if (key in (themeMap[themeKey] || {}) && theme?.[themeKey]) {
+      return themeKey;
     }
   }
 }
@@ -148,7 +135,7 @@ export function processStyles({ styles, theme, config }) {
 
   return Object.entries(styles).reduce((acc, [key, val]) => {
     if (utils && key in utils) {
-      // NOTE: Deepmerge for media propeties.
+      // NOTE: Deepmerge for media properties.
       acc = merge(
         acc,
         processStyles({ styles: utils[key](val), theme, config })
@@ -165,9 +152,9 @@ export function processStyles({ styles, theme, config }) {
       if (scale && theme[scale]) {
         acc[key] = theme[scale][token];
       } else {
-        const configKey = searchHaveTokenConfigKey(theme, themeMap, key);
-        if (configKey) {
-          acc[key] = theme[configKey][token];
+        const themeKey = getThemeKey(theme, themeMap, key);
+        if (themeKey) {
+          acc[key] = theme[themeKey][token];
         }
       }
 
