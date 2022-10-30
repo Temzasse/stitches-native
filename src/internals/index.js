@@ -157,9 +157,7 @@ export function createStitches(config = {}) {
 
               if (breakpoint && propValue[breakpoint] !== undefined) {
                 const val = config.media[mediaKey];
-                if (val === true) {
-                  styleSheetKey = `${prop}_${propValue[breakpoint]}`;
-                } else if (typeof val === 'string') {
+                if (val === true || typeof val === 'string') {
                   styleSheetKey = `${prop}_${propValue[breakpoint]}`;
                 }
               }
