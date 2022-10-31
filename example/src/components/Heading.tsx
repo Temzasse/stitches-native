@@ -54,6 +54,14 @@ const underLinedStyle = css({
         borderBottomWidth: 1,
       },
     },
+    {
+      // NOTE: To check default variants
+      heading: 'h1',
+      underlined: false,
+      css: {
+        marginBottom: '2px',
+      },
+    },
   ],
 });
 

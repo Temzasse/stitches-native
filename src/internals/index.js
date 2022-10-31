@@ -185,7 +185,10 @@ export function createStitches(config = {}) {
             const compoundEntries = Object.entries(compounds);
 
             if (
-              compoundEntries.every(([prop, value]) => props[prop] === value)
+              compoundEntries.every(([prop, value]) => {
+                const propValue = props[prop] ?? defaultVariants[prop];
+                return propValue === value;
+              })
             ) {
               const key = utils.getCompoundKey(compoundEntries);
               const extractedStyle = styleSheet[key];

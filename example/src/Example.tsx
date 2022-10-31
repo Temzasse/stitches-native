@@ -21,14 +21,12 @@ export default function Example() {
           </Stack>
           {example && (
             <Stack axis="y" space="2">
-              <Heading>Heading</Heading>
+              <Heading>Variants</Heading>
               <Heading heading="h2">Heading</Heading>
               <Heading heading="h3">Heading</Heading>
               <Heading heading="h4">Heading</Heading>
               <Heading heading="h5">Heading</Heading>
-              <Heading underlined heading="h1">
-                Heading
-              </Heading>
+              <Heading underlined>Compound Variants</Heading>
               <Heading underlined heading="h2">
                 Heading
               </Heading>
