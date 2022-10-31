@@ -26,6 +26,21 @@ export default function Example() {
               <Heading heading="h3">Heading</Heading>
               <Heading heading="h4">Heading</Heading>
               <Heading heading="h5">Heading</Heading>
+              <Heading underlined heading="h1">
+                Heading
+              </Heading>
+              <Heading underlined heading="h2">
+                Heading
+              </Heading>
+              <Heading underlined heading="h3">
+                Heading
+              </Heading>
+              <Heading underlined heading="h4">
+                Heading
+              </Heading>
+              <Heading underlined heading="h5">
+                Heading
+              </Heading>
             </Stack>
           )}
           {!example && (
