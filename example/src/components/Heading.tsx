@@ -1,5 +1,5 @@
 import { TextProps as RNTextProps } from 'react-native';
-import { styled } from '../styles';
+import { styled, css } from '../styles';
 
 export const Typography = styled('Text', {
   color: '$plainText',
@@ -30,3 +30,18 @@ export const Heading = styled('Text', {
 }).attrs(() => ({
   accessibilityRole: 'text',
 }));
+
+export const UnderlinedHeading = styled(
+  Heading,
+  css({
+    variants: {
+      heading: {
+        h5: { borderBottomWidth: 1, borderBottomColor: 'black' },
+        h4: { borderBottomWidth: 1, borderBottomColor: 'red' },
+        h3: { borderBottomWidth: 1, borderBottomColor: 'blue' },
+        h2: { borderBottomWidth: 1, borderBottomColor: 'green' },
+        h1: { borderBottomWidth: 1, borderBottomColor: 'purple' },
+      },
+    },
+  })
+);
