@@ -1,44 +1,87 @@
 import { Switch } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-
-import { Stack, Text, useColorMode } from './components';
+import { useState } from 'react';
+import { Stack, Text, useColorMode, Media, Heading } from './components';
 import { styled } from './styles';
 
 export default function Example() {
   const { toggleColorMode, colorMode } = useColorMode();
+  const [example, changeExample] = useState(false);
 
   return (
     <Wrapper>
       <Content>
         <Stack axis="y" space="4">
-          <Text variant="title1">Example app</Text>
-
-          <Stack axis="y" space="2">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Box key={i}>
-                <Stack axis="x" space="4">
-                  <Text variant="body" color="primaryText">
-                    Box {i + 1}
-                  </Text>
-                  <Text variant="body" color="primaryText">
-                    XXX
-                  </Text>
-                  <Text variant="body" color="primaryText">
-                    YYY
-                  </Text>
-                </Stack>
-              </Box>
-            ))}
+          <Stack axis="x" space="3" align="center">
+            <Text variant="title1">Example app</Text>
+            <Stack axis="y" space="2">
+              <Text variant="body">Switch Examples</Text>
+              <Switch value={example} onValueChange={changeExample} />
+            </Stack>
           </Stack>
+          {example && (
+            <Stack axis="y" space="2">
+              <Heading>Variants</Heading>
+              <Heading heading="h2">Heading</Heading>
+              <Heading heading="h3">Heading</Heading>
+              <Heading heading="h4">Heading</Heading>
+              <Heading heading="h5">Heading</Heading>
+              <Heading underlined>Compound Variants</Heading>
+              <Heading underlined heading="h2">
+                Heading
+              </Heading>
+              <Heading underlined heading="h3">
+                Heading
+              </Heading>
+              <Heading underlined heading="h4">
+                Heading
+              </Heading>
+              <Heading underlined heading="h5">
+                Heading
+              </Heading>
+            </Stack>
+          )}
+          {!example && (
+            <>
+              <Stack axis="y" space="2">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Box key={i}>
+                    <Stack axis="x" space="4">
+                      <Text variant="body" color="primaryText">
+                        Box {i + 1}
+                      </Text>
+                      <Text variant="body" color="primaryText">
+                        XXX
+                      </Text>
+                      <Text variant="body" color="primaryText">
+                        YYY
+                      </Text>
+                    </Stack>
+                  </Box>
+                ))}
+              </Stack>
 
-          <Stack axis="x" space="3" align="center" justify="end">
-            <Text variant="body">Toggle color mode</Text>
+              <Media
+                color={{
+                  '@xxl': 'primary',
+                  '@xl': 'secondary',
+                  '@lg': 'third',
+                  '@md': 'forth',
+                  '@sm': 'fifth',
+                }}
+              >
+                Font size and color should change as viewport changes
+              </Media>
 
-            <Switch
-              value={colorMode === 'dark'}
-              onValueChange={toggleColorMode}
-            />
-          </Stack>
+              <Stack axis="x" space="3" align="center" justify="end">
+                <Text variant="body">Toggle color mode</Text>
+                <Switch
+                  value={colorMode === 'dark'}
+                  onValueChange={toggleColorMode}
+                />
+              </Stack>
+            </>
+          )}
         </Stack>
       </Content>
 

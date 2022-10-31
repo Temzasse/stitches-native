@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { DEFAULT_THEME_MAP } from './constants';
+import merge from 'lodash.merge';
+import { DEFAULT_THEME_MAP, THEME_VALUES } from './constants';
 
 export function getCompoundKey(compoundEntries) {
   // Eg. `color_primary+size_small`
@@ -20,7 +21,7 @@ export function getCompoundKey(compoundEntries) {
 
 const validSigns = ['<=', '<', '>=', '>'];
 
-export function resolveMediaRangeQuery(query, windowWidth) {
+function matchMediaRangeQuery(query, windowWidth) {
   const singleRangeRegex = /^\(width\s+([><=]+)\s+([0-9]+)px\)$/;
   const multiRangeRegex = /^\(([0-9]+)px\s([><=]+)\swidth\s+([><=]+)\s+([0-9]+)px\)$/; // prettier-ignore
   const singleRangeMatches = query.match(singleRangeRegex);
@@ -55,6 +56,20 @@ export function resolveMediaRangeQuery(query, windowWidth) {
     );
   }
 
+  return result;
+}
+
+export function resolveMediaRangeQuery(queryObjects, windowWidth) {
+  const iterator = Object.entries(queryObjects);
+  let result;
+  for (let i = 0; i < iterator.length; i++) {
+    const [key, query] = iterator[i];
+    if (typeof query !== 'string') continue;
+    const match = matchMediaRangeQuery(query, windowWidth);
+    if (match) {
+      result = key;
+    }
+  }
   return result;
 }
 
@@ -103,16 +118,28 @@ export function processTheme(theme) {
   return { definition, values };
 }
 
+const THEME_KEYS = Object.keys(THEME_VALUES);
+
+function getThemeKey(theme, themeMap, key) {
+  for (let i = 0, len = THEME_KEYS.length; i < len; i++) {
+    const themeKey = THEME_KEYS[i];
+    if (key in (themeMap[themeKey] || {}) && theme?.[themeKey]) {
+      return themeKey;
+    }
+  }
+}
+
 export function processStyles({ styles, theme, config }) {
   const { utils, themeMap: customThemeMap } = config;
   const themeMap = processThemeMap(customThemeMap || DEFAULT_THEME_MAP);
 
   return Object.entries(styles).reduce((acc, [key, val]) => {
     if (utils && key in utils) {
-      acc = {
-        ...acc,
-        ...processStyles({ styles: utils[key](val), theme, config }),
-      };
+      // NOTE: Deepmerge for media properties.
+      acc = merge(
+        acc,
+        processStyles({ styles: utils[key](val), theme, config })
+      );
     } else if (typeof val === 'string' && val.indexOf('$') !== -1) {
       // Handle theme tokens, eg. `color: "$primary"` or `color: "$colors$primary"`
       const arr = val.split('$');
@@ -124,33 +151,11 @@ export function processStyles({ styles, theme, config }) {
 
       if (scale && theme[scale]) {
         acc[key] = theme[scale][token];
-      } else if (key in (themeMap.colors || {}) && theme?.colors) {
-        acc[key] = theme.colors[token];
-      } else if (key in (themeMap.radii || {}) && theme?.radii) {
-        acc[key] = theme.radii[token];
-      } else if (key in (themeMap.sizes || {}) && theme?.sizes) {
-        acc[key] = theme.sizes[token];
-      } else if (key in (themeMap.space || {}) && theme?.space) {
-        acc[key] = theme.space[token];
-      } else if (key in (themeMap.borderStyles || {}) && theme?.borderStyles) {
-        acc[key] = theme.borderStyles[token];
-      } else if (key in (themeMap.borderWidths || {}) && theme?.borderWidths) {
-        acc[key] = theme.borderWidths[token];
-      } else if (key in (themeMap.fonts || {}) && theme?.fonts) {
-        acc[key] = theme.fonts[token];
-      } else if (key in (themeMap.fontSizes || {}) && theme?.fontSizes) {
-        acc[key] = theme.fontSizes[token];
-      } else if (key in (themeMap.fontWeights || {}) && theme?.fontWeights) {
-        acc[key] = theme.fontWeights[token];
-      } else if (key in (themeMap.lineHeights || {}) && theme?.lineHeights) {
-        acc[key] = theme.lineHeights[token];
-      } else if (key in (themeMap.zIndices || {}) && theme?.zIndices) {
-        acc[key] = theme.zIndices[token];
-      } else if (
-        key in (themeMap.letterSpacings || {}) &&
-        theme?.letterSpacings
-      ) {
-        acc[key] = theme.letterSpacings[token];
+      } else {
+        const themeKey = getThemeKey(theme, themeMap, key);
+        if (themeKey) {
+          acc[key] = theme[themeKey][token];
+        }
       }
 
       if (typeof acc[key] === 'number' && sign) {
@@ -159,6 +164,9 @@ export function processStyles({ styles, theme, config }) {
     } else if (typeof val === 'object' && val.value !== undefined) {
       // Handle cases where the value comes from the `theme` returned by `createStitches`
       acc[key] = val.value;
+    } else if (typeof acc[key] === 'object' && typeof val === 'object') {
+      // Handle cases where media object value comes from top of a style prop and variants' ones
+      acc[key] = merge(acc[key], val);
     } else {
       acc[key] = val;
     }
