@@ -54,7 +54,10 @@ export default interface Stitches<
         : Theme[Scale][Token];
     };
   };
-  ThemeProvider: React.FunctionComponent<{ theme?: any; children: React.ReactNode }>; // TODO: fix `any`
+  ThemeProvider: React.FunctionComponent<{
+    theme?: any;
+    children: React.ReactNode;
+  }>; // TODO: fix `any`
   css: {
     <
       Composers extends (
@@ -67,11 +70,13 @@ export default interface Stitches<
       CSS = CSSUtil.CSS<Media, Theme, ThemeMap, Utils>
     >(
       ...composers: {
-        [K in keyof Composers]: Composers[K] extends  // Strings, React Components, and Functions can be skipped over
-          | string
-          | React.ExoticComponent<any>
-          | React.JSXElementConstructor<any>
-          | Util.Function
+        [K in keyof Composers]: string extends Composers[K] // Strings, React Components, and Functions can be skipped over
+          ? Composers[K]
+          : Composers[K] extends
+              | string
+              | React.ExoticComponent<any>
+              | React.JSXElementConstructor<any>
+              | Util.Function
           ? Composers[K]
           : CSS & {
               /** The **variants** property lets you set a subclass of styles based on a key-value pair.
