@@ -118,15 +118,10 @@ export function processTheme(theme) {
   return { definition, values };
 }
 
-const THEME_KEYS = Object.keys(THEME_VALUES);
-
 function getThemeKey(theme, themeMap, key) {
-  for (let i = 0, len = THEME_KEYS.length; i < len; i++) {
-    const themeKey = THEME_KEYS[i];
-    if (key in (themeMap[themeKey] || {}) && theme?.[themeKey]) {
-      return themeKey;
-    }
-  }
+  return Object.keys(THEME_VALUES).find((themeKey) => {
+    return key in (themeMap[themeKey] || {}) && theme?.[themeKey];
+  });
 }
 
 export function processStyles({ styles, theme, config }) {
@@ -135,7 +130,7 @@ export function processStyles({ styles, theme, config }) {
 
   return Object.entries(styles).reduce((acc, [key, val]) => {
     if (utils && key in utils) {
-      // NOTE: Deepmerge for media properties.
+      // NOTE: Deep merge for media properties.
       acc = merge(
         acc,
         processStyles({ styles: utils[key](val), theme, config })
@@ -157,7 +152,6 @@ export function processStyles({ styles, theme, config }) {
           acc[key] = theme[themeKey][token];
         }
       }
-
       if (typeof acc[key] === 'number' && sign) {
         acc[key] *= sign;
       }

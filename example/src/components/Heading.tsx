@@ -2,7 +2,7 @@ import { TextProps as RNTextProps } from 'react-native';
 import { styled, css } from '../styles';
 
 export const Typography = styled('Text', {
-  color: '$plainText',
+  color: '$text',
   fontSizeRem: 1,
 });
 
@@ -59,7 +59,7 @@ const underLinedStyle = css({
       heading: 'h1',
       underlined: false,
       css: {
-        marginBottom: '2px',
+        marginBottom: 2,
       },
     },
   ],
@@ -70,7 +70,6 @@ export const Heading = styled(
   {
     fontWeight: 'bold',
     color: '$plainText',
-    width: 'fit-content',
     variants: {
       heading: {
         h5: { fontSizeRem: 1.0, color: 'black' },
@@ -81,8 +80,8 @@ export const Heading = styled(
       },
       underlined: {
         true: {
-          paddingRight: '4px',
-          paddingLeft: '4px',
+          paddingRight: 4,
+          paddingLeft: 4,
         },
       },
     },
@@ -91,6 +90,8 @@ export const Heading = styled(
       underlined: false,
     },
   },
+  // TODO: fix this! Native `Text` cannot have a border bottom!
+  // The example needs to wrap the text with a `View` and apply the border bottom to that.
   underLinedStyle
 ).attrs(() => ({
   accessibilityRole: 'text',

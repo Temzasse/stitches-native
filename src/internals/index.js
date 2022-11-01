@@ -123,11 +123,13 @@ export function createStitches(config = {}) {
             config.media,
             correctedWindowWidth
           );
+
           return {
             mediaKey: _mediaKey,
             breakpoint: _mediaKey && `@${_mediaKey}`,
           };
         }
+
         return {};
       }, [windowWidth]);
 
@@ -157,6 +159,7 @@ export function createStitches(config = {}) {
 
               if (breakpoint && propValue[breakpoint] !== undefined) {
                 const val = config.media[mediaKey];
+
                 if (val === true || typeof val === 'string') {
                   styleSheetKey = `${prop}_${propValue[breakpoint]}`;
                 }
@@ -168,7 +171,7 @@ export function createStitches(config = {}) {
               : undefined;
 
             if (extractedStyle && breakpoint in extractedStyle) {
-              // WARNING: lodash merge modify first argument reference or skip if freezed object.
+              // WARNING: lodash merge modifies the first argument reference or skips if object is frozen.
               return merge({}, extractedStyle, extractedStyle[breakpoint]);
             }
 
@@ -192,10 +195,12 @@ export function createStitches(config = {}) {
             ) {
               const key = utils.getCompoundKey(compoundEntries);
               const extractedStyle = styleSheet[key];
+
               if (extractedStyle && breakpoint in extractedStyle) {
-                // WARNING: lodash merge modify first argument reference or skip if freezed object.
+                // WARNING: lodash merge modifies the first argument reference or skips if object is frozen.
                 return merge({}, extractedStyle, extractedStyle[breakpoint]);
               }
+
               return extractedStyle;
             }
           })
@@ -233,6 +238,7 @@ export function createStitches(config = {}) {
       }
 
       const propsWithoutVariant = { ...props };
+
       for (const variantKey of Object.keys(variants)) {
         delete propsWithoutVariant[variantKey];
       }
