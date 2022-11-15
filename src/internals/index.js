@@ -207,13 +207,18 @@ export function createStitches(config = {}) {
           .filter(Boolean);
       }
 
-      const cssStyles = props.css
+      let cssStyles = props.css
         ? utils.processStyles({
             styles: props.css || {},
             theme: theme.values,
             config,
           })
         : {};
+
+      if (cssStyles && breakpoint in cssStyles) {
+        // WARNING: lodash merge modifies the first argument reference or skips if object is frozen.
+        cssStyles = merge({}, cssStyles, cssStyles[breakpoint]);
+      }
 
       const mediaStyle = styleSheet.base[breakpoint] || {};
 

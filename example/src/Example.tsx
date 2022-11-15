@@ -26,7 +26,16 @@ export default function Example() {
               <Heading heading="h3">Heading</Heading>
               <Heading heading="h4">Heading</Heading>
               <Heading heading="h5">Heading</Heading>
-              <Heading underlined>Compound Variants</Heading>
+              <Heading
+                // NOTE: test inline media style.
+                // marginTopRem util function turns media style.
+                css={{
+                  marginTopRem: 1,
+                }}
+                underlined
+              >
+                Compound Variants
+              </Heading>
               <Heading underlined heading="h2">
                 Heading
               </Heading>
