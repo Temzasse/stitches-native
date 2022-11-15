@@ -59,17 +59,23 @@ function matchMediaRangeQuery(query, windowWidth) {
   return result;
 }
 
-export function resolveMediaRangeQuery(queryObjects, windowWidth) {
-  const iterator = Object.entries(queryObjects);
+export function resolveMediaRangeQuery(media, windowWidth) {
+  const entries = Object.entries(media);
   let result;
-  for (let i = 0; i < iterator.length; i++) {
-    const [key, query] = iterator[i];
-    if (typeof query !== 'string') continue;
-    const match = matchMediaRangeQuery(query, windowWidth);
+
+  for (let i = 0; i < entries.length; i++) {
+    const [breakpoint, queryOrFlag] = entries[i];
+
+    // TODO: handle boolean flag
+    if (typeof queryOrFlag !== 'string') continue;
+
+    const match = matchMediaRangeQuery(queryOrFlag, windowWidth);
+
     if (match) {
-      result = key;
+      result = breakpoint;
     }
   }
+
   return result;
 }
 
