@@ -139,7 +139,7 @@ export function createStitches(config = {}) {
           };
         }
 
-        return {};
+        return [];
       }, [windowWidth]);
 
       if (variants) {
