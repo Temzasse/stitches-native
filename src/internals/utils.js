@@ -59,24 +59,41 @@ function matchMediaRangeQuery(query, windowWidth) {
   return result;
 }
 
-export function resolveMediaRangeQuery(media, windowWidth) {
-  const entries = Object.entries(media);
-  let result;
+function createMatchedMedia(mediaKey) {
+  return {
+    mediaKey: mediaKey,
+    breakpoint: mediaKey && `@${mediaKey}`,
+  };
+}
 
-  for (let i = 0; i < entries.length; i++) {
-    const [breakpoint, queryOrFlag] = entries[i];
-
-    // TODO: handle boolean flag
-    if (typeof queryOrFlag !== 'string') continue;
-
-    const match = matchMediaRangeQuery(queryOrFlag, windowWidth);
-
+export function resolveMediaRangeQuery(queryObjects, windowWidth) {
+  const iterator = Object.entries(queryObjects);
+  const mediaAppliedKeys = [];
+  for (let i = 0; i < iterator.length; i++) {
+    const [key, query] = iterator[i];
+    if (query === true) {
+      mediaAppliedKeys.push(createMatchedMedia(key));
+    }
+    if (typeof query !== 'string') continue;
+    const match = matchMediaRangeQuery(query, windowWidth);
     if (match) {
-      result = breakpoint;
+      mediaAppliedKeys.push(createMatchedMedia(key));
     }
   }
+  return mediaAppliedKeys;
+}
 
-  return result;
+export function applyMediaStyles(originalStyle, matchedMedias) {
+  return matchedMedias.reduce(
+    (currentStyle, matcheMedia) => {
+      const breakpoint = matcheMedia.breakpoint;
+      if (breakpoint && breakpoint in originalStyle) {
+        return merge(currentStyle, originalStyle[breakpoint]);
+      }
+      return currentStyle;
+    },
+    { ...originalStyle }
+  );
 }
 
 export function processThemeMap(themeMap) {
