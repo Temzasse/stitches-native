@@ -48,7 +48,22 @@ export default function Example() {
               <Heading underlined heading="h5">
                 Heading
               </Heading>
-              <Heading>Media</Heading>
+              <Heading
+                // NOTE: test compound variants with media.
+                // If it work text color and border color are same
+                // as text size will be changed by device size.
+                heading={{
+                  '@xxl': 'h1',
+                  '@xl': 'h1',
+                  '@lg': 'h2',
+                  '@md': 'h3',
+                }}
+                underlined={{
+                  '@initial': true,
+                }}
+              >
+                Media
+              </Heading>
               <Heading
                 heading={{
                   '@initial': 'h5',
