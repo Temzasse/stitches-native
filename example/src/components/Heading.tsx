@@ -19,7 +19,6 @@ const underLinedStyle = css({
       underlined: true,
       css: {
         borderBottomColor: 'black',
-        borderBottomWidth: 1,
       },
     },
     {
@@ -27,7 +26,6 @@ const underLinedStyle = css({
       underlined: true,
       css: {
         borderBottomColor: 'red',
-        borderBottomWidth: 1,
       },
     },
     {
@@ -35,7 +33,6 @@ const underLinedStyle = css({
       underlined: true,
       css: {
         borderBottomColor: 'blue',
-        borderBottomWidth: 1,
       },
     },
     {
@@ -43,7 +40,6 @@ const underLinedStyle = css({
       underlined: true,
       css: {
         borderBottomColor: 'green',
-        borderBottomWidth: 1,
       },
     },
     {
@@ -51,7 +47,6 @@ const underLinedStyle = css({
       underlined: true,
       css: {
         borderBottomColor: 'purple',
-        borderBottomWidth: 1,
       },
     },
     {
@@ -82,6 +77,7 @@ export const Heading = styled(
         true: {
           paddingRight: 4,
           paddingLeft: 4,
+          borderBottomWidth: 1,
         },
       },
     },
