@@ -118,6 +118,7 @@ export function createStitches(config = {}) {
 
       let variantStyles = [];
       let compoundVariantStyles = [];
+      const appliedVariants = {};
 
       const matchedMedias = useMemo(() => {
         if (typeof config.media === 'object') {
@@ -142,15 +143,16 @@ export function createStitches(config = {}) {
       if (variants) {
         variantStyles = Object.keys(variants)
           .map((prop) => {
-            let propValue = props[prop];
-
-            if (propValue === undefined) {
-              propValue = defaultVariants[prop];
-            }
+            const propValue = props[prop] ?? defaultVariants[prop];
 
             const styleSheetKey = `${prop}_${propValue}`;
 
-            if (typeof propValue !== 'object') return styleSheet[styleSheetKey];
+            if (typeof propValue !== 'object') {
+              if (propValue) {
+                appliedVariants[prop] = propValue;
+              }
+              return styleSheet[styleSheetKey];
+            }
 
             const matchedMediasDetected = [
               {
@@ -168,7 +170,10 @@ export function createStitches(config = {}) {
                 if (breakpoint && propValue[breakpoint] !== undefined) {
                   const styleSheetKey = `${prop}_${propValue[breakpoint]}`;
                   const extractedStyle = styleSheet[styleSheetKey];
-                  if (extractedStyle) return extractedStyle;
+                  if (extractedStyle) {
+                    appliedVariants[prop] = propValue[breakpoint];
+                    return extractedStyle;
+                  }
                 }
                 return currentStyle;
               },
@@ -189,7 +194,8 @@ export function createStitches(config = {}) {
 
             if (
               compoundEntries.every(([prop, value]) => {
-                const propValue = props[prop] ?? defaultVariants[prop];
+                const propValue =
+                  appliedVariants[prop] ?? defaultVariants[prop];
                 return propValue === value;
               })
             ) {
