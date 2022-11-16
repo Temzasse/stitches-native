@@ -124,12 +124,7 @@ export default interface Stitches<
                   : unknown;
               };
       }
-    ): StyledComponent.CssComponent<
-      StyledComponent.StyledComponentType<Composers>,
-      StyledComponent.StyledComponentProps<Composers>,
-      Media,
-      CSS
-    >;
+    ): CSS;
   }; // TODO: `variants` inside `css` break TS...
   styled: {
     <
