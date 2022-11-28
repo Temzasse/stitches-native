@@ -27,3 +27,36 @@ describe('Basic', () => {
     });
   });
 });
+
+describe('Runtime', () => {
+  it('Functionality of ThemeProvider', () => {
+    const { styled, createTheme, ThemeProvider } = createStitches({
+      theme: {
+        sizes: { demoWidth: 100 },
+      },
+    });
+
+    const Comp = styled('View', {
+      backgroundColor: 'red',
+      height: 100,
+      width: '$demoWidth',
+    });
+
+    const newTheme = createTheme({ sizes: { demoWidth: 30 } });
+
+    const { toJSON } = render(
+      <ThemeProvider theme={newTheme}>
+        <Comp />
+      </ThemeProvider>
+    );
+
+    const result = toJSON();
+
+    expect(result?.type).toEqual('View');
+    expect(result?.props.style[0]).toMatchObject({
+      backgroundColor: 'red',
+      height: 100,
+      width: 30,
+    });
+  });
+});

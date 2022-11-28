@@ -92,17 +92,17 @@ export function createStitches(config = {}) {
 
     const styles = _styles;
 
-    const styleSheets = utils.createStyleSheets({
-      styles,
-      config,
-      themes,
-      variants,
-      compoundVariants,
-    });
-
     let attrsFn;
 
     let Comp = forwardRef((props, ref) => {
+      const styleSheets = utils.createStyleSheets({
+        styles,
+        config,
+        themes,
+        variants,
+        compoundVariants,
+      });
+
       const theme = useThemeInternal();
       const styleSheet = styleSheets[theme.definition.__ID__];
       const { width: windowWidth } = useWindowDimensions();
