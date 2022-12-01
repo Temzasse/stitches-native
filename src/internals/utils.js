@@ -186,11 +186,11 @@ export function createStyleSheet({
     base: styles ? processStyles({ styles, config, theme: theme.values }) : {},
     // Variant styles
     ...Object.entries(variants).reduce(
-      (variantsAcc, [vartiantProp, variantValues]) => {
+      (variantsAcc, [variantProp, variantValues]) => {
         Object.entries(variantValues).forEach(
           ([variantName, variantStyles]) => {
             // Eg. `color_primary` or `size_small`
-            const key = `${vartiantProp}_${variantName}`;
+            const key = `${variantProp}_${variantName}`;
 
             variantsAcc[key] = processStyles({
               styles: variantStyles,
