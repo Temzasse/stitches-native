@@ -175,58 +175,50 @@ export function processStyles({ styles, theme, config }) {
   }, {});
 }
 
-export function createStyleSheets({
-  themes,
+export function createStyleSheet({
+  theme,
   styles,
   config,
   variants,
   compoundVariants,
 }) {
-  const styleSheets = themes.reduce((styleSheetAcc, theme) => {
-    styleSheetAcc[theme.definition.__ID__] = StyleSheet.create({
-      base: styles
-        ? processStyles({ styles, config, theme: theme.values })
-        : {},
-      // Variant styles
-      ...Object.entries(variants).reduce(
-        (variantsAcc, [vartiantProp, variantValues]) => {
-          Object.entries(variantValues).forEach(
-            ([variantName, variantStyles]) => {
-              // Eg. `color_primary` or `size_small`
-              const key = `${vartiantProp}_${variantName}`;
+  return StyleSheet.create({
+    base: styles ? processStyles({ styles, config, theme: theme.values }) : {},
+    // Variant styles
+    ...Object.entries(variants).reduce(
+      (variantsAcc, [vartiantProp, variantValues]) => {
+        Object.entries(variantValues).forEach(
+          ([variantName, variantStyles]) => {
+            // Eg. `color_primary` or `size_small`
+            const key = `${vartiantProp}_${variantName}`;
 
-              variantsAcc[key] = processStyles({
-                styles: variantStyles,
-                config,
-                theme: theme.values,
-              });
-            }
-          );
-          return variantsAcc;
-        },
-        {}
-      ),
-      // Compound variant styles
-      ...compoundVariants.reduce((compoundAcc, compoundVariant) => {
-        const { css, ...compounds } = compoundVariant;
-        const compoundEntries = Object.entries(compounds);
+            variantsAcc[key] = processStyles({
+              styles: variantStyles,
+              config,
+              theme: theme.values,
+            });
+          }
+        );
+        return variantsAcc;
+      },
+      {}
+    ),
+    // Compound variant styles
+    ...compoundVariants.reduce((compoundAcc, compoundVariant) => {
+      const { css, ...compounds } = compoundVariant;
+      const compoundEntries = Object.entries(compounds);
 
-        if (compoundEntries.length > 1) {
-          const key = getCompoundKey(compoundEntries);
+      if (compoundEntries.length > 1) {
+        const key = getCompoundKey(compoundEntries);
 
-          compoundAcc[key] = processStyles({
-            styles: css || {},
-            config,
-            theme: theme.values,
-          });
-        }
+        compoundAcc[key] = processStyles({
+          styles: css || {},
+          config,
+          theme: theme.values,
+        });
+      }
 
-        return compoundAcc;
-      }, {}),
-    });
-
-    return styleSheetAcc;
-  }, {});
-
-  return styleSheets;
+      return compoundAcc;
+    }, {}),
+  });
 }
