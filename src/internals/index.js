@@ -92,19 +92,28 @@ export function createStitches(config = {}) {
 
     const styles = _styles;
 
-    const styleSheets = utils.createStyleSheets({
-      styles,
-      config,
-      themes,
-      variants,
-      compoundVariants,
-    });
+    const styleSheets = {};
 
     let attrsFn;
 
     let Comp = forwardRef((props, ref) => {
       const theme = useThemeInternal();
-      const styleSheet = styleSheets[theme.definition.__ID__];
+
+      const styleSheet = useMemo(() => {
+        const _styleSheet = styleSheets[theme.definition.__ID__];
+        if (_styleSheet) {
+          return _styleSheet;
+        }
+        styleSheets[theme.definition.__ID__] = utils.createStyleSheet({
+          styles,
+          config,
+          theme,
+          variants,
+          compoundVariants,
+        });
+        return styleSheets[theme.definition.__ID__];
+      }, [theme]);
+
       const { width: windowWidth } = useWindowDimensions();
 
       let variantStyles = [];
