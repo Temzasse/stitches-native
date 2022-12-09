@@ -48,6 +48,51 @@ export default function Example() {
               <Heading underlined heading="h5">
                 Heading
               </Heading>
+              <Heading
+                // NOTE: test compound variants with media.
+                // If it work text color and border color are same
+                // as text size will be changed by device size.
+                heading={{
+                  '@xxl': 'h1',
+                  '@xl': 'h1',
+                  '@lg': 'h2',
+                  '@md': 'h3',
+                }}
+                underlined={{
+                  '@initial': true,
+                }}
+              >
+                Media
+              </Heading>
+              <Heading
+                heading={{
+                  '@initial': 'h5',
+                }}
+                underlined={{
+                  '@initial': false,
+                  '@phone': true,
+                }}
+              >
+                Underlined appears on phone
+              </Heading>
+              <Heading
+                heading="h5"
+                // NOTE: media style can be marged and overwriten by later applied media styles.
+                css={{
+                  '@phone': {
+                    borderColor: 'white',
+                    borderRightWidth: 1,
+                    borderTopWidth: 1,
+                    borderLeftWidth: 1,
+                    borderBottomWidth: 1,
+                  },
+                  '@md': {
+                    borderColor: 'black',
+                  },
+                }}
+              >
+                Square border appears on md Phone
+              </Heading>
             </Stack>
           )}
           {!example && (

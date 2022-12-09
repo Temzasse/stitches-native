@@ -118,8 +118,9 @@ export function createStitches(config = {}) {
 
       let variantStyles = [];
       let compoundVariantStyles = [];
+      const appliedVariants = {};
 
-      const { mediaKey, breakpoint } = useMemo(() => {
+      const matchedMedias = useMemo(() => {
         if (typeof config.media === 'object') {
           const correctedWindowWidth =
             PixelRatio.getPixelSizeForLayoutSize(windowWidth);
@@ -128,63 +129,58 @@ export function createStitches(config = {}) {
           // The order of the media key value pairs should be constant
           // but is that guaranteed? So if the keys are ordered from
           // smallest screen size to largest everything should work ok...
-          const _mediaKey = utils.resolveMediaRangeQuery(
+          const matchedMedias = utils.resolveMediaRangeQuery(
             config.media,
             correctedWindowWidth
           );
 
-          return {
-            mediaKey: _mediaKey,
-            breakpoint: _mediaKey && `@${_mediaKey}`,
-          };
+          return matchedMedias;
         }
 
-        return {};
+        return [];
       }, [windowWidth]);
 
       if (variants) {
         variantStyles = Object.keys(variants)
           .map((prop) => {
-            let propValue = props[prop];
+            const propValue = props[prop] ?? defaultVariants[prop];
 
-            if (propValue === undefined) {
-              propValue = defaultVariants[prop];
+            const styleSheetKey = `${prop}_${propValue}`;
+
+            if (typeof propValue !== 'object') {
+              if (propValue) {
+                appliedVariants[prop] = propValue;
+              }
+              return styleSheet[styleSheetKey];
             }
 
-            let styleSheetKey = `${prop}_${propValue}`;
+            const matchedMediasDetected = [
+              {
+                mediaKey: 'initial',
+                breakpoint: '@initial',
+              },
+              ...matchedMedias,
+            ];
 
-            // Handle responsive prop value
-            // NOTE: only one media query will be applied since the `styleSheetKey`
-            // is being rewritten by the last matching media query and defaults to `@initial`
-            if (
-              typeof propValue === 'object' &&
-              typeof config.media === 'object'
-            ) {
-              // `@initial` acts as the default value if none of the media query values match
-              // It's basically the as setting `prop="value"`, eg. `color="primary"`
-              if (typeof propValue['@initial'] === 'string') {
-                styleSheetKey = `${prop}_${propValue['@initial']}`;
-              }
-
-              if (breakpoint && propValue[breakpoint] !== undefined) {
-                const val = config.media[mediaKey];
-
-                if (val === true || typeof val === 'string') {
-                  styleSheetKey = `${prop}_${propValue[breakpoint]}`;
+            // NOTE: Even if multiple values are matched, restict variant value is last matched and
+            // compensated to be determined uniquely.
+            const finalVariantStyle = matchedMediasDetected.reduce(
+              (currentStyle, matchedMedia) => {
+                const breakpoint = matchedMedia.breakpoint;
+                if (breakpoint && propValue[breakpoint] !== undefined) {
+                  const styleSheetKey = `${prop}_${propValue[breakpoint]}`;
+                  const extractedStyle = styleSheet[styleSheetKey];
+                  if (extractedStyle) {
+                    appliedVariants[prop] = propValue[breakpoint];
+                    return extractedStyle;
+                  }
                 }
-              }
-            }
+                return currentStyle;
+              },
+              {}
+            );
 
-            const extractedStyle = styleSheetKey
-              ? styleSheet[styleSheetKey]
-              : undefined;
-
-            if (extractedStyle && breakpoint in extractedStyle) {
-              // WARNING: lodash merge modifies the first argument reference or skips if object is frozen.
-              return merge({}, extractedStyle, extractedStyle[breakpoint]);
-            }
-
-            return extractedStyle;
+            return finalVariantStyle;
           })
           .filter(Boolean);
       }
@@ -198,25 +194,19 @@ export function createStitches(config = {}) {
 
             if (
               compoundEntries.every(([prop, value]) => {
-                const propValue = props[prop] ?? defaultVariants[prop];
+                const propValue =
+                  appliedVariants[prop] ?? defaultVariants[prop];
                 return propValue === value;
               })
             ) {
               const key = utils.getCompoundKey(compoundEntries);
-              const extractedStyle = styleSheet[key];
-
-              if (extractedStyle && breakpoint in extractedStyle) {
-                // WARNING: lodash merge modifies the first argument reference or skips if object is frozen.
-                return merge({}, extractedStyle, extractedStyle[breakpoint]);
-              }
-
-              return extractedStyle;
+              return styleSheet[key];
             }
           })
           .filter(Boolean);
       }
 
-      let cssStyles = props.css
+      const cssStyles = props.css
         ? utils.processStyles({
             styles: props.css || {},
             theme: theme.values,
@@ -224,20 +214,12 @@ export function createStitches(config = {}) {
           })
         : {};
 
-      if (cssStyles && breakpoint in cssStyles) {
-        // WARNING: lodash merge modifies the first argument reference or skips if object is frozen.
-        cssStyles = merge({}, cssStyles, cssStyles[breakpoint]);
-      }
-
-      const mediaStyle = styleSheet.base[breakpoint] || {};
-
       const stitchesStyles = [
         styleSheet.base,
-        mediaStyle,
         ...variantStyles,
         ...compoundVariantStyles,
         cssStyles,
-      ];
+      ].map((style) => utils.applyMediaStyles(style, matchedMedias));
 
       const allStyles =
         typeof props.style === 'function'
