@@ -1,7 +1,15 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
+
+import {
+  flattenCompoundVariantStyles,
+  flattenStyles,
+  flattenVariantStyles,
+} from '../internals/utils';
+
 import { createStitches as _createStitches } from '../internals';
-import type { CreateStitches } from '../types';
+import { CreateStitches } from '../types';
+import { mockDimensions } from './utils';
 
 // NOTE: the JSDoc types from the internal `createStitches` are not working properly
 const createStitches = _createStitches as CreateStitches;
@@ -151,5 +159,145 @@ describe('Runtime', () => {
       height: 100,
       width: 10,
     });
+  });
+});
+
+describe('Media', () => {
+  it('Nested utils and media queries with theme values', async () => {
+    const { styled } = createStitches({
+      media: {
+        bp1: '(width <= 640px)',
+        bp2: '(width <= 1024px)',
+      },
+      utils: {
+        util1: (value: number) => ({
+          fontSize: value,
+          '@bp1': { fontSize: value / 2 },
+          '@bp2': { fontSize: value * 2 },
+        }),
+        util2: (value: number) => ({
+          util1: 20,
+          width: value,
+          height: value,
+          '@bp1': { width: value / 2, height: value / 2 },
+          '@bp2': { width: value * 2, height: value * 2 },
+        }),
+      },
+    });
+
+    const Comp = styled('View', {
+      backgroundColor: 'yellow',
+      color: 'red',
+      util2: 100,
+      '@bp1': {
+        color: 'blue',
+      },
+    });
+
+    mockDimensions({ width: 640 });
+
+    const { toJSON } = render(<Comp />);
+    const result = toJSON();
+
+    expect(result?.props.style[0]).toMatchObject({
+      backgroundColor: 'yellow',
+      // Styles from @bp1
+      color: 'blue', // <- base media query
+      fontSize: 10, // <- util1
+      width: 50, // <- util2
+      height: 50, // <- util2
+    });
+  });
+});
+
+describe('Utils', () => {
+  const utils = {
+    util1: (value) => ({
+      fontSize: value,
+      '@bp1': { fontSize: value / 2 },
+      '@bp2': { fontSize: value * 2 },
+    }),
+    util2: (value) => ({
+      util1: 20,
+      width: value,
+      height: value,
+      '@bp2': { width: value * 3, height: value * 3 },
+    }),
+  };
+
+  it('flattenStyles', () => {
+    const result = flattenStyles(
+      {
+        color: 'red',
+        util2: 100,
+        '@bp1': { color: 'blue' },
+      },
+      utils
+    );
+
+    expect(result).toMatchObject({
+      color: 'red',
+      fontSize: 20,
+      width: 100,
+      height: 100,
+      bp1: { color: 'blue', fontSize: 10 },
+      bp2: { fontSize: 40, width: 300, height: 300 },
+    });
+  });
+
+  it('flattenVariantStyles', () => {
+    const result = flattenVariantStyles(
+      {
+        v1: {
+          x: { util1: 10 },
+          y: { util2: 100 },
+        },
+      },
+      utils
+    );
+
+    expect(result).toMatchObject({
+      v1: {
+        x: {
+          fontSize: 10,
+          bp1: { fontSize: 5 },
+          bp2: { fontSize: 20 },
+        },
+        y: {
+          width: 100,
+          height: 100,
+          fontSize: 20,
+          bp1: { fontSize: 10 },
+          bp2: { fontSize: 40, width: 300, height: 300 },
+        },
+      },
+    });
+  });
+
+  it('flattenCompoundVariantStyles', () => {
+    const result = flattenCompoundVariantStyles(
+      [
+        {
+          v1: 'x',
+          v2: 'y',
+          css: { util2: 100, '@bp1': { color: 'blue' } },
+        },
+      ],
+      utils
+    );
+
+    expect(result).toMatchObject([
+      {
+        v1: 'x',
+        v2: 'y',
+        css: {
+          width: 100,
+          height: 100,
+          fontSize: 20,
+          bp1: { color: 'blue', fontSize: 10 },
+          bp2: { fontSize: 40, width: 300, height: 300 },
+        },
+      },
+    ]);
   });
 });
