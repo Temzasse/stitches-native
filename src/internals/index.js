@@ -1,5 +1,4 @@
 import merge from 'lodash.merge';
-import { PixelRatio, useWindowDimensions } from 'react-native';
 
 import React, {
   createContext,
@@ -10,8 +9,27 @@ import React, {
   useContext,
 } from 'react';
 
-import * as utils from './utils';
-import * as constants from './constants';
+import {
+  flattenCompoundVariantStyles,
+  flattenStyles,
+  flattenVariantStyles,
+} from './utils';
+
+import {
+  DEFAULT_THEME_MAP,
+  EMPTY_THEME,
+  THEME_PROVIDER_MISSING_MESSAGE,
+} from './constants';
+
+import {
+  useCompoundVariantStyles,
+  useMediaQueries,
+  useProcessedStyleSheet,
+  useVariantStyles,
+} from './hooks';
+
+import { processTheme } from './theme';
+import { createStyleSheet, processStyles } from './styles';
 
 /** @typedef {import('../types').__Stitches__} Stitches */
 /** @typedef {import('../types').CreateStitches} CreateStitches */
@@ -24,17 +42,17 @@ export function createStitches(config = {}) {
   const themes = [];
 
   if (config.theme) {
-    const processedTheme = utils.processTheme(config.theme);
+    const processedTheme = processTheme(config.theme);
     processedTheme.definition.__ID__ = 'theme-1';
 
     themes.push(processedTheme);
   } else {
-    themes.push(constants.EMPTY_THEME);
+    themes.push(EMPTY_THEME);
   }
 
   /** @type {Stitches['createTheme']} */
   function createTheme(theme) {
-    const newTheme = utils.processTheme(
+    const newTheme = processTheme(
       Object.entries(config.theme || {}).reduce((acc, [key, val]) => {
         acc[key] = { ...val, ...theme[key] };
         return acc;
@@ -62,10 +80,10 @@ export function createStitches(config = {}) {
     const themeDefinition = useContext(ThemeContext);
 
     if (!themeDefinition) {
-      throw new Error(constants.THEME_PROVIDER_MISSING_MESSAGE);
+      throw new Error(THEME_PROVIDER_MISSING_MESSAGE);
     }
 
-    return themes.find((x) => x.definition.__ID__ === themeDefinition.__ID__);
+    return themes.find((t) => t.definition.__ID__ === themeDefinition.__ID__);
   }
 
   /** @type {Stitches['useTheme']} */
@@ -73,25 +91,28 @@ export function createStitches(config = {}) {
     const themeDefinition = useContext(ThemeContext);
 
     if (!themeDefinition) {
-      throw new Error(constants.THEME_PROVIDER_MISSING_MESSAGE);
+      throw new Error(THEME_PROVIDER_MISSING_MESSAGE);
     }
 
-    return themes.find((x) => x.definition.__ID__ === themeDefinition.__ID__).values; // prettier-ignore
+    return themes.find((t) => t.definition.__ID__ === themeDefinition.__ID__).values; // prettier-ignore
   }
 
   /** @type {Stitches['styled']} */
-  function styled(component, ...styleObjects) {
-    const styleObject = styleObjects.reduce((a, v) => merge(a, v), {});
+  function styled(component, ...styleDefs) {
+    const styleDef = styleDefs.reduce((a, v) => merge(a, v), {});
 
     const {
-      variants = {},
-      compoundVariants = [],
       defaultVariants = {},
+      variants: _variants,
+      compoundVariants: _compoundVariants,
       ..._styles
-    } = styleObject;
+    } = styleDef;
 
-    const styles = _styles;
-
+    const media = config.media || {};
+    const utils = config.utils || {};
+    const variants = flattenVariantStyles(_variants || {}, utils);
+    const compoundVariants = flattenCompoundVariantStyles(_compoundVariants || [], utils); // prettier-ignore
+    const styles = flattenStyles(_styles || {}, utils);
     const styleSheets = {};
 
     let attrsFn;
@@ -99,151 +120,66 @@ export function createStitches(config = {}) {
     let Comp = forwardRef((props, ref) => {
       const theme = useThemeInternal();
 
-      const styleSheet = useMemo(() => {
-        const _styleSheet = styleSheets[theme.definition.__ID__];
-        if (_styleSheet) {
-          return _styleSheet;
-        }
-        styleSheets[theme.definition.__ID__] = utils.createStyleSheet({
+      const baseStyleSheet = useMemo(() => {
+        const existingSheet = styleSheets[theme.definition.__ID__];
+        if (existingSheet) return existingSheet;
+
+        styleSheets[theme.definition.__ID__] = createStyleSheet({
           styles,
-          config,
-          theme,
           variants,
           compoundVariants,
+          theme: theme.values,
+          themeMap: config.themeMap,
         });
+
         return styleSheets[theme.definition.__ID__];
       }, [theme]);
 
-      const { width: windowWidth } = useWindowDimensions();
+      const activeMediaQueries = useMediaQueries(media);
 
-      let variantStyles = [];
-      let compoundVariantStyles = [];
+      const styleSheet = useProcessedStyleSheet({
+        media,
+        activeMediaQueries,
+        styleSheet: baseStyleSheet,
+      });
 
-      const { mediaKey, breakpoint } = useMemo(() => {
-        if (typeof config.media === 'object') {
-          const correctedWindowWidth =
-            PixelRatio.getPixelSizeForLayoutSize(windowWidth);
+      const variantStyles = useVariantStyles({
+        props,
+        variants,
+        defaultVariants,
+        media,
+        activeMediaQueries,
+        styleSheet,
+      });
 
-          // TODO: how do we quarantee the order of breakpoint matches?
-          // The order of the media key value pairs should be constant
-          // but is that guaranteed? So if the keys are ordered from
-          // smallest screen size to largest everything should work ok...
-          const _mediaKey = utils.resolveMediaRangeQuery(
-            config.media,
-            correctedWindowWidth
-          );
+      const compoundVariantStyles = useCompoundVariantStyles({
+        props,
+        variants,
+        defaultVariants,
+        compoundVariants,
+        styleSheet,
+      });
 
-          return {
-            mediaKey: _mediaKey,
-            breakpoint: _mediaKey && `@${_mediaKey}`,
-          };
-        }
-
-        return {};
-      }, [windowWidth]);
-
-      if (variants) {
-        variantStyles = Object.keys(variants)
-          .map((prop) => {
-            let propValue = props[prop];
-
-            if (propValue === undefined) {
-              propValue = defaultVariants[prop];
-            }
-
-            let styleSheetKey = `${prop}_${propValue}`;
-
-            // Handle responsive prop value
-            // NOTE: only one media query will be applied since the `styleSheetKey`
-            // is being rewritten by the last matching media query and defaults to `@initial`
-            if (
-              typeof propValue === 'object' &&
-              typeof config.media === 'object'
-            ) {
-              // `@initial` acts as the default value if none of the media query values match
-              // It's basically the as setting `prop="value"`, eg. `color="primary"`
-              if (typeof propValue['@initial'] === 'string') {
-                styleSheetKey = `${prop}_${propValue['@initial']}`;
-              }
-
-              if (breakpoint && propValue[breakpoint] !== undefined) {
-                const val = config.media[mediaKey];
-
-                if (val === true || typeof val === 'string') {
-                  styleSheetKey = `${prop}_${propValue[breakpoint]}`;
-                }
-              }
-            }
-
-            const extractedStyle = styleSheetKey
-              ? styleSheet[styleSheetKey]
-              : undefined;
-
-            if (extractedStyle && breakpoint in extractedStyle) {
-              // WARNING: lodash merge modifies the first argument reference or skips if object is frozen.
-              return merge({}, extractedStyle, extractedStyle[breakpoint]);
-            }
-
-            return extractedStyle;
-          })
-          .filter(Boolean);
-      }
-
-      if (compoundVariants) {
-        compoundVariantStyles = compoundVariants
-          .map((compoundVariant) => {
-            // eslint-disable-next-line
-            const { css: _css, ...compounds } = compoundVariant;
-            const compoundEntries = Object.entries(compounds);
-
-            if (
-              compoundEntries.every(([prop, value]) => {
-                const propValue = props[prop] ?? defaultVariants[prop];
-                return propValue === value;
-              })
-            ) {
-              const key = utils.getCompoundKey(compoundEntries);
-              const extractedStyle = styleSheet[key];
-
-              if (extractedStyle && breakpoint in extractedStyle) {
-                // WARNING: lodash merge modifies the first argument reference or skips if object is frozen.
-                return merge({}, extractedStyle, extractedStyle[breakpoint]);
-              }
-
-              return extractedStyle;
-            }
-          })
-          .filter(Boolean);
-      }
-
-      let cssStyles = props.css
-        ? utils.processStyles({
-            styles: props.css || {},
+      const cssStyles = props.css
+        ? processStyles({
+            styles: flattenStyles(props.css || {}, utils),
             theme: theme.values,
-            config,
+            themeMap: config.themeMap,
           })
         : {};
 
-      if (cssStyles && breakpoint in cssStyles) {
-        // WARNING: lodash merge modifies the first argument reference or skips if object is frozen.
-        cssStyles = merge({}, cssStyles, cssStyles[breakpoint]);
-      }
-
-      const mediaStyle = styleSheet.base[breakpoint] || {};
-
-      const stitchesStyles = [
+      const combinedStyles = [
         styleSheet.base,
-        mediaStyle,
         ...variantStyles,
         ...compoundVariantStyles,
         cssStyles,
       ];
 
-      const allStyles =
+      const style =
         typeof props.style === 'function'
           ? (...rest) =>
-              [props.style(...rest), ...stitchesStyles].filter(Boolean)
-          : [...stitchesStyles, props.style].filter(Boolean);
+              [props.style(...rest), ...combinedStyles].filter(Boolean)
+          : [...combinedStyles, props.style].filter(Boolean);
 
       let attrsProps = {};
 
@@ -260,7 +196,7 @@ export function createStitches(config = {}) {
       const componentProps = {
         ...attrsProps,
         ...propsWithoutVariant,
-        style: allStyles,
+        style,
         ref,
       };
 
@@ -306,6 +242,6 @@ export function createStitches(config = {}) {
 
 export const { styled, css } = createStitches();
 
-export const defaultThemeMap = constants.DEFAULT_THEME_MAP;
+export const defaultThemeMap = DEFAULT_THEME_MAP;
 
 export default createStitches;
