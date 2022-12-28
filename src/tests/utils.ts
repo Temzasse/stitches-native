@@ -23,4 +23,6 @@ export function mockDimensions({
   }));
 }
 
+export function reduceStyles(s: any) {
+  return s.reduce((s1: any, s2: any) => ({ ...s1, ...s2 }), {});
 }
