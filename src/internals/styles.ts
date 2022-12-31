@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { StyleSheet } from 'react-native';
 import { DEFAULT_THEME_MAP } from './constants';
 import { getThemeKey, processThemeMap } from './theme';

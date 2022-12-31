@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useMemo, useRef } from 'react';
 import { PixelRatio, useWindowDimensions } from 'react-native';
 import { resolveMediaRangeQueries } from './media';
