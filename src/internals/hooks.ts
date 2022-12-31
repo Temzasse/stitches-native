@@ -1,7 +1,7 @@
 import { useMemo, useRef } from 'react';
 import { PixelRatio, useWindowDimensions } from 'react-native';
-import { resolveMediaRangeQueries } from './media';
-import { processStyleSheet } from './styles';
+import { resolveMediaRangeQueries, Media } from './media';
+import { processStyleSheet, ProcessedStyleSheetArgs } from './styles';
 import { getCompoundKey } from './utils';
 
 /**
@@ -14,7 +14,7 @@ import { getCompoundKey } from './utils';
  *   tablet: DeviceInfo.isTablet(),
  * }
  */
-export function useMediaQueries(media) {
+export function useMediaQueries(media: Media): string[] {
   const { width: windowWidth } = useWindowDimensions();
 
   return useMemo(() => {
@@ -27,11 +27,20 @@ export function useProcessedStyleSheet({
   media,
   activeMediaQueries,
   styleSheet,
-}) {
+}: ProcessedStyleSheetArgs) {
   return useMemo(() => {
     return processStyleSheet(styleSheet, media, activeMediaQueries);
   }, [styleSheet, activeMediaQueries]); // eslint-disable-line react-hooks/exhaustive-deps
 }
+
+type UseVariantStylesArgs = {
+  props: any;
+  variants: any;
+  defaultVariants: Record<string, VariantValue>;
+  media: ProcessedStyleSheetArgs['media'];
+  styleSheet: ProcessedStyleSheetArgs['styleSheet'];
+  activeMediaQueries: ProcessedStyleSheetArgs['activeMediaQueries'];
+};
 
 export function useVariantStyles({
   props: _props,
@@ -40,7 +49,7 @@ export function useVariantStyles({
   media,
   styleSheet,
   activeMediaQueries,
-}) {
+}: UseVariantStylesArgs) {
   // Only recalculate if the variant props have changed
   const props = useStableVariantProps(variants, _props);
 
@@ -74,7 +83,7 @@ export function useVariantStyles({
           // so that later ones overwrite earlier ones.
           if (activeMediaQueries.length > 0) {
             activeMediaQueries.forEach((mediaKey) => {
-              const value = propValue[`@${mediaKey}`];
+              const value = (propValue as VariantValue)[`@${mediaKey}`];
 
               if (value !== undefined && styleSheet[`${prop}_${value}`]) {
                 variantStyle = {
@@ -124,7 +133,13 @@ export function useCompoundVariantStyles({
 
 // Helpers ---------------------------------------------------------------------
 
-function variantPropsEqual(variants, props) {
+type VariantValue = { [key: string]: string } | string;
+type Optional<Value> = Value | undefined;
+
+function variantPropsEqual(
+  variants: Record<string, Optional<VariantValue>>,
+  props: Record<string, Optional<VariantValue>>
+): boolean {
   const variantKeys = Object.keys(variants);
   for (let i = 0; i < variantKeys.length; i++) {
     const key = variantKeys[i];
@@ -133,8 +148,11 @@ function variantPropsEqual(variants, props) {
   return true;
 }
 
-function useStableVariantProps(variants, props) {
-  const propsRef = useRef();
+function useStableVariantProps(
+  variants: Record<string, Optional<VariantValue>>,
+  props: Record<string, Optional<VariantValue>>
+) {
+  const propsRef = useRef<Record<string, Optional<VariantValue>>>();
 
   if (!propsRef.current || !variantPropsEqual(variants, propsRef.current)) {
     propsRef.current = props;

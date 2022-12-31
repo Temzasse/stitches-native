@@ -1,4 +1,4 @@
-import { THEME_VALUES } from './constants';
+import { StoredTheme, THEME_VALUES } from './constants';
 
 export function processThemeMap(themeMap) {
   const definition = {};
@@ -16,7 +16,7 @@ export function processThemeMap(themeMap) {
   return definition;
 }
 
-export function processTheme(theme) {
+export function processTheme(theme): StoredTheme {
   const definition = {};
   const values = {};
 
@@ -42,7 +42,7 @@ export function processTheme(theme) {
     });
   });
 
-  return { definition, values };
+  return { definition, values } as StoredTheme;
 }
 
 export function getThemeKey(theme, themeMap, key) {

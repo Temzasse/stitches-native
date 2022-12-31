@@ -11,7 +11,7 @@
     "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
     "importsNotUsedAsValues": "error",
-    "jsx": "react",
+    "jsx": "react-native",
     "lib": ["esnext", "dom"],
     "module": "esnext",
     "moduleResolution": "node",
