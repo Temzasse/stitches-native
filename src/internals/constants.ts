@@ -1,3 +1,4 @@
+// @ts-nocheck
 export const COLOR_PROPERTIES = {
   backgroundColor: 'colors',
   border: 'colors',

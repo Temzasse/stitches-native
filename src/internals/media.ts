@@ -1,3 +1,4 @@
+// @ts-nocheck
 export function resolveMediaRangeQueries(media, width) {
   const activeMediaQueries = [];
 

@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json.schemastore.org/swcrc",
+  "module": {
+    "type": "commonjs",
+    // These are defaults.
+    "strict": false,
+    "strictMode": true,
+    "lazy": false,
+    "noInterop": false
+  },
+  "jsc": {
+    "parser": {
+      "syntax": "typescript",
+      "tsx": true,
+      "decorators": true,
+      "dynamicImport": false
+    },
+    "transform": {
+      "decoratorMetadata": true,
+      "legacyDecorator": true,
+      "react": {
+        "runtime": "automatic",
+        "useBuiltins": true
+      }
+    },
+    "keepClassNames": true,
+    "minify": {
+      "compress": {
+        "unused": true,
+        "keep_classnames": true,
+        "keep_fnames": true,
+        "keep_fargs": true
+      }
+    }
+  },
+  "minify": true
+}
