@@ -1,21 +1,38 @@
-// @ts-nocheck
 import { StyleSheet } from 'react-native';
 import { DEFAULT_THEME_MAP } from './constants';
 import { getThemeKey, processThemeMap } from './theme';
 import { getCompoundKey } from './utils';
+import { Media } from './media';
+
+type StyleValue =
+  | Record<string, any>
+  | {
+      value?: any;
+    }
+  | string;
+
+export type ProcessStylesArgs = {
+  styles: Record<string, StyleValue>;
+  theme: Record<string, object>;
+  themeMap: any;
+};
 
 /**
  * Process styles by replacing all theme tokens with their actual value.
  * NOTE: passed styles need to be flattened before calling this!
  */
-export function processStyles({ styles, theme, themeMap: customThemeMap }) {
+export function processStyles({
+  styles,
+  theme,
+  themeMap: customThemeMap,
+}: ProcessStylesArgs) {
   const themeMap = processThemeMap(customThemeMap || DEFAULT_THEME_MAP);
 
   return Object.entries(styles).reduce((acc, [key, val]) => {
     if (typeof val === 'string' && val.indexOf('$') !== -1) {
       // Handle theme tokens, eg. `color: "$primary"` or `color: "$colors$primary"`
       const arr = val.split('$');
-      const token = arr.pop();
+      const token: string = arr.pop() as string;
       const scaleOrSign = arr.pop();
       const maybeSign = arr.pop(); // handle negative values
       const scale = scaleOrSign !== '-' ? scaleOrSign : undefined;
@@ -44,13 +61,21 @@ export function processStyles({ styles, theme, themeMap: customThemeMap }) {
   }, {});
 }
 
+export type CreateStyleSheetArgs = {
+  theme: any;
+  themeMap: any;
+  styles: any;
+  variants: Record<string, StyleValue>;
+  compoundVariants: any;
+};
+
 export function createStyleSheet({
   theme,
   themeMap,
   styles,
   variants,
   compoundVariants,
-}) {
+}: CreateStyleSheetArgs) {
   return StyleSheet.create({
     base: styles
       ? processStyles({
@@ -98,6 +123,12 @@ export function createStyleSheet({
   });
 }
 
+export type ProcessedStyleSheetArgs = {
+  media: Media;
+  activeMediaQueries: string[];
+  styleSheet: Record<string, object>;
+};
+
 /**
  * Process the style sheet by inlining media styles.
  *
@@ -118,8 +149,12 @@ export function createStyleSheet({
  * @param {string[]} activeMediaQueries
  * @returns {Record<string, object>}
  */
-export function processStyleSheet(styleSheet, media, activeMediaQueries) {
-  const prosessedStyleSheet = {};
+export function processStyleSheet(
+  styleSheet: ProcessedStyleSheetArgs['styleSheet'],
+  media: ProcessedStyleSheetArgs['media'],
+  activeMediaQueries: ProcessedStyleSheetArgs['activeMediaQueries']
+) {
+  const prosessedStyleSheet: Record<string, object> = {};
 
   Object.entries(styleSheet).forEach(([sKey, sVal]) => {
     prosessedStyleSheet[sKey] = {};

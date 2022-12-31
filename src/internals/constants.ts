@@ -1,4 +1,3 @@
-// @ts-nocheck
 export const COLOR_PROPERTIES = {
   backgroundColor: 'colors',
   border: 'colors',
@@ -117,7 +116,22 @@ export const DEFAULT_THEME_MAP = {
   ...Z_INDEX_PROPERTIES,
 };
 
-export const THEME_VALUES = {
+export type ThemeValues = {
+  borderStyles: null | string | object | number;
+  borderWidths: null | string | object | number;
+  colors: null | string | object | number;
+  fonts: null | string | object | number;
+  fontSizes: null | string | object | number;
+  fontWeights: null | string | object | number;
+  letterSpacings: null | string | object | number;
+  lineHeights: null | string | object | number;
+  radii: null | string | object | number;
+  sizes: null | string | object | number;
+  space: null | string | object | number;
+  zIndices: null | string | object | number;
+};
+
+export const THEME_VALUES: ThemeValues = {
   borderStyles: null,
   borderWidths: null,
   colors: null,
@@ -132,7 +146,14 @@ export const THEME_VALUES = {
   zIndices: null,
 };
 
-export const EMPTY_THEME = {
+export type StoredTheme = {
+  definition: {
+    __ID__: string;
+  } & ThemeValues;
+  values: ThemeValues;
+};
+
+export const EMPTY_THEME: StoredTheme = {
   definition: {
     __ID__: 'theme-0',
     ...THEME_VALUES,

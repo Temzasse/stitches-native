@@ -1,13 +1,13 @@
-// @ts-nocheck
 import merge from 'lodash.merge';
 
 import React, {
+  ForwardRefExoticComponent,
   createContext,
   createElement,
   forwardRef,
   memo,
-  useMemo,
   useContext,
+  useMemo,
 } from 'react';
 
 import {
@@ -19,6 +19,7 @@ import {
 import {
   DEFAULT_THEME_MAP,
   EMPTY_THEME,
+  StoredTheme,
   THEME_PROVIDER_MISSING_MESSAGE,
 } from './constants';
 
@@ -29,8 +30,10 @@ import {
   useVariantStyles,
 } from './hooks';
 
-import { processTheme } from './theme';
 import { createStyleSheet, processStyles } from './styles';
+import { processTheme } from './theme';
+import { ConfigType, DefaultThemeMap } from '../types/config';
+import Stitches from '../types/stitches';
 
 /** @typedef {import('../types').__Stitches__} Stitches */
 /** @typedef {import('../types').CreateStitches} CreateStitches */
@@ -39,8 +42,32 @@ import { createStyleSheet, processStyles } from './styles';
 const ReactNative = require('react-native');
 
 /** @type {CreateStitches} */
-export function createStitches(config = {}) {
-  const themes = [];
+
+export function createStitches<
+  Media extends {} = {},
+  Theme extends {} = {},
+  ThemeMap extends {} = DefaultThemeMap,
+  Utils extends {} = {}
+>(config?: {
+  media?: ConfigType.Media<Media>;
+  theme?: ConfigType.Theme<Theme>;
+  themeMap?: ConfigType.ThemeMap<ThemeMap>;
+  utils?: ConfigType.Utils<Utils>;
+}): Stitches<Media, Theme, ThemeMap, Utils>;
+export function createStitches<
+  Media extends {} = {},
+  Theme extends {} = {},
+  ThemeMap extends {} = DefaultThemeMap,
+  Utils extends {} = {}
+>(
+  config: {
+    media?: ConfigType.Media<Media>;
+    theme?: ConfigType.Theme<Theme>;
+    themeMap?: ConfigType.ThemeMap<ThemeMap>;
+    utils?: ConfigType.Utils<Utils>;
+  } = {}
+): Stitches<Media, Theme, ThemeMap, Utils> {
+  const themes: StoredTheme[] = [];
 
   if (config.theme) {
     const processedTheme = processTheme(config.theme);
@@ -77,14 +104,22 @@ export function createStitches(config = {}) {
     );
   }
 
-  function useThemeInternal() {
+  function useThemeInternal(): StoredTheme {
     const themeDefinition = useContext(ThemeContext);
 
     if (!themeDefinition) {
       throw new Error(THEME_PROVIDER_MISSING_MESSAGE);
     }
 
-    return themes.find((t) => t.definition.__ID__ === themeDefinition.__ID__);
+    const _theme = themes.find(
+      (t) => t.definition.__ID__ === themeDefinition.__ID__
+    );
+
+    if (!_theme) {
+      throw new Error(THEME_PROVIDER_MISSING_MESSAGE);
+    }
+
+    return _theme;
   }
 
   /** @type {Stitches['useTheme']} */
@@ -95,7 +130,7 @@ export function createStitches(config = {}) {
       throw new Error(THEME_PROVIDER_MISSING_MESSAGE);
     }
 
-    return themes.find((t) => t.definition.__ID__ === themeDefinition.__ID__).values; // prettier-ignore
+    return themes.find((t) => t.definition.__ID__ === themeDefinition.__ID__)?.values; // prettier-ignore
   }
 
   /** @type {Stitches['styled']} */
@@ -118,100 +153,102 @@ export function createStitches(config = {}) {
 
     let attrsFn;
 
-    let Comp = forwardRef((props, ref) => {
-      const theme = useThemeInternal();
+    let Comp: ForwardRefExoticComponent<any> & { attrs?: any } = forwardRef(
+      (props, ref) => {
+        const theme = useThemeInternal();
 
-      const baseStyleSheet = useMemo(() => {
-        const existingSheet = styleSheets[theme.definition.__ID__];
-        if (existingSheet) return existingSheet;
+        const baseStyleSheet = useMemo(() => {
+          const existingSheet = styleSheets[theme.definition.__ID__];
+          if (existingSheet) return existingSheet;
 
-        styleSheets[theme.definition.__ID__] = createStyleSheet({
-          styles,
-          variants,
-          compoundVariants,
-          theme: theme.values,
-          themeMap: config.themeMap,
-        });
-
-        return styleSheets[theme.definition.__ID__];
-      }, [theme]);
-
-      const activeMediaQueries = useMediaQueries(media);
-
-      const styleSheet = useProcessedStyleSheet({
-        media,
-        activeMediaQueries,
-        styleSheet: baseStyleSheet,
-      });
-
-      const variantStyles = useVariantStyles({
-        props,
-        variants,
-        defaultVariants,
-        media,
-        activeMediaQueries,
-        styleSheet,
-      });
-
-      const compoundVariantStyles = useCompoundVariantStyles({
-        props,
-        variants,
-        defaultVariants,
-        compoundVariants,
-        styleSheet,
-      });
-
-      const cssStyles = props.css
-        ? processStyles({
-            styles: flattenStyles(props.css || {}, utils),
+          styleSheets[theme.definition.__ID__] = createStyleSheet({
+            styles,
+            variants,
+            compoundVariants,
             theme: theme.values,
             themeMap: config.themeMap,
-          })
-        : {};
+          });
 
-      const combinedStyles = [
-        styleSheet.base,
-        ...variantStyles,
-        ...compoundVariantStyles,
-        cssStyles,
-      ];
+          return styleSheets[theme.definition.__ID__];
+        }, [theme]);
 
-      const style =
-        typeof props.style === 'function'
-          ? (...rest) =>
-              [props.style(...rest), ...combinedStyles].filter(Boolean)
-          : [...combinedStyles, props.style].filter(Boolean);
+        const activeMediaQueries = useMediaQueries(media);
 
-      let attrsProps = {};
+        const styleSheet = useProcessedStyleSheet({
+          media,
+          activeMediaQueries,
+          styleSheet: baseStyleSheet,
+        });
 
-      if (typeof attrsFn === 'function') {
-        attrsProps = attrsFn({ ...props, theme: theme.values });
+        const variantStyles = useVariantStyles({
+          props,
+          variants,
+          defaultVariants,
+          media,
+          activeMediaQueries,
+          styleSheet,
+        });
+
+        const compoundVariantStyles = useCompoundVariantStyles({
+          props,
+          variants,
+          defaultVariants,
+          compoundVariants,
+          styleSheet,
+        });
+
+        const cssStyles = props.css
+          ? processStyles({
+              styles: flattenStyles(props.css || {}, utils),
+              theme: theme.values as Record<string, object>,
+              themeMap: config.themeMap,
+            })
+          : {};
+
+        const combinedStyles = [
+          styleSheet.base,
+          ...variantStyles,
+          ...compoundVariantStyles,
+          cssStyles,
+        ];
+
+        const style =
+          typeof props.style === 'function'
+            ? (...rest) =>
+                [props.style(...rest), ...combinedStyles].filter(Boolean)
+            : [...combinedStyles, props.style].filter(Boolean);
+
+        let attrsProps = {};
+
+        if (typeof attrsFn === 'function') {
+          attrsProps = attrsFn({ ...props, theme: theme.values });
+        }
+
+        const propsWithoutVariant = { ...props };
+
+        for (const variantKey of Object.keys(variants)) {
+          delete propsWithoutVariant[variantKey];
+        }
+
+        const componentProps = {
+          ...attrsProps,
+          ...propsWithoutVariant,
+          style,
+          ref,
+        };
+
+        if (typeof component === 'string') {
+          return createElement(ReactNative[component], componentProps);
+        } else if (
+          typeof component === 'object' ||
+          typeof component === 'function'
+        ) {
+          return createElement(component, componentProps);
+        }
+
+        return null;
       }
-
-      const propsWithoutVariant = { ...props };
-
-      for (const variantKey of Object.keys(variants)) {
-        delete propsWithoutVariant[variantKey];
-      }
-
-      const componentProps = {
-        ...attrsProps,
-        ...propsWithoutVariant,
-        style,
-        ref,
-      };
-
-      if (typeof component === 'string') {
-        return createElement(ReactNative[component], componentProps);
-      } else if (
-        typeof component === 'object' ||
-        typeof component === 'function'
-      ) {
-        return createElement(component, componentProps);
-      }
-
-      return null;
-    });
+    );
 
     Comp = memo(Comp);
 
@@ -238,7 +275,7 @@ export function createStitches(config = {}) {
     config,
     media: config.media,
     utils: config.utils,
-  };
+  } as unknown as Stitches<Media, Theme, ThemeMap, Utils>;
 }
 
 export const { styled, css } = createStitches();

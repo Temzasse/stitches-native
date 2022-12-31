@@ -1,4 +1,3 @@
-// @ts-nocheck
 import merge from 'lodash.merge';
 
 export function getCompoundKey(compoundEntries) {
@@ -172,7 +171,7 @@ export function flattenStyles(styles, utils) {
  *   },
  * }
  */
-export function flattenVariantStyles(variants, utils) {
+export function flattenVariantStyles(variants: Record<string, any>, utils) {
   const flatVariants = {};
 
   Object.entries(variants).forEach(([variantProp, variantObj]) => {
